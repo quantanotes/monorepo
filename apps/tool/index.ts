@@ -13,7 +13,6 @@ yargs(hideBin(process.argv)).command(
     });
   },
   async ({ file }) => {
-    console.log('running dev server')
     await dev_server(file as string);
   },
 ).command(
