@@ -29,6 +29,6 @@ yargs(hideBin(process.argv)).command(
       const file = Bun.file(filename);
       const code = await file.text();
       const name = filename.slice(0, (filename.lastIndexOf('.')));
-      client.push.$post({ json: { name, code }  })
+      client.registry.push.$post({ json: { name, code }  })
   },
 ).parse()

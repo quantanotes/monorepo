@@ -2,11 +2,16 @@
   "name": "quanta",
   "private": true,
   "scripts": {
-    "api:run": "bun run apps/api/index.ts",
-    "tool:run": "bun run apps/tool/index.ts"
+    "api": "bun run apps/api/index.ts",
+    "tool": "bun run apps/tool/index.ts"
   },
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "prettier": "^3.4.2",
+    "prettier-plugin-svelte": "^3.3.3",
+    "prettier-plugin-tailwindcss": "^0.6.11"
+  }
 }

@@ -1,22 +1,15 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { hc } from 'hono/client';
-import { compile } from '#/compile';
-import { db, schema } from '#/db/remote';
+import { ai_controller } from './ai';
+import { registry_controller } from './registry';
 
 const app = new Hono()
-  .post('/push', async (c) => {
-    const  { name, code } = await c.req.json<{ name: string; code: string }>();
-    const executable = compile(code);
-    await db.insert(schema.actions).values({
-      name,
-      code,
-      executable,
-    }).onConflictDoUpdate({
-      target: schema.actions.name, 
-      set: { code, executable },
-    });
-    return c.json({}, 200);
-  });
+  .use(cors())
+  .route('/ai', ai_controller)
+  .route('/registry', registry_controller);
+
+export type App = typeof app;
 
 export const client = hc<typeof app>('http://localhost:4000');
 
