@@ -40,7 +40,7 @@ export async function init_db(_path: string) {
   Object.defineProperty(db, 'orm', {
     value: orm,
     writable: false,
-	});
+  });
 
-	return db;
+  return db;
 }
