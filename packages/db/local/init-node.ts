@@ -32,10 +32,10 @@ export async function init_db(_path: string) {
   });
 
   const orm = drizzle({
-	  client: db as unknown as PGlite,
-	  casing: 'snake_case',
-	  logger: true,
-	});
+    client: db as unknown as PGlite,
+    casing: 'snake_case',
+    logger: true,
+  });
 
   Object.defineProperty(db, 'orm', {
     value: orm,
