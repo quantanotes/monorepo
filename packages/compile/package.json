@@ -1,0 +1,21 @@
+{
+  "name": "compile",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-virtual": "^3.0.2",
+    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "drizzle-orm": "^0.39.1",
+    "hono": "^4.6.20",
+    "rollup": "^4.34.0",
+    "rollup-plugin-svelte": "^7.2.2",
+    "svelte": "^5.19.6"
+  }
+}

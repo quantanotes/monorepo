@@ -1,0 +1,7 @@
+node_modules
+*.lcov
+.eslintcache
+.env
+.DS_Store
+.svelte-kit
+tmp

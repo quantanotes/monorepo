@@ -1,0 +1,12 @@
+{
+  "name": "quanta",
+  "private": true,
+  "scripts": {
+    "api:run": "bun run apps/api/index.ts",
+    "tool:run": "bun run apps/tool/index.ts"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

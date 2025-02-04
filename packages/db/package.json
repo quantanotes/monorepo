@@ -1,0 +1,19 @@
+{
+  "name": "db",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "^1.2.2",
+    "drizzle-kit": "^0.30.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "^0.2.16",
+    "@electric-sql/pglite-sync": "^0.2.18",
+    "drizzle-orm": "^0.39.1",
+    "nanoid": "^5.0.9",
+    "postgres": "^3.4.5"
+  }
+}
