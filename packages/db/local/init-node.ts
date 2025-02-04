@@ -31,15 +31,15 @@ export async function init_db(_path: string) {
     primaryKey: ['name'],
   });
 
-	const orm = drizzle({
-		client: db as unknown as PGlite,
-		casing: 'snake_case',
-		logger: true,
+  const orm = drizzle({
+	  client: db as unknown as PGlite,
+	  casing: 'snake_case',
+	  logger: true,
 	});
 
-	Object.defineProperty(db, 'orm', {
-		value: orm,
-		writable: false,
+  Object.defineProperty(db, 'orm', {
+    value: orm,
+    writable: false,
 	});
 
 	return db;
