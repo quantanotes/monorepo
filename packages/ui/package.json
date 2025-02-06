@@ -1,0 +1,20 @@
+{
+  "name": "ui",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "bits-ui": "^1.0.0-next.86",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.1",
+    "tailwind-variants": "^0.3.1",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "tailwindcss": "^4.0.3"
+  }
+}

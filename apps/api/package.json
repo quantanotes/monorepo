@@ -11,6 +11,7 @@
   "dependencies": {
     "dotenv": "^16.4.7",
     "hono": "^4.6.20",
-    "openai": "^4.82.0"
+    "openai": "^4.82.0",
+    "zod-to-json-schema": "^3.24.1"
   }
 }

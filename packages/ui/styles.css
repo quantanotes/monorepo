@@ -1,0 +1,155 @@
+@import 'tailwindcss';
+
+@config './tailwind.config.ts';
+
+@utility themed-prose {
+	@apply prose prose-neutral text-foreground dark:prose-invert;
+}
+
+@utility hero-title {
+	@apply text-5xl font-medium sm:text-6xl md:text-7xl lg:text-8xl;
+}
+
+@utility section {
+	@apply my-64 min-h-screen w-full p-8;
+}
+
+@utility section-title {
+	@apply mx-auto max-w-7xl text-center text-6xl font-medium md:text-7xl;
+}
+
+/* @utility section-subheading {
+} */
+
+@layer base {
+	:root {
+		--background: 37 12% 88%;
+		--foreground: 45 15% 5%;
+
+		--card: 37 12% 90%;
+		--card-foreground: 45 15% 10%;
+
+		--popover: 37 13% 88%;
+		--popover-foreground: 45 15% 5%;
+
+		--primary: 40 14% 26%;
+		--primary-foreground: 15 13% 94%;
+
+		--secondary: 45 13% 58%;
+		--secondary-foreground: 45 15% 5%;
+
+		--muted: 44 14% 76%;
+		--muted-foreground: 44 15% 70%;
+
+		--accent: 44 14% 90%;
+		--accent-foreground: 45 15% 5%;
+
+		--destructive: 0 85% 60%;
+		--destructive-foreground: 45 15% 5%;
+
+		--border: 37 14% 66%;
+		--input: 37 14% 66%;
+
+		--ring: 51 14% 40%;
+
+		--radius: 0.1em;
+	}
+
+	.dark {
+		--background: 37 12% 8%;
+		--foreground: 45 15% 90%;
+
+		--card: 37 12% 7%;
+		--card-foreground: 45 15% 95%;
+
+		--popover: 37 13% 8%;
+		--popover-foreground: 45 15% 90%;
+
+		--primary: 40 14% 74%;
+		--primary-foreground: 15 13% 6%;
+
+		--secondary: 45 13% 42%;
+		--secondary-foreground: 15 13% 6%;
+
+		--muted: 44 14% 12%;
+		--muted-foreground: 45 7% 30%;
+
+		--accent: 44 14% 10%;
+		--accent-foreground: 45 14% 95%;
+
+		--destructive: 0 62% 30%;
+		--destructive-foreground: 43 14% 10%;
+
+		--border: 37 14% 17%;
+		--input: 37 14% 17%;
+
+		--ring: 51 14% 60%;
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+
+	body {
+		@apply bg-background text-foreground;
+	}
+
+	.ProseMirror > .title,
+	.ProseMirror > h1,
+	.ProseMirror > h2,
+	.ProseMirror > h3,
+	.ProseMirror > h4,
+	.ProseMirror > h5,
+	.ProseMirror > h6 {
+		@apply !font-bold;
+	}
+
+	.ProseMirror h1,
+	.ProseMirror h2,
+	.ProseMirror h3,
+	.ProseMirror h4,
+	.ProseMirror h5,
+	.ProseMirror h6,
+	.ProseMirror p,
+	.ProseMirror blockquote,
+	.ProseMirror pre,
+	.ProseMirror ul,
+	.ProseMirror ol,
+	.ProseMirror li {
+		margin: 0.75rem !important;
+	}
+
+	.ProseMirror ul,
+	.ProseMirror ol {
+		@apply !pl-2;
+	}
+
+	/* :global(.ProseMirror p.is-editor-empty:first-child::before) {
+		@apply text-muted-foreground;
+		content: attr(data-placeholder);
+		float: left;
+		height: 0;
+		pointer-events: none;
+	} */
+
+	.collaboration-cursor__caret {
+		pointer-events: none;
+		position: relative;
+		word-break: normal;
+	}
+
+	.collaboration-cursor__label {
+		@apply text-sm;
+		font-style: normal;
+		font-weight: 600;
+		left: -1px;
+		line-height: normal;
+		padding: 0.1rem 0.3rem;
+		position: absolute;
+		top: -1.4em;
+		user-select: none;
+		white-space: nowrap;
+	}
+}

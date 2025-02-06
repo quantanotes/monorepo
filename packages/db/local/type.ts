@@ -1,6 +1,6 @@
 import type { PgliteDatabase } from 'drizzle-orm/pglite';
 import type { PGliteInterface } from '@electric-sql/pglite';
-import type { LiveNamespace } from '@electric-sql/pglite/live';
+// import type { LiveNamespace } from '@electric-sql/pglite/live';
 import type {
 	SyncShapeToTableOptions,
 	SyncShapeToTableResult
@@ -17,5 +17,5 @@ export type DB = PGliteInterface & {
 			options: SyncShapeToTableOptions
 		) => Promise<SyncShapeToTableResult>;
 	};
-	live: LiveNamespace;
+	// live: LiveNamespace;
 };

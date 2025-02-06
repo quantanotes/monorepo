@@ -1,9 +1,11 @@
 {
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["apps/*"],
-      "#/*": ["packages/*"]
-    }
-  }
+	"compilerOptions": {
+		"moduleResolution": "bundler",
+		"module": "ES2022",
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["apps/*"],
+			"#/*": ["packages/*"]
+		}
+	}
 }

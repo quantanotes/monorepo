@@ -1,8 +1,8 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { hc } from 'hono/client';
-import { ai_controller } from './ai';
-import { registry_controller } from './registry';
+import { ai_controller } from './controllers/ai';
+import { registry_controller } from './controllers/registry';
 
 const app = new Hono()
   .use(cors())
