@@ -102,16 +102,12 @@ export const ai_controller = new Hono()
     }>();
     messages = [{ role: 'system', content: system_prompt }, ...messages];
     return streamText(c, async (stream) => {
-      console.log('starting stream');
       const runner = openai.beta.chat.completions
         .runTools({
           stream: true,
           model: 'gpt-4o-mini',
           tools: [render_code_tool(stream)],
           messages,
-        })
-        .on('tool_calls.function.arguments.done', (args) => {
-          console.log(args);
         })
         .on('content', async (delta) => {
           await stream.writeln(

@@ -17,7 +17,7 @@
 </script>
 
 <div
-  class="bg-background/50 absolute bottom-0 z-50 flex w-full px-4 py-2 backdrop-blur-md"
+  class="bg-background/50 absolute bottom-0 z-10 flex w-full px-4 py-2 backdrop-blur-md"
 >
   <Input
     class="flex-grow border-0 bg-opacity-0 !text-xl focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -29,6 +29,7 @@
       }
     }}
   />
+
   <Button variant="ghost" size="icon" onclick={send}>
     <ArrowRight class="!size-6" />
   </Button>

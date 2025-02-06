@@ -21,10 +21,12 @@
   />
 </svelte:head>
 
-<ScrollArea class="relative h-screen w-screen">
-  <Navbar />
-  {#key page.url}
-    {@render children?.()}
-  {/key}
-  <Input />
-</ScrollArea>
+<Navbar />
+{#key page.url}
+  <div class="absolute" transition:blur>
+    <ScrollArea class="relative h-screen w-screen">
+      {@render children?.()}
+    </ScrollArea>
+  </div>
+{/key}
+<Input />
