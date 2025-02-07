@@ -5,12 +5,12 @@ import { schema } from '#/db/local';
 export function db_resolver(db: any) {
   return {
     name: 'db-resolver',
-  
+
     resolveId: {
       order: 'post',
       async handler() {
         return null;
-      }
+      },
     },
 
     async load(source) {
@@ -18,14 +18,13 @@ export function db_resolver(db: any) {
       if (source.includes('node_modules') || source.includes('monorepo')) {
         return null;
       }
-      const results = await db 
+      const results = await db
         .select({
-          executable: schema.actions.executable
+          executable: schema.actions.compiled,
         })
         .from(schema.actions)
-        .where(eq(schema.actions.name, source))
+        .where(eq(schema.actions.name, source));
       return results[0]?.executable ?? null;
     },
-
-  } satisfies Plugin; 
+  } satisfies Plugin;
 }

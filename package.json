@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "api": "bun run apps/api/index.ts",
-    "tool": "bun run apps/tool/index.ts"
+    "tool": "bun run apps/tool/index.ts",
+    "app": "vite apps/app"
   },
   "workspaces": [
     "apps/*",

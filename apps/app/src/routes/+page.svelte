@@ -3,7 +3,7 @@
 </script>
 
 <div class="absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2">
-  <Blob class="size-[768px] opacity-45 blur-3xl" seed="xyz" />
+  <Blob class="size-[768px] opacity-50 blur-xl" seed="xyz" />
 </div>
 
 <div class="mt-16 p-8">

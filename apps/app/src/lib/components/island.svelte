@@ -1,6 +1,6 @@
 <script>
   import { onMount, mount } from 'svelte';
-  import { make_component } from '$/make-component';
+  import { make_component } from '#/runtime';
 
   let { code } = $props();
 

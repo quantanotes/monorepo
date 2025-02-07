@@ -31,7 +31,6 @@ export class ChatStore {
           break;
         case 'render':
           this.#pop_last_empty_message();
-          console.log(chunk);
           this.messages.push({ role: 'render', content: chunk.content });
           this.messages.push({ role: 'assistant', content: '' });
           break;
@@ -40,6 +39,13 @@ export class ChatStore {
       }
     }
     this.#pop_last_empty_message();
+  }
+
+  append_island(code: string) {
+    if (page.url.pathname !== '/shell') {
+      goto('/shell');
+    }
+    this.messages.push({ role: 'render', content: code });
   }
 
   #pop_last_empty_message() {

@@ -7,7 +7,6 @@ import typescript from '@rollup/plugin-typescript';
 import virtual from '@rollup/plugin-virtual';
 import postcss from 'rollup-plugin-postcss';
 import tailwindcss_postcss from '@tailwindcss/postcss';
-import { db_resolver } from './db-resolver';
 
 const virtual_entry = `
   import { mount } from 'svelte';

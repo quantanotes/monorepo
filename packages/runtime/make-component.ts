@@ -1,11 +1,10 @@
 import { onDestroy, onMount } from 'svelte';
 import * as svelte_client from 'svelte/internal/client';
-import ui from '#/runtime/ui';
-import ai from '#/runtime/ai';
+import ui from './ui';
+import ai from './ai';
 
 export function make_component(code: string) {
-  console.log(code);
-  const res = new Function(
+  return new Function(
     '$',
     'onMount',
     'onDestroy',
@@ -13,6 +12,4 @@ export function make_component(code: string) {
     'ai',
     `return ${code};`,
   )(svelte_client, onMount, onDestroy, ui, ai);
-  console.log(res.toString());
-  return res;
 }

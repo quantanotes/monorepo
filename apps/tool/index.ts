@@ -14,7 +14,7 @@ yargs(hideBin(process.argv))
       });
     },
     async ({ file }) => {
-      await dev_server(file as string);
+      await dev_server(null, file as string);
     },
   )
   .command(

@@ -9,6 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "hono": "^4.6.20"
+    "hono": "^4.6.20",
+    "svelte": "^5.19.9"
   }
 }
