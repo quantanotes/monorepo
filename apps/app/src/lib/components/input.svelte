@@ -17,7 +17,7 @@
 </script>
 
 <div
-  class="bg-background/50 border-t absolute bottom-0 z-10 flex w-full px-4 py-2 backdrop-blur-md"
+  class="bg-background/50 border max-w-4xl -translate-x-1/2 left-1/2 absolute bottom-4 z-10 flex w-full px-4 py-2 backdrop-blur-md"
 >
   <Input
     class="flex-grow border-0 bg-opacity-0 !text-xl focus-visible:ring-0 focus-visible:ring-offset-0"

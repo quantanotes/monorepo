@@ -5,11 +5,11 @@
   let chat = getChatContext();
 </script>
 
-<div class="flex flex-col gap-6 pb-96 pt-20 max-w-4xl mx-auto">
+<div class="flex flex-col gap-6 pb-96 pt-20 max-w-6xl mx-auto">
   {#each chat.messages as message}
     {#if message.role === 'render'}
-        <div class="w-fit p-8 border-l-6 bg-card/50 mx-8">
-          <Island code={message.content}>I'm an island boy</Island>
+      <div class="p-8 bg-card/40 mx-8">
+        <Island code={message.content}>I'm an island boy</Island>
       </div>
     {:else}
       <div
