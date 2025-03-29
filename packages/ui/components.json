@@ -1,0 +1,19 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "default",
+  "rsc": false,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/styles/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true
+  },
+  "aliases": {
+    "components": "@quanta/ui",
+    "ui": "@quanta/ui",
+    "hooks": "@quanta/ui/hooks",
+    "lib": "@quanta/ui",
+    "utils": "@quanta/ui/utils/css"
+  }
+}

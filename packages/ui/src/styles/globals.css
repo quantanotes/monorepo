@@ -1,0 +1,195 @@
+@import 'tailwindcss';
+
+@source '../**/*.{tsx,ts}';
+@source '@radix-ui/**/*.{tsx,ts}';
+
+@plugin '@tailwindcss/typography';
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: hsl(45, 20%, 75%);
+  --foreground: hsl(45, 15%, 20%);
+
+  --card: hsl(45, 20%, 77%);
+  --card-foreground: hsl(45, 15%, 25%);
+  --popover: hsl(45, 20%, 77%);
+  --popover-foreground: hsl(45, 15%, 25%);
+
+  --primary: hsl(45, 25%, 35%);
+  --primary-foreground: hsl(45, 20%, 96%);
+
+  --secondary: hsl(45, 20%, 70%);
+  --secondary-foreground: hsl(45, 15%, 30%);
+
+  --muted: hsl(45, 20%, 72%);
+  --muted-foreground: hsl(45, 15%, 45%);
+
+  --accent: hsl(45, 20%, 68%);
+  --accent-foreground: hsl(45, 15%, 30%);
+
+  --destructive: hsl(0, 60%, 50%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+
+  --border: hsl(45, 20%, 70%);
+  --input: hsl(45, 20%, 70%);
+  --ring: hsl(45, 20%, 65%);
+
+  --radius: 0.2em;
+}
+
+.dark {
+  --background: hsl(45, 5%, 6%);
+  --foreground: hsl(45, 3%, 70%);
+
+  --card: hsl(45, 5%, 7%);
+  --card-foreground: hsl(45, 3%, 65%);
+  --popover: hsl(45, 5%, 7%);
+  --popover-foreground: hsl(45, 3%, 65%);
+
+  --primary: hsl(45, 10%, 55%);
+  --primary-foreground: hsl(45, 5%, 8%);
+
+  --secondary: hsl(45, 5%, 12%);
+  --secondary-foreground: hsl(45, 3%, 65%);
+
+  --muted: hsl(45, 5%, 10%);
+  --muted-foreground: hsl(45, 3%, 40%);
+
+  --accent: hsl(45, 5%, 14%);
+  --accent-foreground: hsl(45, 3%, 60%);
+
+  --destructive: hsl(0, 40%, 45%);
+  --destructive-foreground: hsl(0, 0%, 90%);
+
+  --border: hsl(45, 5%, 12%);
+  --input: hsl(45, 5%, 12%);
+  --ring: hsl(45, 5%, 18%);
+}
+
+@theme inline {
+  --font-sans: 'Poppins', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-accordion-down: 0.2s ease-out accordion-down;
+  --animate-accordion-up: 0.2s ease-out accordion-up;
+  --animate-caret-blink: 1.25s ease-out infinite caret-blink;
+
+  @keyframes accordion-down {
+    from: {
+      height: 0;
+    }
+
+    to: {
+      height: var(--bits-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from: {
+      height: var(--bits-accordion-content-height);
+    }
+
+    to: {
+      height: 0;
+    }
+  }
+
+  @keyframes caret-blink {
+    0%,
+    70%,
+    100% {
+      opacity: 1;
+    }
+
+    20%,
+    50% {
+      opacity: 0;
+    }
+  }
+}
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6,
+.ProseMirror p,
+.ProseMirror blockquote,
+.ProseMirror pre,
+.ProseMirror ul,
+.ProseMirror ol,
+.ProseMirror li {
+  margin: 0.75rem !important;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+  @apply !pl-2;
+}
+
+/* :global(.ProseMirror p.is-editor-empty:first-child::before) {
+		@apply text-muted-foreground;
+		content: attr(data-placeholder);
+		float: left;
+		height: 0;
+		pointer-events: none;
+	} */
+
+.collaboration-cursor__caret {
+  pointer-events: none;
+  position: relative;
+  word-break: normal;
+}
+
+.collaboration-cursor__label {
+  @apply text-sm;
+  font-style: normal;
+  font-weight: 600;
+  left: -1px;
+  line-height: normal;
+  padding: 0.1rem 0.3rem;
+  position: absolute;
+  top: -1.4em;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.themed-prose {
+  @apply prose prose-neutral dark:prose-invert prose-ul:my-0.5 prose-ol:my-0.5;
+}

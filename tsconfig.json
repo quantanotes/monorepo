@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "target": "ES2022",
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "paths": {
+      "@quanta/agent": ["packages/agent/src"],
+      "@quanta/auth/*": ["packages/auth/src/*"],
+      "@quanta/browser": ["packages/browser/src"],
+      "@quanta/cache": ["packages/cache/src"],
+      "@quanta/db/*": ["packages/db/src/*"],
+      "@quanta/types": ["packages/types/src"],
+      "@quanta/ui/*": ["packages/ui/src/*"],
+      "@quanta/utils/*": ["packages/utils/src/*"],
+      "@quanta/web/*": ["apps/web/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "build"],
+  "include": ["apps/**/*", "packages/**/*"]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "quanta",
+  "version": "0.0.1",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "devDependencies": {
+    "typescript": "latest",
+    "@types/bun": "latest",
+    "prettier": "latest",
+    "prettier-plugin-tailwindcss": "latest",
+    "eslint": "latest"
+  },
+  "packageManager": "bun@1.2.5",
+}
