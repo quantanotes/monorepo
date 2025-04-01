@@ -1,8 +1,8 @@
 import { useHumanChat } from '@quanta/web/contexts/human-chat';
-import { HumanChatItem } from '@quanta/web/components/human-chat-item';
+import { HumanChatMessage } from '@quanta/web/components/human-chat-message';
 import { Loader2 } from 'lucide-react';
 
-export function HumanChatList() {
+export function HumanChatMessages() {
   const { comments, loading, deleteComment } = useHumanChat();
 
   if (loading) {
@@ -25,9 +25,9 @@ export function HumanChatList() {
   }
 
   return (
-    <div className="flex flex-col divide-y">
+    <div className="flex flex-col">
       {comments.map((comment) => (
-        <HumanChatItem
+        <HumanChatMessage
           key={comment.id}
           comment={comment}
           onDelete={deleteComment}

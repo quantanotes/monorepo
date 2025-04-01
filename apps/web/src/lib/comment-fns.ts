@@ -1,12 +1,8 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
+import { db } from '@quanta/db/remote';
 import { assertSessionFn } from '@quanta/web/lib/auth-fns';
-import {
-  addComment,
-  deleteComment,
-  getItemComments,
-  getSpaceComments,
-} from '@quanta/web/lib/comment-model';
+import { CommentModelShared } from '@quanta/web/lib/comment-model';
 
 export const addCommentFn = createServerFn()
   .validator(
@@ -18,32 +14,43 @@ export const addCommentFn = createServerFn()
   )
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
-    return await addComment(session.user.id, data.content, {
-      itemId: data.itemId,
-      spaceId: data.spaceId,
-    });
+    await new CommentModelShared(
+      db,
+      data.spaceId ?? null,
+      session.user.id,
+    ).addComment(data.content, data.itemId);
   });
 
 export const deleteCommentFn = createServerFn()
   .validator(
     z.object({
       id: z.string(),
+      spaceId: z.string().optional(),
     }),
   )
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
-    return await deleteComment(session.user.id, data.id);
+    await new CommentModelShared(
+      db,
+      data.spaceId ?? null,
+      session.user.id,
+    ).deleteComment(data.id);
   });
 
 export const getItemCommentsFn = createServerFn()
   .validator(
     z.object({
       id: z.string(),
+      spaceId: z.string().optional(),
     }),
   )
   .handler(async ({ data }) => {
-    await assertSessionFn();
-    return await getItemComments(data.id);
+    const session = await assertSessionFn();
+    return await new CommentModelShared(
+      db,
+      data.spaceId ?? null,
+      session.user.id,
+    ).getItemComments(data.id);
   });
 
 export const getSpaceCommentsFn = createServerFn()
@@ -53,6 +60,10 @@ export const getSpaceCommentsFn = createServerFn()
     }),
   )
   .handler(async ({ data }) => {
-    await assertSessionFn();
-    return await getSpaceComments(data.id);
+    const session = await assertSessionFn();
+    return await new CommentModelShared(
+      db,
+      data.id,
+      session.user.id,
+    ).getSpaceComments();
   });

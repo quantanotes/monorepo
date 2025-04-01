@@ -19,8 +19,12 @@ export class ItemModelShared {
 
   async get(id: string) {
     return await this.#db
-      .select()
+      .select({
+        ...schema.items,
+        username: schema.users.username,
+      })
       .from(schema.items)
+      .leftJoin(schema.users, eq(schema.items.authorId, schema.users.id))
       .where(
         and(
           eq(schema.items.id, id),
@@ -109,8 +113,12 @@ export class ItemModelShared {
     offset: number = 0,
   ) {
     return await this.#db
-      .select()
+      .select({
+        ...schema.items,
+        username: schema.users.username,
+      })
       .from(schema.items)
+      .leftJoin(schema.users, eq(schema.items.authorId, schema.users.id))
       .where(
         and(
           eqMaybeNull(schema.items.spaceId, this.#spaceId),

@@ -1,65 +1,55 @@
 import { and, eq, desc } from '@quanta/db/drizzle';
-import { db, schema } from '@quanta/db/remote';
+import { type DB as DBLocal } from '@quanta/db/local';
+import { type DB, schema } from '@quanta/db/remote';
+import { eqMaybeNull } from '@quanta/utils/eq-maybe-null';
 
-export async function addComment(
-  userId: string,
-  content: string,
-  options: { itemId?: string; spaceId?: string },
-) {
-  const { itemId, spaceId } = options;
+export class CommentModelShared {
+  readonly #db: DBLocal['orm'] | DB;
+  readonly #spaceId: string | null;
+  readonly #userId: string;
 
-  if (!itemId && !spaceId) {
-    throw new Error('Comment must have either itemId or spaceId');
+  constructor(db: DBLocal['orm'] | DB, spaceId: string | null, userId: string) {
+    this.#db = db;
+    this.#spaceId = spaceId;
+    this.#userId = userId;
   }
 
-  const comment = await db
-    .insert(schema.comments)
-    .values({
-      content,
-      userId,
-      itemId,
-      spaceId,
-    })
-    .returning();
-
-  return comment[0];
-}
-
-export async function deleteComment(userId: string, commentId: string) {
-  const comment = await db
-    .select()
-    .from(schema.comments)
-    .where(
-      and(
-        eq(schema.comments.id, commentId),
-        eq(schema.comments.userId, userId),
-      ),
-    )
-    .then((results) => results[0]);
-
-  if (!comment) {
-    throw new Error(
-      'Comment not found or you do not have permission to delete it',
-    );
+  async addComment(content: string, itemId?: string) {
+    await this.#db
+      .insert(schema.comments)
+      .values({
+        content,
+        userId: this.#userId,
+        itemId,
+        spaceId: this.#spaceId,
+      })
+      .returning();
   }
 
-  await db.delete(schema.comments).where(eq(schema.comments.id, commentId));
+  async deleteComment(commentId: string) {
+    await this.#db
+      .delete(schema.comments)
+      .where(
+        and(
+          eq(schema.comments.id, commentId),
+          eq(schema.comments.userId, this.#userId),
+        ),
+      );
+  }
 
-  return { success: true };
-}
+  async getItemComments(itemId: string) {
+    return await this.#db
+      .select()
+      .from(schema.comments)
+      .where(eq(schema.comments.itemId, itemId))
+      .orderBy(desc(schema.comments.createdAt));
+  }
 
-export async function getItemComments(itemId: string) {
-  return await db
-    .select()
-    .from(schema.comments)
-    .where(eq(schema.comments.itemId, itemId))
-    .orderBy(desc(schema.comments.createdAt));
-}
-
-export async function getSpaceComments(spaceId: string) {
-  return await db
-    .select()
-    .from(schema.comments)
-    .where(eq(schema.comments.spaceId, spaceId))
-    .orderBy(desc(schema.comments.createdAt));
+  async getSpaceComments() {
+    return await this.#db
+      .select()
+      .from(schema.comments)
+      .where(eqMaybeNull(schema.comments.spaceId, this.#spaceId))
+      .orderBy(desc(schema.comments.createdAt));
+  }
 }

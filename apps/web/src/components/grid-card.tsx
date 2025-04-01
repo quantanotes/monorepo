@@ -7,7 +7,7 @@ import { Button } from '@quanta/ui/button';
 export function GridCard({ data }) {
   return (
     <Link to={`/$itemId`} params={{ itemId: data.id }}>
-      <div className="bg-card/70 hover:bg-accent/50 h-full overflow-hidden rounded-md border p-4 transition-colors">
+      <div className="bg-card/70 hover:bg-accent/50 h-full overflow-hidden rounded-md p-4 transition-colors">
         <h3 className="text-card-foreground mb-2 truncate text-lg font-semibold">
           {data.name || 'Untitled'}
         </h3>
@@ -22,7 +22,9 @@ export function GridCard({ data }) {
         />
 
         <div className="mt-4 flex items-center justify-between border-t pt-2">
-          <span className="text-card-foreground text-sm">@username</span>
+          <span className="text-card-foreground text-sm">
+            @ {data.username}
+          </span>
           <div className="flex items-center gap-2">
             <LikeButton
               likeCount={data.likeCount}
