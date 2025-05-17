@@ -1,7 +1,7 @@
 import { Extension } from '@tiptap/core';
+import { ReactRenderer } from '@tiptap/react';
 import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
-import TagsView from './view';
-import { createRoot } from 'react-dom/client';
+import { TagsView } from './view';
 
 export const Tags = Extension.create({
   name: 'tags',
@@ -24,67 +24,30 @@ const suggestion: Partial<SuggestionOptions> = {
   },
 
   render() {
-    let root: any = null;
-    let element: HTMLDivElement | null = null;
+    let component: ReactRenderer<any>;
 
     return {
       onStart(props) {
-        const { editor, command } = props;
-
-        element = document.createElement('div');
-        editor.view.dom.parentNode?.appendChild(element);
-
-        root = createRoot(element);
-        root.render(
-          <TagsView onselect={() => command(null)} query={props.query} />,
-        );
+        component = new ReactRenderer(TagsView, {
+          props,
+          editor: props.editor,
+        });
       },
 
       onUpdate(props) {
-        if (root && element) {
-          root.render(
-            <TagsView
-              onselect={() => props.command(null)}
-              query={props.query}
-            />,
-          );
-        }
+        component.updateProps(props);
       },
 
       onKeyDown(props) {
-        const { event } = props;
-
-        if (event.key === 'Escape') {
-          if (element) {
-            element.style.display = 'none';
-          }
+        if (props.event.key === 'Escape') {
+          component.ref?.hide();
           return true;
         }
-
-        if (element) {
-          const keyEvent = new KeyboardEvent('keydown', {
-            key: event.key,
-            bubbles: true,
-            cancelable: true,
-          });
-          element.dispatchEvent(keyEvent);
-
-          if (['ArrowUp', 'ArrowDown', 'Enter'].includes(event.key)) {
-            return true;
-          }
-        }
-
-        return false;
+        return component.ref?.onKeyDown(props.event);
       },
 
       onExit() {
-        if (root) {
-          root.unmount();
-        }
-
-        if (element) {
-          element.remove();
-        }
+        component.destroy();
       },
     };
   },

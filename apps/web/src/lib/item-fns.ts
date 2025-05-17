@@ -23,7 +23,7 @@ export const createItemFn = createServerFn()
     return await model.create(data);
   });
 
-export const updateItemWhereUserFn = createServerFn()
+export const updateItemFn = createServerFn()
   .validator(
     z.object({
       id: z.string(),
@@ -34,13 +34,13 @@ export const updateItemWhereUserFn = createServerFn()
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
     const model = new ItemModelRemote(session.user.id);
-    return await model.updateWhereUser(data.id, {
+    return await model.update(data.id, {
       name: data.name,
       content: data.content,
     });
   });
 
-export const deleteItemWhereUserFn = createServerFn()
+export const deleteItemFn = createServerFn()
   .validator(
     z.object({
       id: z.string(),
@@ -49,14 +49,14 @@ export const deleteItemWhereUserFn = createServerFn()
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
     const model = new ItemModelRemote(session.user.id);
-    return await model.deleteItemWhereUser(data.id);
+    return await model.delete(data.id);
   });
 
 export const searchItemFn = createServerFn()
   .validator(
     z.object({
-      query: z.string().optional().default(''),
-      tags: z.any().optional(),
+      query: z.string().optional().default(' '),
+      tags: z.any().optional().default([]),
       limit: z.number().optional().default(100),
       offset: z.number().optional().default(0),
     }),
@@ -64,5 +64,5 @@ export const searchItemFn = createServerFn()
   .handler(async ({ data }) => {
     const { query, tags, limit, offset } = data;
     const model = new ItemModelRemote('');
-    return await model.textSearchItemsWithTags(query, tags, limit, offset);
+    return await model.search(query, tags, limit, offset);
   });

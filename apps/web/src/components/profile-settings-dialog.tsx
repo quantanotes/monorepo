@@ -1,5 +1,5 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useCallback } from 'react';
+import { toast } from 'sonner';
 import { z } from 'zod';
 import { Button } from '@quanta/ui/button';
 import {
@@ -10,17 +10,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@quanta/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@quanta/ui/form';
 import { Input } from '@quanta/ui/input';
-import { useAuthUser, useUpdateUsername } from '@quanta/web/lib/user';
-import { toast } from 'sonner';
+import { useAppForm } from '@quanta/ui/form';
+import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
+import { useUpdateUsername } from '@quanta/web/hooks/use-update-username';
 
 const profileFormSchema = z.object({
   username: z
@@ -32,8 +25,6 @@ const profileFormSchema = z.object({
       'Username can only contain letters, numbers and hyphens',
     ),
 });
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 interface ProfileSettingsDialogProps {
   open: boolean;
@@ -47,28 +38,34 @@ export function ProfileSettingsDialog({
   const user = useAuthUser();
   const { mutate: updateUsername, isPending } = useUpdateUsername();
 
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+  const form = useAppForm({
     defaultValues: {
       username: user?.username || '',
     },
+    validators: {
+      onChange: profileFormSchema,
+    },
+    onSubmit: async ({ value, formApi }) => {
+      try {
+        await updateUsername({ username: value.username });
+        toast.success('Username updated successfully');
+        formApi.reset();
+        onOpenChange(false);
+      } catch (error) {
+        toast.error('Failed to update username');
+        console.error(error);
+      }
+    },
   });
 
-  function onSubmit(data: ProfileFormValues) {
-    updateUsername(
-      { username: data.username },
-      {
-        onSuccess: () => {
-          toast.success('Username updated successfully');
-          onOpenChange(false);
-        },
-        onError: (error) => {
-          toast.error('Failed to update username');
-          console.error(error);
-        },
-      },
-    );
-  }
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      form.handleSubmit();
+    },
+    [form],
+  );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -79,19 +76,23 @@ export function ProfileSettingsDialog({
             Update your profile information.
           </DialogDescription>
         </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
+        <form.AppForm>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <form.AppField
               name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter your username" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              children={(field) => (
+                <field.FormItem>
+                  <field.FormLabel>Username</field.FormLabel>
+                  <field.FormControl>
+                    <Input
+                      placeholder="Enter your username"
+                      value={field.state.value}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      onBlur={field.handleBlur}
+                    />
+                  </field.FormControl>
+                  <field.FormMessage />
+                </field.FormItem>
               )}
             />
             <DialogFooter>
@@ -100,7 +101,7 @@ export function ProfileSettingsDialog({
               </Button>
             </DialogFooter>
           </form>
-        </Form>
+        </form.AppForm>
       </DialogContent>
     </Dialog>
   );

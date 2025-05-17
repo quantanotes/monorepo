@@ -5,13 +5,11 @@ import { ScrollArea } from '@quanta/ui/scroll-area';
 export function AiChat() {
   return (
     <div className="relative z-50 h-full">
-      <div className="absolute inset-0 bottom-0 mb-2 pb-[56px]">
-        <ScrollArea className="bg-background h-full rounded-lg">
-          <AiChatMessages />
-        </ScrollArea>
-      </div>
+      <ScrollArea className="h-full">
+        <AiChatMessages />
+      </ScrollArea>
 
-      <div className="absolute right-0 bottom-0 left-0 z-50">
+      <div className="absolute right-0 bottom-0 left-0 z-50 p-2">
         <AiChatInput />
       </div>
     </div>

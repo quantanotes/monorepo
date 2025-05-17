@@ -36,5 +36,7 @@ export async function initDB() {
     writable: false,
   });
 
+  await db.waitReady;
+
   return db as unknown as DB;
 }

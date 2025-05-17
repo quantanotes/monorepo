@@ -1,3 +1,4 @@
+import { useSpace } from '@quanta/web/hooks/use-space';
 import { usePinned } from '@quanta/web/contexts/pinned';
 import { SidebarPinned } from '@quanta/web/components/sidebar-pinned';
 
@@ -6,7 +7,8 @@ interface SidebarPinnedListProps {
 }
 
 export function SidebarPinnedList({ isCollapsed }: SidebarPinnedListProps) {
-  const { pinned } = usePinned();
+  const { pinned } = usePinned()!;
+  const space = useSpace();
 
   if (isCollapsed) {
     return <></>;
@@ -15,7 +17,7 @@ export function SidebarPinnedList({ isCollapsed }: SidebarPinnedListProps) {
   return (
     <div className="flex flex-col">
       {pinned.map((pinned) => (
-        <SidebarPinned key={pinned.id} pinned={pinned} />
+        <SidebarPinned key={pinned.id} pinned={pinned} spaceId={space?.id} />
       ))}
     </div>
   );

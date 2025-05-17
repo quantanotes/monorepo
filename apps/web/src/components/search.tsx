@@ -1,12 +1,58 @@
-import { Input } from '@quanta/ui/input';
+import { useEffect, useState } from 'react';
+import { Link } from '@tanstack/react-router';
+import { Item } from '@quanta/types';
+import { debounce } from '@quanta/utils/debounce';
+import {
+  CommandDialog,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@quanta/ui/command';
+import { useItemModel } from '@quanta/web/contexts/item-model';
+import { useSpace } from '@quanta/web/hooks/use-space';
 
-export function Search() {
+export interface SearchProps {
+  show: boolean;
+  setShow: (show: boolean) => void;
+}
+
+export function Search({ show, setShow }: SearchProps) {
+  const [results, setResults] = useState<Item[]>([]);
+  const [input, setInput] = useState('');
+  const space = useSpace();
+  const itemModel = useItemModel();
+  const searchItems = itemModel?.searchItems;
+
+  const search = debounce(() => {
+    if (input.trim().length) {
+      searchItems?.(input).then(setResults);
+    }
+  }, 400);
+
+  useEffect(() => {
+    search();
+  }, [input]);
+
   return (
-    <div className="flex h-10 items-center px-1">
-      <Input
-        placeholder="Search anything..."
-        className="mx-auto max-w-3xl focus-within:ring-0 focus-within:outline-0"
-      ></Input>
-    </div>
+    <CommandDialog open={show} onOpenChange={setShow}>
+      <CommandInput value={input} onValueChange={setInput} />
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
+        {results.map((item) => (
+          <CommandItem key={item.id} asChild>
+            <Link
+              href={space ? '/s/$spaceId/$itemId' : '/$itemId'}
+              params={{
+                spaceId: space?.id,
+                itemId: item.id,
+              }}
+            >
+              {item.name}
+            </Link>
+          </CommandItem>
+        ))}
+      </CommandList>
+    </CommandDialog>
   );
 }

@@ -2,6 +2,8 @@ import { createContext, useContext, useState, useCallback } from 'react';
 import { doc, runAgentClient, type ServerMessage } from '@quanta/agent';
 import { getBaseEnvironment } from '@quanta/web/lib/agent/base-environment';
 
+export type MessageRole = 'user' | 'assistant' | 'system';
+
 export interface MessagePart {
   type: 'text' | 'action';
   content: string;
@@ -18,20 +20,20 @@ export interface Source {
 }
 
 export interface Message {
-  role: string;
+  role: MessageRole;
   parts: MessagePart[];
   sources: Source[];
 }
 
 interface AiChatContextType {
   value: string;
-  setValue: (value: string) => void;
   messages: Message[];
   files: File[];
-  setFiles: (files: File[]) => void;
   running: boolean;
   send: () => void;
   handleAbort: () => void;
+  setFiles: (files: File[]) => void;
+  setValue: (value: string) => void;
   setActionStatus: (
     messageIndex: number,
     actionIndex: number,
@@ -48,7 +50,7 @@ export function AiChatProvider({ children }: { children: React.ReactNode }) {
   const [running, setRunning] = useState(false);
   const [abort, setAbort] = useState<null | (() => void)>(null);
 
-  const addMessage = useCallback((role: string, parts: MessagePart[]) => {
+  const addMessage = useCallback((role: MessageRole, parts: MessagePart[]) => {
     setMessages((prev) => [
       ...prev,
       {
@@ -74,10 +76,13 @@ export function AiChatProvider({ children }: { children: React.ReactNode }) {
         if (replyIndex === -1) return prev;
 
         const lastPart = reply.parts.at(-1);
-        if (!lastPart || lastPart.type !== chunk.type) {
-          if (chunk.type === 'action' || chunk.type === 'text') {
-            newMessages[replyIndex].parts.push(chunk as MessagePart);
-          }
+        if (
+          !lastPart ||
+          lastPart.type !== chunk.type ||
+          chunk.type === 'action' ||
+          chunk.type === 'text'
+        ) {
+          newMessages[replyIndex].parts.push(chunk as MessagePart);
         } else {
           lastPart.content += chunk.content;
           if (chunk.type === 'action' && chunk.status) {
@@ -119,7 +124,6 @@ export function AiChatProvider({ children }: { children: React.ReactNode }) {
       add_web_source: doc(
         'chat.add_web_source',
         (source: { title: string; url: string; image?: string }) => {
-          console.log('this is running!');
           setMessages((prev) => {
             const newMessages = [...prev];
             const messageIndex = newMessages.indexOf(message);
@@ -146,8 +150,7 @@ export function AiChatProvider({ children }: { children: React.ReactNode }) {
   const runAgent = useCallback(
     async (reply: Message) => {
       const tools = [];
-
-      const abortFn = runAgentClient(
+      const abort = runAgentClient(
         getBaseEnvironment(null, getChatActions(reply), files, tools),
         convertToServerMessages(messages.slice(0, -1)),
         (chunk) => handleChunk(reply, chunk),
@@ -155,7 +158,7 @@ export function AiChatProvider({ children }: { children: React.ReactNode }) {
           setRunning(false);
         },
       );
-      setAbort(() => abortFn);
+      setAbort(() => abort);
     },
     [files, messages, getChatActions, handleChunk],
   );
@@ -177,7 +180,7 @@ export function AiChatProvider({ children }: { children: React.ReactNode }) {
     });
   }, [running, value, addMessage, runAgent]);
 
-  const handleAbortCallback = useCallback(() => {
+  const handleAbort = useCallback(() => {
     if (abort) {
       abort();
       setAbort(null);
@@ -194,10 +197,8 @@ export function AiChatProvider({ children }: { children: React.ReactNode }) {
         const newMessages = [...prev];
         const message = newMessages[messageIndex];
         if (!message) return prev;
-
         const action = message.parts[actionIndex];
         if (!action || action.type !== 'action') return prev;
-
         action.status = status;
         return newMessages;
       });
@@ -209,13 +210,13 @@ export function AiChatProvider({ children }: { children: React.ReactNode }) {
     <AiChatContext.Provider
       value={{
         value,
-        setValue,
         messages,
         running,
         files,
-        setFiles,
         send,
-        handleAbort: handleAbortCallback,
+        handleAbort: handleAbort,
+        setValue,
+        setFiles,
         setActionStatus,
       }}
     >

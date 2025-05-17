@@ -1,15 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { debounce } from '@quanta/utils/debounce';
-import { useAuthUser } from '@quanta/web/lib/user';
-import { updateItemWhereUserFn } from '@quanta/web/lib/item-fns';
-import { itemQueryOptions } from '@quanta/web/lib/item-query';
-import { useLikeModel } from '@quanta/web/hooks/use-like-model';
-import { ItemPage } from '@quanta/web/components/item-page';
-import { PageLayout } from '@quanta/web/components/page-layout';
 import { usePinned } from '@quanta/web/contexts/pinned';
-import { useItemShape } from '@quanta/web/hooks/use-item-shape';
+import { useItemModel } from '@quanta/web/contexts/item-model';
+import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
+import { itemQueryOptions } from '@quanta/web/lib/item-query';
+import { useLike } from '@quanta/web/hooks/use-like';
+import { ItemPage } from '@quanta/web/components/item-page';
 
-export const Route = createFileRoute('/$itemId')({
+export const Route = createFileRoute({
   component: RouteComponent,
   loader: async ({ params, context }) => {
     await context.queryClient.ensureQueryData(itemQueryOptions(params.itemId));
@@ -17,29 +15,31 @@ export const Route = createFileRoute('/$itemId')({
 });
 
 function RouteComponent() {
+  const navigate = useNavigate();
   const { itemId } = Route.useParams();
+  const { useItemLive, updateItem, deleteItem } = useItemModel()!;
+  const { isItemPinned, togglePinItem } = usePinned()!;
+  const { isLiked, toggleLike } = useLike(itemId);
   const user = useAuthUser();
-  const item = useItemShape(itemId)!;
-  const { isItemPinned, togglePinItem } = usePinned();
-  const { isLiked, toggleLike } = useLikeModel(itemId);
+  const item = useItemLive(itemId);
   const isAuthor = user?.id === item?.authorId;
 
-  const updateItemDebounced = debounce(
-    (name: string, content: string) =>
-      updateItemWhereUserFn({
-        data: { id: itemId, name, content },
-      }),
-    100,
-  );
+  const handleUpdate = isAuthor
+    ? debounce((name: string, content: string) => {
+        updateItem(itemId, { name, content });
+      }, 500)
+    : undefined;
 
-  const handleUpdate = isAuthor ? updateItemDebounced : () => {};
-  const handleDelete = () => {};
+  const handleDelete = isAuthor
+    ? () => {
+        deleteItem(itemId);
+        navigate({ to: '/', params: {} });
+      }
+    : undefined;
+
   const handleTogglePin = () => togglePinItem(itemId);
-  const handleToggleLike = () => toggleLike();
 
-  if (!item) {
-    return <PageLayout />;
-  }
+  const handleToggleLike = () => toggleLike();
 
   return (
     <ItemPage

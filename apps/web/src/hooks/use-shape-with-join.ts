@@ -42,12 +42,18 @@ export function useShapeWithJoin<
       : joinCondition;
   }, [joinIds, shape2Params.where]);
 
+  const [abortController] = useMemo(() => {
+    const controller = new AbortController();
+    return [controller, () => controller.abort()];
+  }, [shape2WhereClause]);
+
   const { data: data2 = [] } = useShape<S2>({
     url: shape2Url,
     params: {
       ...shape2Params,
       where: shape2WhereClause,
     },
+    signal: abortController.signal,
   });
 
   return useMemo(() => {

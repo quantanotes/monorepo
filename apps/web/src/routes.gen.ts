@@ -8,24 +8,61 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
+
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as ItemIdImport } from './routes/$itemId'
-import { Route as IndexImport } from './routes/index'
+import { Route as ItemIdRouteImport } from './routes/$itemId'
+import { Route as IndexRouteImport } from './routes/index'
+import { Route as SSpaceIdRouteImport } from './routes/s.$spaceId'
+import { Route as SSpaceIdIndexRouteImport } from './routes/s.$spaceId.index'
+import { Route as SSpaceIdTagsRouteImport } from './routes/s.$spaceId.tags'
+import { Route as SSpaceIdItemIdRouteImport } from './routes/s.$spaceId.$itemId'
+import { Route as SSpaceIdTTagNameRouteImport } from './routes/s.$spaceId.t.$tagName'
 
 // Create/Update Routes
 
-const ItemIdRoute = ItemIdImport.update({
+const ItemIdRoute = ItemIdRouteImport.update({
   id: '/$itemId',
   path: '/$itemId',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
+const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const SSpaceIdRoute = SSpaceIdRouteImport.update({
+  id: '/s/$spaceId',
+  path: '/s/$spaceId',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SSpaceIdIndexRoute = SSpaceIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SSpaceIdRoute,
+} as any)
+
+const SSpaceIdTagsRoute = SSpaceIdTagsRouteImport.update({
+  id: '/tags',
+  path: '/tags',
+  getParentRoute: () => SSpaceIdRoute,
+} as any)
+
+const SSpaceIdItemIdRoute = SSpaceIdItemIdRouteImport.update({
+  id: '/$itemId',
+  path: '/$itemId',
+  getParentRoute: () => SSpaceIdRoute,
+} as any)
+
+const SSpaceIdTTagNameRoute = SSpaceIdTTagNameRouteImport.update({
+  id: '/t/$tagName',
+  path: '/t/$tagName',
+  getParentRoute: () => SSpaceIdRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -36,54 +73,210 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRoute
     }
     '/$itemId': {
       id: '/$itemId'
       path: '/$itemId'
       fullPath: '/$itemId'
-      preLoaderRoute: typeof ItemIdImport
+      preLoaderRoute: typeof ItemIdRouteImport
       parentRoute: typeof rootRoute
+    }
+    '/s/$spaceId': {
+      id: '/s/$spaceId'
+      path: '/s/$spaceId'
+      fullPath: '/s/$spaceId'
+      preLoaderRoute: typeof SSpaceIdRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/s/$spaceId/$itemId': {
+      id: '/s/$spaceId/$itemId'
+      path: '/$itemId'
+      fullPath: '/s/$spaceId/$itemId'
+      preLoaderRoute: typeof SSpaceIdItemIdRouteImport
+      parentRoute: typeof SSpaceIdRouteImport
+    }
+    '/s/$spaceId/tags': {
+      id: '/s/$spaceId/tags'
+      path: '/tags'
+      fullPath: '/s/$spaceId/tags'
+      preLoaderRoute: typeof SSpaceIdTagsRouteImport
+      parentRoute: typeof SSpaceIdRouteImport
+    }
+    '/s/$spaceId/': {
+      id: '/s/$spaceId/'
+      path: '/'
+      fullPath: '/s/$spaceId/'
+      preLoaderRoute: typeof SSpaceIdIndexRouteImport
+      parentRoute: typeof SSpaceIdRouteImport
+    }
+    '/s/$spaceId/t/$tagName': {
+      id: '/s/$spaceId/t/$tagName'
+      path: '/t/$tagName'
+      fullPath: '/s/$spaceId/t/$tagName'
+      preLoaderRoute: typeof SSpaceIdTTagNameRouteImport
+      parentRoute: typeof SSpaceIdRouteImport
     }
   }
 }
 
+// Add type-safety to the createFileRoute function across the route tree
+
+declare module './routes/index' {
+  const createFileRoute: CreateFileRoute<
+    '/',
+    FileRoutesByPath['/']['parentRoute'],
+    FileRoutesByPath['/']['id'],
+    FileRoutesByPath['/']['path'],
+    FileRoutesByPath['/']['fullPath']
+  >
+}
+declare module './routes/$itemId' {
+  const createFileRoute: CreateFileRoute<
+    '/$itemId',
+    FileRoutesByPath['/$itemId']['parentRoute'],
+    FileRoutesByPath['/$itemId']['id'],
+    FileRoutesByPath['/$itemId']['path'],
+    FileRoutesByPath['/$itemId']['fullPath']
+  >
+}
+declare module './routes/s.$spaceId' {
+  const createFileRoute: CreateFileRoute<
+    '/s/$spaceId',
+    FileRoutesByPath['/s/$spaceId']['parentRoute'],
+    FileRoutesByPath['/s/$spaceId']['id'],
+    FileRoutesByPath['/s/$spaceId']['path'],
+    FileRoutesByPath['/s/$spaceId']['fullPath']
+  >
+}
+declare module './routes/s.$spaceId.$itemId' {
+  const createFileRoute: CreateFileRoute<
+    '/s/$spaceId/$itemId',
+    FileRoutesByPath['/s/$spaceId/$itemId']['parentRoute'],
+    FileRoutesByPath['/s/$spaceId/$itemId']['id'],
+    FileRoutesByPath['/s/$spaceId/$itemId']['path'],
+    FileRoutesByPath['/s/$spaceId/$itemId']['fullPath']
+  >
+}
+declare module './routes/s.$spaceId.tags' {
+  const createFileRoute: CreateFileRoute<
+    '/s/$spaceId/tags',
+    FileRoutesByPath['/s/$spaceId/tags']['parentRoute'],
+    FileRoutesByPath['/s/$spaceId/tags']['id'],
+    FileRoutesByPath['/s/$spaceId/tags']['path'],
+    FileRoutesByPath['/s/$spaceId/tags']['fullPath']
+  >
+}
+declare module './routes/s.$spaceId.index' {
+  const createFileRoute: CreateFileRoute<
+    '/s/$spaceId/',
+    FileRoutesByPath['/s/$spaceId/']['parentRoute'],
+    FileRoutesByPath['/s/$spaceId/']['id'],
+    FileRoutesByPath['/s/$spaceId/']['path'],
+    FileRoutesByPath['/s/$spaceId/']['fullPath']
+  >
+}
+declare module './routes/s.$spaceId.t.$tagName' {
+  const createFileRoute: CreateFileRoute<
+    '/s/$spaceId/t/$tagName',
+    FileRoutesByPath['/s/$spaceId/t/$tagName']['parentRoute'],
+    FileRoutesByPath['/s/$spaceId/t/$tagName']['id'],
+    FileRoutesByPath['/s/$spaceId/t/$tagName']['path'],
+    FileRoutesByPath['/s/$spaceId/t/$tagName']['fullPath']
+  >
+}
+
 // Create and export the route tree
+
+interface SSpaceIdRouteChildren {
+  SSpaceIdItemIdRoute: typeof SSpaceIdItemIdRoute
+  SSpaceIdTagsRoute: typeof SSpaceIdTagsRoute
+  SSpaceIdIndexRoute: typeof SSpaceIdIndexRoute
+  SSpaceIdTTagNameRoute: typeof SSpaceIdTTagNameRoute
+}
+
+const SSpaceIdRouteChildren: SSpaceIdRouteChildren = {
+  SSpaceIdItemIdRoute: SSpaceIdItemIdRoute,
+  SSpaceIdTagsRoute: SSpaceIdTagsRoute,
+  SSpaceIdIndexRoute: SSpaceIdIndexRoute,
+  SSpaceIdTTagNameRoute: SSpaceIdTTagNameRoute,
+}
+
+const SSpaceIdRouteWithChildren = SSpaceIdRoute._addFileChildren(
+  SSpaceIdRouteChildren,
+)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/$itemId': typeof ItemIdRoute
+  '/s/$spaceId': typeof SSpaceIdRouteWithChildren
+  '/s/$spaceId/$itemId': typeof SSpaceIdItemIdRoute
+  '/s/$spaceId/tags': typeof SSpaceIdTagsRoute
+  '/s/$spaceId/': typeof SSpaceIdIndexRoute
+  '/s/$spaceId/t/$tagName': typeof SSpaceIdTTagNameRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$itemId': typeof ItemIdRoute
+  '/s/$spaceId/$itemId': typeof SSpaceIdItemIdRoute
+  '/s/$spaceId/tags': typeof SSpaceIdTagsRoute
+  '/s/$spaceId': typeof SSpaceIdIndexRoute
+  '/s/$spaceId/t/$tagName': typeof SSpaceIdTTagNameRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/$itemId': typeof ItemIdRoute
+  '/s/$spaceId': typeof SSpaceIdRouteWithChildren
+  '/s/$spaceId/$itemId': typeof SSpaceIdItemIdRoute
+  '/s/$spaceId/tags': typeof SSpaceIdTagsRoute
+  '/s/$spaceId/': typeof SSpaceIdIndexRoute
+  '/s/$spaceId/t/$tagName': typeof SSpaceIdTTagNameRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$itemId'
+  fullPaths:
+    | '/'
+    | '/$itemId'
+    | '/s/$spaceId'
+    | '/s/$spaceId/$itemId'
+    | '/s/$spaceId/tags'
+    | '/s/$spaceId/'
+    | '/s/$spaceId/t/$tagName'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$itemId'
-  id: '__root__' | '/' | '/$itemId'
+  to:
+    | '/'
+    | '/$itemId'
+    | '/s/$spaceId/$itemId'
+    | '/s/$spaceId/tags'
+    | '/s/$spaceId'
+    | '/s/$spaceId/t/$tagName'
+  id:
+    | '__root__'
+    | '/'
+    | '/$itemId'
+    | '/s/$spaceId'
+    | '/s/$spaceId/$itemId'
+    | '/s/$spaceId/tags'
+    | '/s/$spaceId/'
+    | '/s/$spaceId/t/$tagName'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ItemIdRoute: typeof ItemIdRoute
+  SSpaceIdRoute: typeof SSpaceIdRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ItemIdRoute: ItemIdRoute,
+  SSpaceIdRoute: SSpaceIdRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -97,7 +290,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/$itemId"
+        "/$itemId",
+        "/s/$spaceId"
       ]
     },
     "/": {
@@ -105,6 +299,31 @@ export const routeTree = rootRoute
     },
     "/$itemId": {
       "filePath": "$itemId.tsx"
+    },
+    "/s/$spaceId": {
+      "filePath": "s.$spaceId.tsx",
+      "children": [
+        "/s/$spaceId/$itemId",
+        "/s/$spaceId/tags",
+        "/s/$spaceId/",
+        "/s/$spaceId/t/$tagName"
+      ]
+    },
+    "/s/$spaceId/$itemId": {
+      "filePath": "s.$spaceId.$itemId.tsx",
+      "parent": "/s/$spaceId"
+    },
+    "/s/$spaceId/tags": {
+      "filePath": "s.$spaceId.tags.tsx",
+      "parent": "/s/$spaceId"
+    },
+    "/s/$spaceId/": {
+      "filePath": "s.$spaceId.index.tsx",
+      "parent": "/s/$spaceId"
+    },
+    "/s/$spaceId/t/$tagName": {
+      "filePath": "s.$spaceId.t.$tagName.tsx",
+      "parent": "/s/$spaceId"
     }
   }
 }

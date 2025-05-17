@@ -24,7 +24,7 @@ export const tags = pgTable('tags', tagColumns(spaces), (t) => [
   unique().on(t.spaceId, t.name),
 ]);
 
-export const objectTags = pgTable(
+export const itemTags = pgTable(
   'item_tags',
   itemTagColumns(spaces, items, tags),
   (t) => [primaryKey({ columns: [t.itemId, t.tagId] })],

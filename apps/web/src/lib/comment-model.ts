@@ -1,20 +1,19 @@
 import { and, eq, desc } from '@quanta/db/drizzle';
-import { type DB as DBLocal } from '@quanta/db/local';
 import { type DB, schema } from '@quanta/db/remote';
 import { eqMaybeNull } from '@quanta/utils/eq-maybe-null';
 
-export class CommentModelShared {
-  readonly #db: DBLocal['orm'] | DB;
+export class CommendModel {
+  readonly #db: DB;
   readonly #spaceId: string | null;
   readonly #userId: string;
 
-  constructor(db: DBLocal['orm'] | DB, spaceId: string | null, userId: string) {
+  constructor(db: DB, spaceId: string | null, userId: string) {
     this.#db = db;
     this.#spaceId = spaceId;
     this.#userId = userId;
   }
 
-  async addComment(content: string, itemId?: string) {
+  async add(content: string, itemId?: string) {
     await this.#db
       .insert(schema.comments)
       .values({
@@ -26,26 +25,26 @@ export class CommentModelShared {
       .returning();
   }
 
-  async deleteComment(commentId: string) {
+  async delete(id: string) {
     await this.#db
       .delete(schema.comments)
       .where(
         and(
-          eq(schema.comments.id, commentId),
+          eq(schema.comments.id, id),
           eq(schema.comments.userId, this.#userId),
         ),
       );
   }
 
-  async getItemComments(itemId: string) {
+  async getWhereItem(id: string) {
     return await this.#db
       .select()
       .from(schema.comments)
-      .where(eq(schema.comments.itemId, itemId))
+      .where(eq(schema.comments.itemId, id))
       .orderBy(desc(schema.comments.createdAt));
   }
 
-  async getSpaceComments() {
+  async getWhereSpace() {
     return await this.#db
       .select()
       .from(schema.comments)

@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@quanta/ui/dropdown-menu';
 import type { HumanChatComment } from '@quanta/web/contexts/human-chat';
-import { useAuthUser } from '@quanta/web/lib/user';
+import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
 
 interface HumanChatMessageProps {
   comment: HumanChatComment;
@@ -20,7 +20,7 @@ export function HumanChatMessage({ comment, onDelete }: HumanChatMessageProps) {
   const isCurrentUser = comment.userId === user?.id;
   const date = new Date(comment.createdAt);
   return (
-    <div className="group hover:bg-muted/50 flex gap-4 px-4 py-4">
+    <div className="group hover:bg-muted/50 flex gap-4 px-4 py-4 transition-colors">
       <Avatar className="h-8 w-8 shrink-0">
         <AvatarImage src={comment.image} />
         <AvatarFallback>

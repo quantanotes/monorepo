@@ -1,33 +1,57 @@
+import { useMemo } from 'react';
+import { Link } from '@tanstack/react-router';
 import { StickyNote, Sparkles, Hash } from 'lucide-react';
 import { Pinned } from '@quanta/types';
 import { Button } from '@quanta/ui/button';
-import { Link } from '@tanstack/react-router';
-// import { ObjectPageMenu } from '@quanta/web/components/object-page-menu';
-// import { TagPageMenu } from '@quanta/web/components/tag-page-menu';
+import { SidebarPinnedItemMenu } from '@quanta/web/components/sidebar-pinned-item-menu';
+import { SidebarPinnedTagMenu } from '@quanta/web/components/sidebar-pinned-tag-menu';
 
 interface SidebarPinnedProps {
   pinned: Pinned;
   spaceId?: string;
 }
 
-export function SidebarPinned({ pinned }: SidebarPinnedProps) {
-  const href = pinned.type === 'item' ? `/${pinned.itemId}` : '/';
+export function SidebarPinned({ pinned, spaceId }: SidebarPinnedProps) {
+  const href = useMemo(() => {
+    let result = '';
+    if (spaceId) {
+      result += `/s/${spaceId}`;
+    }
+    if (pinned.type === 'item') {
+      result += `/${pinned.itemId}`;
+    }
+    if (pinned.type === 'tag') {
+      result += `/t/${pinned.itemId}`;
+    }
+    return result;
+  }, [pinned.type, pinned.itemId, spaceId]);
 
   const Icon = () => {
     switch (pinned.type) {
       case 'item':
-        return <StickyNote className="size-5" />;
+        return <StickyNote className="size-5!" />;
       case 'tag':
-        return <Hash className="size-5" />;
+        return <Hash className="size-5!" />;
       default:
-        return <Sparkles className="size-5" />;
+        return <Sparkles className="size-5!" />;
+    }
+  };
+
+  const Menu = () => {
+    switch (pinned.type) {
+      case 'item':
+        return <SidebarPinnedItemMenu />;
+      case 'tag':
+        return <SidebarPinnedTagMenu />;
+      default:
+        return <div></div>;
     }
   };
 
   return (
     <div className="group/menu-item relative">
       <Button
-        className="text-muted-foreground peer/menu-button h-8 w-full cursor-pointer justify-start truncate px-1.5 text-base"
+        className="text-muted-foreground peer/menu-button h-8 w-full justify-start truncate text-base"
         variant="ghost"
         asChild
       >
@@ -39,19 +63,7 @@ export function SidebarPinned({ pinned }: SidebarPinnedProps) {
         </Link>
       </Button>
 
-      {/* {item.type === 'object' ? (
-        <ObjectPageMenu
-          className="peer-hover/menu-button:text-accent-foreground absolute right-1 h-8 w-8 opacity-0 transition-opacity group-hover/menu-item:opacity-100"
-          id={item.object_id}
-          isPinned={true}
-        />
-      ) : item.type === 'tag' ? (
-        <TagPageMenu
-          className="peer-hover/menu-button:text-accent-foreground absolute right-1 h-8 w-8 opacity-0 transition-opacity group-hover/menu-item:opacity-100"
-          name={item.name}
-          isPinned={true}
-        />
-      ) : null} */}
+      <Menu className="" />
     </div>
   );
 }

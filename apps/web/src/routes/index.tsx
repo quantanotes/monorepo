@@ -1,23 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { useState } from 'react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { z } from 'zod';
 import { itemsQueryOptions } from '@quanta/web/lib/item-query';
+import { searchQuerySchema } from '@quanta/web/lib/search';
 import { PageLayout } from '@quanta/web/components/page-layout';
-import { Grid } from '@quanta/web/components/grid';
+import { Query } from '@quanta/web/components/query';
+import { ViewMenu } from '@quanta/web/components/view-menu';
 
-const tagSchema = z.object({
-  name: z.string(),
-  operator: z.string().optional(),
-  value: z.string().optional(),
-});
-
-export const Route = createFileRoute('/')({
-  validateSearch: z.object({
-    query: z.string().optional(),
-    tags: z.array(tagSchema).optional(),
-    limit: z.number().optional(),
-    offset: z.number().optional(),
-  }),
+export const Route = createFileRoute({
+  validateSearch: searchQuerySchema,
   loaderDeps: ({ search }) => search,
   loader: async ({ deps, context }) => {
     await context.queryClient.ensureQueryData(itemsQueryOptions(deps));
@@ -28,9 +18,26 @@ export const Route = createFileRoute('/')({
 function RouteComponent() {
   const search = Route.useSearch();
   const itemsQuery = useSuspenseQuery(itemsQueryOptions(search));
+  const [view, setView] = useState<'table' | 'grid'>('grid');
+  const tags = search.tags || [];
+
   return (
-    <PageLayout>
-      <Grid items={itemsQuery.data} />
+    <PageLayout
+      headerMenu={
+        <>
+          <ViewMenu
+            views={['table', 'grid']}
+            currentView={view}
+            onViewChange={setView}
+          />
+        </>
+      }
+    >
+      <Query
+        items={itemsQuery.data}
+        tags={tags.map((tag) => tag.tag)}
+        view={view}
+      />
     </PageLayout>
   );
 }

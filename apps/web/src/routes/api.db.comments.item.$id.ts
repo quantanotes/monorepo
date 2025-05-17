@@ -1,10 +1,9 @@
-import { createAPIFileRoute } from '@tanstack/react-start/api';
 import { proxyElectricRequest } from '@quanta/web/lib/electric-proxy';
 
-export const APIRoute = createAPIFileRoute('/api/db/comments/item/$id')({
+export const ServerRoute = createServerFileRoute().methods({
   GET: async ({ request, params }) => {
-    return await proxyElectricRequest(request!, 'comments', {
-      where: `"item_id" = '${params.id}'`,
+    return await proxyElectricRequest(request, 'comments', {
+      where: `"item_id" = '${params.id}' AND space_id IS NULL`,
       order: '"created_at" DESC',
     });
   },

@@ -61,7 +61,7 @@ export function AiChatInput() {
   return (
     <div className="flex flex-col gap-2">
       <div
-        className="bg-background rounded-lg transition-all duration-200"
+        className="rounded-lg transition-all duration-200"
         style={
           running
             ? {

@@ -1,10 +1,5 @@
 import { createServerFn } from '@tanstack/react-start';
-import {
-  queryOptions,
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from '@tanstack/react-query';
+import { queryOptions } from '@tanstack/react-query';
 import { z } from 'zod';
 import { eq } from '@quanta/db/drizzle';
 import { db, schema } from '@quanta/db/remote';
@@ -38,15 +33,3 @@ export const updateUsernameFn = createServerFn()
       .set({ username: data.username })
       .where(eq(schema.users.id, session.user.id));
   });
-
-export const useAuthUser = () => useQuery(authUserQueryOptions()).data;
-
-export const useUpdateUsername = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (data: { username: string }) => updateUsernameFn({ data }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['auth-user'] });
-    },
-  });
-};

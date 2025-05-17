@@ -11,15 +11,10 @@ import { Button } from '@quanta/ui/button';
 
 export function ErrorBoundary({ error }: ErrorComponentProps) {
   const router = useRouter();
-
-  const isRoot = useMemo(
-    () =>
-      useMatch({
-        strict: false,
-        select: (state) => state.id === rootRouteId,
-      }),
-    [useMatch],
-  );
+  const isRoot = useMatch({
+    strict: false,
+    select: (state) => state.id === rootRouteId,
+  });
 
   const handleTryAgain = useCallback(() => {
     router.invalidate();

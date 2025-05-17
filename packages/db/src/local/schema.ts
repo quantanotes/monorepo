@@ -17,17 +17,20 @@ import {
   itemTagColumns,
   pinnedColumns,
   tagTagColumns,
+  personaColumns,
 } from '../shared';
 
 export const syncColumns = {
-  isNew: boolean().notNull().default(false),
-  isDeleted: boolean().notNull().default(false),
-  isSent: boolean().notNull().default(false),
-  isSynced: boolean().generatedAlwaysAs(
-    sql`ARRAY_LENGTH(modified_columns, 1) IS NULL AND NOT is_deleted AND NOT is_new`,
-  ),
-  modifiedColumns: text().array().default([]),
-  backup: jsonb(),
+  isNew: boolean('is_new').notNull().default(false),
+  isDeleted: boolean('is_deleted').notNull().default(false),
+  isSent: boolean('is_sent').notNull().default(false),
+  isSynced: boolean('is_synced')
+    .generatedAlwaysAs(
+      sql`ARRAY_LENGTH(modified_columns, 1) IS NULL AND NOT is_deleted AND NOT is_new`,
+    )
+    .notNull(),
+  modifiedColumns: text('modified_columns').array().default([]),
+  backup: jsonb('backup'),
 };
 
 export const syncIndexes = (t: any) => [
@@ -74,3 +77,4 @@ export const pinned = table(
   pinnedColumns(null, null, items, tags),
   (t: any) => [unique().on(t.itemId), unique().on(t.tagId)],
 );
+export const personas = table('personas', personaColumns());

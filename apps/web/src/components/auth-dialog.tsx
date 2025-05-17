@@ -40,12 +40,12 @@ export function AuthDialogProvider({
     setIsOpen(open);
   }, [open]);
 
-  const handleOpenChange = (open: boolean) => {
+  function handleOpenChange(open: boolean) {
     setIsOpen(open);
     if (!open) {
       navigate({ to: '.', search: { unauthenticated: undefined } });
     }
-  };
+  }
 
   return (
     <AuthDialogContext.Provider value={{ isOpen, setIsOpen: handleOpenChange }}>
@@ -61,7 +61,6 @@ export function useAuthDialog() {
 
 function AuthDialog() {
   const { isOpen, setIsOpen } = useAuthDialog();
-
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
@@ -79,7 +78,7 @@ function AuthDialog() {
             variant="outline"
             onClick={() => auth.signIn.social({ provider: 'google' })}
           >
-            <Google className="mr-2 size-5" />
+            <GoogleIcon className="mr-2 size-5" />
             Continue with Google
           </Button>
         </div>
@@ -88,7 +87,7 @@ function AuthDialog() {
   );
 }
 
-function Google(props: SVGProps<SVGSVGElement>) {
+function GoogleIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

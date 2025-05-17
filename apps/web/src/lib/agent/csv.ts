@@ -1,5 +1,10 @@
-import * as Papa from 'papaparse';
+// import * as Papa from 'papaparse';
 import { doc } from '@quanta/agent';
+
+let Papa: any = null;
+if (!import.meta.env.SSR) {
+  Papa = await import('papaparse');
+}
 
 function foreach(file: File, callback: (data: unknown) => void) {
   Papa.parse(file, {

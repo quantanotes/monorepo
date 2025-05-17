@@ -1,15 +1,7 @@
 {
   "name": "@quanta/auth",
   "type": "module",
-  "private": true,
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
   "dependencies": {
-    "@quanta/db": "workspace:*",
-    "better-auth": "^1.2.1"
+    "better-auth": "latest"
   }
 }

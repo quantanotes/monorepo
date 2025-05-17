@@ -10,10 +10,13 @@ import { type QueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { Toaster } from '@quanta/ui/sonner';
 import { DBProvider } from '@quanta/web/contexts/db';
-import { AuthDialogProvider } from '@quanta/web/components/auth-dialog';
-import { MainLayout } from '@quanta/web/components/main-layout';
+import { SyncProvider } from '@quanta/web/contexts/sync';
 import { PinnedProvider } from '@quanta/web/contexts/pinned';
-import { authUserQueryOptions } from '@quanta/web/lib/user';
+import { ItemModelProvider } from '@quanta/web/contexts/item-model';
+import { AuthDialogProvider } from '@quanta/web/components/auth-dialog';
+// import { authUserQueryOptions } from '@quanta/web/lib/user';
+// import { spaceQueryOptions } from '@quanta/web/lib/space-query';
+import { MainLayout } from '@quanta/web/components/main-layout';
 import css from '@quanta/ui/styles/globals.css?url';
 import favicon from '@quanta/web/public/favicon.ico?url';
 
@@ -45,7 +48,7 @@ export const Route = createRootRouteWithContext<{
       },
       {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap',
+        href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Manrope:wght@200..800&display=swap',
       },
       {
         rel: 'icon',
@@ -59,7 +62,10 @@ export const Route = createRootRouteWithContext<{
   }),
 
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(authUserQueryOptions());
+    await Promise.all([
+      // context.queryClient.ensureQueryData(authUserQueryOptions()),
+      // context.queryClient.ensureQueryData(spaceQueryOptions()),
+    ]);
   },
 
   validateSearch: z.object({ unauthenticated: z.boolean().optional() }),
@@ -68,32 +74,38 @@ export const Route = createRootRouteWithContext<{
 });
 
 function RootComponent() {
+  const { unauthenticated } = Route.useSearch();
   return (
     <RootDocument>
-      <Outlet />
+      <DBProvider>
+        <SyncProvider>
+          <ItemModelProvider>
+            <PinnedProvider>
+              <AuthDialogProvider open={!!unauthenticated}>
+                <MainLayout>
+                  <Outlet />
+                </MainLayout>
+              </AuthDialogProvider>
+            </PinnedProvider>
+          </ItemModelProvider>
+        </SyncProvider>
+      </DBProvider>
     </RootDocument>
   );
 }
 
 function RootDocument({ children }: React.PropsWithChildren) {
-  const { unauthenticated } = Route.useSearch();
   return (
     <html className="dark">
       <head>
         <HeadContent />
       </head>
       <body>
-        <DBProvider>
-          <AuthDialogProvider open={!!unauthenticated}>
-            <PinnedProvider>
-              <MainLayout>{children}</MainLayout>
-            </PinnedProvider>
-          </AuthDialogProvider>
-        </DBProvider>
+        {children}
         <Toaster />
         <Scripts />
-        {/* <TanStackRouterDevtools position="bottom-right" />
-        <ReactQueryDevtools buttonPosition="bottom-left" /> */}
+        {/* <TanStackRouterDevtools position="bottom-right" /> */}
+        {/* <ReactQueryDevtools buttonPosition="bottom-left" /> */}
       </body>
     </html>
   );

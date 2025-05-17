@@ -5,7 +5,7 @@ export async function proxyElectricRequest(
 ) {
   const url = new URL(`${process.env.ELECTRIC_SQL_URL}/shape`);
   new URL(req.url).searchParams.forEach((value, key) => {
-    if ([`live`, `handle`, `offset`, `cursor`].includes(key)) {
+    if ([`live`, `handle`, `offset`, `cursor`, 'columns'].includes(key)) {
       url.searchParams.set(key, value);
     }
   });

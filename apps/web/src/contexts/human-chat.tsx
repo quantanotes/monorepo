@@ -1,6 +1,5 @@
 import { createContext, useContext, useMemo, useState } from 'react';
-import { useShape } from '@electric-sql/react';
-import { useMatch } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
 import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
 import { addCommentFn, deleteCommentFn } from '@quanta/web/lib/comment-fns';
@@ -31,13 +30,11 @@ const HumanChatContext = createContext<HumanChatContextType | undefined>(
   undefined,
 );
 
-export function HumanChatProvider({ children }: { children: React.ReactNode }) {
+export function HumanChatProvider({ children }: React.PropsWithChildren) {
   const [value, setValue] = useState('');
   const addCommentServerFn = useServerFn(addCommentFn);
   const deleteCommentServerFn = useServerFn(deleteCommentFn);
-  const itemMatch = useMatch({ from: '/$itemId', shouldThrow: false });
-  const itemId = itemMatch ? itemMatch.params.itemId : null;
-  const spaceId = null;
+  const { spaceId, itemId } = useParams({ strict: false });
   const commentsUrl = useMemo(() => {
     return itemId
       ? `${process.env.PUBLIC_APP_URL}/api/db/comments/item/${itemId}`
@@ -70,11 +67,7 @@ export function HumanChatProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteComment = async (id: string) => {
-    await deleteCommentServerFn({
-      data: {
-        id,
-      },
-    });
+    await deleteCommentServerFn({ data: { id } });
   };
 
   return (

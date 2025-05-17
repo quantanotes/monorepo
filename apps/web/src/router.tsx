@@ -6,7 +6,6 @@ import { routeTree } from './routes.gen';
 
 export function createRouter() {
   const queryClient = new QueryClient();
-
   return routerWithQueryClient(
     createTanStackRouter({
       routeTree,

@@ -1,17 +1,19 @@
-import { Button } from '@quanta/ui/button';
-import { X } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
-import { PinButton } from './pin-button';
-import { LikeButton } from './like-button';
+import { X } from 'lucide-react';
+import { Button } from '@quanta/ui/button';
+import { useSpace } from '@quanta/web/hooks/use-space';
+import { PinButton } from '@quanta/web/components/pin-button';
+import { LikeButton } from '@quanta/web/components/like-button';
+import { ItemPageMenu } from '@quanta/web/components/item-page-menu';
 
 interface ItemHeaderProps {
   isPinned: boolean;
-  isLiked: boolean;
-  pinCount: number;
-  likeCount: number;
-  onDelete: () => void;
+  isLiked?: boolean;
+  pinCount?: number;
+  likeCount?: number;
+  onDelete?: () => void;
   onTogglePin: () => void;
-  onToggleLike: () => void;
+  onToggleLike?: () => void;
 }
 
 export function ItemPageHeader({
@@ -23,23 +25,38 @@ export function ItemPageHeader({
   onTogglePin,
   onToggleLike,
 }: ItemHeaderProps) {
+  const space = useSpace();
+
   return (
     <>
-      <PinButton
+      <ItemPageMenu
         isPinned={isPinned}
-        pinCount={pinCount}
         onTogglePin={onTogglePin}
+        onDelete={onDelete}
       />
 
-      <LikeButton
-        isLiked={isLiked}
-        likeCount={likeCount}
-        onToggleLike={onToggleLike}
-      />
+      {onTogglePin && (
+        <PinButton
+          isPinned={isPinned}
+          pinCount={pinCount}
+          onTogglePin={onTogglePin}
+        />
+      )}
 
-      <Button className="size-8" variant="ghost" asChild>
-        <Link to="/">
-          <X />
+      {onToggleLike && (
+        <LikeButton
+          isLiked={isLiked}
+          likeCount={likeCount}
+          onToggleLike={onToggleLike}
+        />
+      )}
+
+      <Button className="size-8 p-2!" variant="ghost" asChild>
+        <Link
+          to={space ? '/s/$spaceId' : '/'}
+          params={space ? { spaceId: space.id } : undefined}
+        >
+          <X className="size-5" />
         </Link>
       </Button>
     </>

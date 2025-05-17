@@ -5,18 +5,18 @@ import { ItemPageHeader } from '@quanta/web/components/item-page-header';
 
 interface ItemPageProps {
   item: Item;
-  isAuthor: boolean;
+  isAuthor?: boolean;
   isPinned: boolean;
-  isLiked: boolean;
+  isLiked?: boolean;
   onUpdate: (name: string, content: string) => void;
   onDelete: () => void;
   onTogglePin: () => void;
-  onToggleLike: () => void;
+  onToggleLike?: () => void;
 }
 
 export function ItemPage({
   item,
-  isAuthor,
+  isAuthor = true,
   isPinned,
   isLiked,
   onUpdate,
@@ -24,9 +24,10 @@ export function ItemPage({
   onTogglePin,
   onToggleLike,
 }: ItemPageProps) {
-  if (!item) {
+  if (item === undefined) {
     return <PageLayout />;
   }
+
   return (
     <PageLayout
       title={item.name}
@@ -42,7 +43,7 @@ export function ItemPage({
         />
       }
     >
-      <Text key={item.id} item={item} onUpdate={onUpdate} editable={isAuthor} />
+      <Text key={item.id} editable={isAuthor} item={item} onUpdate={onUpdate} />
     </PageLayout>
   );
 }

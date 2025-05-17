@@ -3,9 +3,9 @@ import {
   defineWebSocket,
 } from '@tanstack/react-start/server';
 import { runAgent, ServerMessage } from '@quanta/agent';
-// import { getSessionFromHeaders } from '@quanta/web/lib/auth';
+import { auth } from '@quanta/auth/server';
 
-// This file is cosplaying as a file based route, but it's routed in app.config.ts
+// This file is cosplaying as a file based route, but it's routed in server.ts
 
 interface WebSocketContext {
   started: boolean;
@@ -21,7 +21,12 @@ interface AgentRequest {
 export default defineEventHandler({
   handler() {},
   websocket: defineWebSocket({
-    upgrade() {},
+    async upgrade(request) {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session?.user) {
+        throw new Response('Unauthorized', { status: 401 });
+      }
+    },
 
     open(peer) {
       peer.context.started = false;

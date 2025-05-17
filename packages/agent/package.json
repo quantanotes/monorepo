@@ -1,19 +1,8 @@
 {
   "name": "@quanta/agent",
   "type": "module",
-  "private": true,
-  "main": "src/index.ts",
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
   "dependencies": {
-    "@ai-sdk/anthropic": "^1.1.15",
-    "ai": "^4.1.54"
+    "@ai-sdk/anthropic": "latest",
+    "ai": "latest"
   }
 }

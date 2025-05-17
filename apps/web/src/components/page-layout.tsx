@@ -15,8 +15,8 @@ export function PageLayout({
   return (
     <>
       <PageHeader title={title}>{headerMenu}</PageHeader>
-      <ScrollArea className="bg-background h-[calc(100vh-16px-40px)] rounded-lg p-2">
-        {children}
+      <ScrollArea className="bg-background h-screen rounded-lg">
+        <div className="mt-10 mb-48 px-2">{children}</div>
       </ScrollArea>
     </>
   );

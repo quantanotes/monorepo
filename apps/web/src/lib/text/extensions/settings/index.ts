@@ -1,8 +1,12 @@
+import { State } from '@hookstate/core';
 import { mergeAttributes, Node } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import SettingsView from './view';
+import { Item } from '@quanta/types';
+import { SettingsView } from './view';
 
-export interface SettingsOptions {}
+export interface SettingsOptions {
+  item: State<Item>;
+}
 
 export const Settings = Node.create<SettingsOptions>({
   name: 'settings',
@@ -10,11 +14,15 @@ export const Settings = Node.create<SettingsOptions>({
   content: 'inline*',
 
   addOptions() {
-    return {};
+    return {
+      item: null!,
+    };
   },
 
   addStorage() {
-    return {};
+    return {
+      item: this.options.item,
+    };
   },
 
   parseHTML() {
@@ -30,8 +38,6 @@ export const Settings = Node.create<SettingsOptions>({
   },
 
   addNodeView() {
-    return ReactNodeViewRenderer(SettingsView, {
-      contentDOMElementTag: 'settings',
-    });
+    return ReactNodeViewRenderer(SettingsView);
   },
 });

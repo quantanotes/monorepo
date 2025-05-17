@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { db } from '@quanta/db/remote';
 import { assertSessionFn } from '@quanta/web/lib/auth-fns';
-import { CommentModelShared } from '@quanta/web/lib/comment-model';
+import { CommendModel } from '@quanta/web/lib/comment-model';
 
 export const addCommentFn = createServerFn()
   .validator(
@@ -14,11 +14,10 @@ export const addCommentFn = createServerFn()
   )
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
-    await new CommentModelShared(
-      db,
-      data.spaceId ?? null,
-      session.user.id,
-    ).addComment(data.content, data.itemId);
+    await new CommendModel(db, data.spaceId ?? null, session.user.id).add(
+      data.content,
+      data.itemId,
+    );
   });
 
 export const deleteCommentFn = createServerFn()
@@ -30,11 +29,9 @@ export const deleteCommentFn = createServerFn()
   )
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
-    await new CommentModelShared(
-      db,
-      data.spaceId ?? null,
-      session.user.id,
-    ).deleteComment(data.id);
+    await new CommendModel(db, data.spaceId ?? null, session.user.id).delete(
+      data.id,
+    );
   });
 
 export const getItemCommentsFn = createServerFn()
@@ -46,11 +43,11 @@ export const getItemCommentsFn = createServerFn()
   )
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
-    return await new CommentModelShared(
+    return await new CommendModel(
       db,
       data.spaceId ?? null,
       session.user.id,
-    ).getItemComments(data.id);
+    ).getWhereItem(data.id);
   });
 
 export const getSpaceCommentsFn = createServerFn()
@@ -61,9 +58,5 @@ export const getSpaceCommentsFn = createServerFn()
   )
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
-    return await new CommentModelShared(
-      db,
-      data.id,
-      session.user.id,
-    ).getSpaceComments();
+    return await new CommendModel(db, data.id, session.user.id).getWhereSpace();
   });

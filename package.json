@@ -1,17 +1,21 @@
 {
-  "name": "quanta",
-  "version": "0.0.1",
+  "name": "@quanta/monorepo",
   "private": true,
+  "scripts": {
+    "web.dev": "cd apps/web && bun run dev",
+    "db.remote.push.dev": "cd packages/db && bun run remote.push",
+    "db.local.gen.dev": "cd packages/db && bun run local.gen"
+  },
   "workspaces": [
     "apps/*",
     "packages/*"
   ],
+  "peerDependencies": {
+    "typescript": "latest"
+  },
   "devDependencies": {
-    "typescript": "latest",
     "@types/bun": "latest",
     "prettier": "latest",
-    "prettier-plugin-tailwindcss": "latest",
-    "eslint": "latest"
-  },
-  "packageManager": "bun@1.2.5"
+    "prettier-plugin-tailwindcss": "latest"
+  }
 }

@@ -3,7 +3,7 @@ import { useServerFn } from '@tanstack/react-start';
 import { toggleLikeItemFn } from '@quanta/web/lib/like-fns';
 import { likeItemQueryOptions } from '@quanta/web/lib/like-query';
 
-export function useLikeModel(itemId: string) {
+export function useLike(itemId: string) {
   const queryClient = useQueryClient();
   const toggleLikeItem = useServerFn(toggleLikeItemFn);
   const likeItemQuery = useQuery(likeItemQueryOptions(itemId));

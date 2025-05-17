@@ -1,4 +1,5 @@
-import { Ellipsis, Trash } from 'lucide-react';
+import { Ellipsis, Trash, Pin } from 'lucide-react';
+import { cn } from '@quanta/ui/utils/css';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,12 +9,14 @@ import {
 import { Button } from '@quanta/ui/button';
 
 interface ItemPageMenuProps {
+  className?: string;
   isPinned: boolean;
   onTogglePin: () => void;
-  onDelete: () => void;
+  onDelete?: () => void;
 }
 
 export function ItemPageMenu({
+  className,
   isPinned,
   onTogglePin,
   onDelete,
@@ -21,15 +24,15 @@ export function ItemPageMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="size-8" variant="ghost" size="icon">
+        <Button className={cn('size-8', className)} variant="ghost" size="icon">
           <Ellipsis className="text-muted-foreground size-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        {/* <DropdownMenuItem onClick={onTogglePin}>
-          <Pin className="mr-2 h-4 w-4" />
+        <DropdownMenuItem onClick={onTogglePin}>
+          <Pin className={`${isPinned && 'fill-foreground'}`} />
           {isPinned ? 'Unpin' : 'Pin'}
-        </DropdownMenuItem> */}
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={onDelete} variant="destructive">
           <Trash />
           Delete

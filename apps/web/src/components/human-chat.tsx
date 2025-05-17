@@ -7,13 +7,11 @@ export function HumanChat() {
   return (
     <HumanChatProvider>
       <div className="relative h-full">
-        <div className="absolute inset-0 bottom-0 mb-2 pb-[56px]">
-          <ScrollArea className="bg-background h-full rounded-lg">
-            <HumanChatMessages />
-          </ScrollArea>
-        </div>
+        <ScrollArea className="h-full">
+          <HumanChatMessages />
+        </ScrollArea>
 
-        <div className="absolute right-0 bottom-0 left-0">
+        <div className="absolute right-0 bottom-0 left-0 z-50 p-2">
           <HumanChatInput />
         </div>
       </div>
