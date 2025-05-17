@@ -24,10 +24,9 @@ export function Search({ show, setShow }: SearchProps) {
   const itemModel = useItemModel();
   const searchItems = itemModel?.searchItems;
 
-  const search = debounce(() => {
-    if (input.trim().length) {
-      searchItems?.(input).then(setResults);
-    }
+  const search = debounce(async () => {
+    const results = await searchItems?.(input);
+    setResults(results || []);
   }, 400);
 
   useEffect(() => {

@@ -11,9 +11,9 @@ import {
 import { Button } from '@quanta/ui/button';
 import { useItemModel } from '@quanta/web/contexts/item-model';
 import { useSpace } from '@quanta/web/hooks/use-space';
+import { useMeasure } from '@quanta/web/hooks/use-measure';
 import { SidebarFooter } from '@quanta/web/components/sidebar-footer';
 import { SidebarPinnedList } from '@quanta/web/components/sidebar-pinned-list';
-import { useMeasure } from '@quanta/web/hooks/use-measure';
 
 interface SidebarProps {
   toggleSidebar: () => void;
