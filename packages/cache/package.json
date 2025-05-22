@@ -1,7 +1,8 @@
 {
   "name": "@quanta/cache",
   "type": "module",
+  "version": "0.0.1",
   "dependencies": {
-    "redis": "latest"
+    "@upstash/redis": "^1.34.9"
   }
 }

@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "web.dev": "cd apps/web && bun run dev",
-    "db.remote.push.dev": "cd packages/db && bun run remote.push",
+    "web.build": "cd apps/web && bun run build",
+    "db.remote.push.dev": "cd packages/db && npm run remote.push",
+    "db.remote.push.prod": "NODE_ENV=production cd packages/db && bun run remote.push",
     "db.local.gen.dev": "cd packages/db && bun run local.gen"
   },
   "workspaces": [

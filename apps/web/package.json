@@ -1,18 +1,19 @@
 {
   "name": "web",
   "type": "module",
+  "version": "0.0.1",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.2.2",
     "@tailwindcss/vite": "^4.1.7",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.5",
-    "@vitejs/plugin-basic-ssl": "^2.0.0",
+    "@vitejs/plugin-react": "^4.4.1",
     "tailwindcss": "^4.1.7",
     "vite": "^6.3.5",
+    "vite-plugin-mkcert": "^1.17.8",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "peerDependencies": {
@@ -22,12 +23,12 @@
   "dependencies": {
     "@electric-sql/pglite-react": "^0.2.19",
     "@electric-sql/react": "^1.0.4",
-    "@tanstack/react-form": "^1.9.1",
+    "@tanstack/react-form": "^1.11.2",
     "@tanstack/react-query": "^5.75.5",
     "@tanstack/react-query-devtools": "^5.75.5",
-    "@tanstack/react-router": "^1.121.0-alpha.1",
-    "@tanstack/react-router-with-query": "^1.121.0-alpha.1",
-    "@tanstack/react-start": "^1.121.0-alpha.2",
+    "@tanstack/react-router": "https://pkg.pr.new/TanStack/router/@tanstack/react-router@5111406",
+    "@tanstack/react-router-with-query": "https://pkg.pr.new/TanStack/router/@tanstack/react-router-with-query@5111406",
+    "@tanstack/react-start": "https://pkg.pr.new/TanStack/router/@tanstack/react-start@5111406",
     "@tanstack/react-table": "^8.21.3",
     "@tiptap/core": "^3.0.0-beta.4",
     "@tiptap/extension-document": "^3.0.0-beta.4",
@@ -42,6 +43,8 @@
     "masonic": "^4.1.0",
     "nodemailer": "^7.0.3",
     "papaparse": "^5.5.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "sonner": "^2.0.3",
     "zod": "^3.24.4"
   }

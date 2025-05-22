@@ -1,7 +1,8 @@
 node_modules
-.npmrc
-
 bun.lock
+yarn.lock
+package-lock.json
+.npmrc
 
 .env
 .env.local
@@ -15,6 +16,9 @@ bun.lock
 .nitro
 .netlify
 .output
+.vercel
+.wrangler
 dist
+wrangler.toml
 
 .vscode/*

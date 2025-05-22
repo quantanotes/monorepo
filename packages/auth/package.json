@@ -1,6 +1,7 @@
 {
   "name": "@quanta/auth",
   "type": "module",
+  "version": "0.0.1",
   "dependencies": {
     "better-auth": "latest"
   }

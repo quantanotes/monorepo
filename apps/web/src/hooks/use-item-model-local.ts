@@ -9,7 +9,6 @@ export function useItemModelLocal() {
   const user = useAuthUser();
 
   if (!space || !user) {
-    console.log(space, user);
     return;
   }
 

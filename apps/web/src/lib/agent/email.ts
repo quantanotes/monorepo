@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
-import nodemailer from 'nodemailer';
+//import nodemailer from 'nodemailer';
 import { doc } from '@quanta/agent';
 
 const emailFn = createServerFn()
@@ -23,16 +23,16 @@ const emailFn = createServerFn()
   )
   .handler(async ({ data }) => {
     const { smtp, email } = data;
-    const transporter = nodemailer.createTransport({
-      host: smtp.host,
-      port: smtp.port,
-      secure: smtp.tls,
-      auth: {
-        user: smtp.username,
-        pass: smtp.password,
-      },
-    });
-    await transporter.sendMail(email);
+    //const transporter = nodemailer.createTransport({
+    //  host: smtp.host,
+    //  port: smtp.port,
+    //  secure: smtp.tls,
+    //  auth: {
+    //    user: smtp.username,
+    //    pass: smtp.password,
+    //  },
+    //});
+    //await transporter.sendMail(email);
     return { ok: true };
   });
 

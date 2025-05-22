@@ -1,8 +1,8 @@
 {
   "name": "@quanta/ui",
-  "private": true,
   "type": "module",
-  "devDependencies": {
+  "version": "0.0.1",
+  "peerDependencies": {
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
@@ -21,6 +21,7 @@
     "@radix-ui/react-switch": "^1.2.2",
     "@radix-ui/react-tabs": "^1.1.9",
     "@tailwindcss/typography": "^0.5.16",
+    "@tanstack/react-form": "^1.11.2",
     "class-variance-authority": "^0.7.1",
     "cmdk": "1.1.1",
     "lucide-react": "^0.486.0",

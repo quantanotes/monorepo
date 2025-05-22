@@ -1,4 +1,5 @@
 import {
+  createError,
   defineEventHandler,
   defineWebSocket,
 } from '@tanstack/react-start/server';
@@ -19,9 +20,16 @@ interface AgentRequest {
 }
 
 export default defineEventHandler({
-  handler() {},
+  handler() {
+    throw createError({
+      statusCode: 426,
+      statusMessage: 'Upgrade Required',
+    });
+  },
+
   websocket: defineWebSocket({
     async upgrade(request) {
+      console.log('WE ARE GETTING WEB SOCKET REQUEST', request);
       const session = await auth.api.getSession({ headers: request.headers });
       if (!session?.user) {
         throw new Response('Unauthorized', { status: 401 });
@@ -29,6 +37,7 @@ export default defineEventHandler({
     },
 
     open(peer) {
+      console.log('WEBSOCKET CONN OPENED');
       peer.context.started = false;
       peer.context.observe = null;
       peer.context.abort = new AbortController();

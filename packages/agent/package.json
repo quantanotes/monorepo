@@ -1,6 +1,7 @@
 {
   "name": "@quanta/agent",
   "type": "module",
+  "version": "0.0.1",
   "dependencies": {
     "@ai-sdk/anthropic": "latest",
     "ai": "latest"

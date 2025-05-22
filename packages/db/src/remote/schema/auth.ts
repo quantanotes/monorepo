@@ -1,10 +1,9 @@
 import { pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
-import { nanoid } from 'nanoid';
+import { nanoidCol, nanoidPk } from '@quanta/db/shared';
 import { users } from './users';
-import { nanoidCol } from '@quanta/db/shared';
 
 export const sessions = pgTable('sessions', {
-  id: uuid().defaultRandom().primaryKey(),
+  id: nanoidPk(),
   expiresAt: timestamp().notNull(),
   token: text().notNull().unique(),
   createdAt: timestamp().notNull(),
@@ -17,7 +16,7 @@ export const sessions = pgTable('sessions', {
 });
 
 export const accounts = pgTable('accounts', {
-  id: uuid().defaultRandom().primaryKey(),
+  id: nanoidPk(),
   accountId: text().notNull(),
   providerId: text().notNull(),
   userId: nanoidCol()
@@ -35,19 +34,10 @@ export const accounts = pgTable('accounts', {
 });
 
 export const verifications = pgTable('verifications', {
-  id: uuid().defaultRandom().primaryKey(),
+  id: nanoidPk(),
   identifier: text().notNull(),
   value: text().notNull(),
   expiresAt: timestamp().notNull(),
   createdAt: timestamp(),
   updatedAt: timestamp(),
-});
-
-export const jwks = pgTable('jwks', {
-  id: varchar({ length: 21 })
-    .$defaultFn(() => nanoid())
-    .primaryKey(),
-  publicKey: text(),
-  privateKey: text(),
-  createdAt: timestamp(),
 });

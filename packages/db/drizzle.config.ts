@@ -1,9 +1,11 @@
 import dotenv from 'dotenv';
 import { defineConfig } from 'drizzle-kit';
-dotenv.config({
-  path:
-    process.env.NODE_ENV === 'production' ? '../../.env' : '../../.env.local',
-});
+
+const envPath =
+  process.env.NODE_ENV === 'production' ? '../../.env' : '../../.env.local';
+
+dotenv.config({ path: envPath });
+
 export default defineConfig({
   schema: './src/remote/schema',
   out: './src/remote/migrations',

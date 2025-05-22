@@ -4,27 +4,29 @@ import { db, schema } from '@quanta/db/remote';
 import { sessionStore } from './session-store';
 
 export default {
+  secret: process.env.AUTH_SECRET,
   baseURL: process.env.PUBLIC_APP_URL,
   basePath: '/api/auth',
-  secret: process.env.AUTH_SECRET,
+
   database: drizzleAdapter(db, {
     provider: 'pg',
     usePlural: true,
-    schema: { ...schema, jwkss: schema.jwks },
+    schema,
   }),
-  logger: {
-    level: 'debug',
-    disabled: false,
-  },
+
   secondaryStorage: sessionStore,
+
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
   },
+
   advanced: {
     generateId: false,
+    database: {
+      generateId: false,
+    },
   },
-  plugins: [],
 } satisfies Parameters<typeof betterAuth>[0];

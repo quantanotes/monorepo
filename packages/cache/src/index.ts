@@ -1,6 +1,6 @@
-import { createClient } from 'redis';
-export const cache = createClient({
+import { Redis } from '@upstash/redis'
+
+export const cache = new Redis({
   url: process.env.CACHE_URL,
-  pingInterval: 1000,
-});
-await cache.connect();
+  token: process.env.CACHE_TOKEN,
+})

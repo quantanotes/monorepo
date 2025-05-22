@@ -17,7 +17,7 @@ import { AuthDialogProvider } from '@quanta/web/components/auth-dialog';
 // import { authUserQueryOptions } from '@quanta/web/lib/user';
 // import { spaceQueryOptions } from '@quanta/web/lib/space-query';
 import { MainLayout } from '@quanta/web/components/main-layout';
-import css from '@quanta/ui/styles/globals.css?url';
+import globalCss from '@quanta/ui/styles/globals.css?url';
 import favicon from '@quanta/web/public/favicon.ico?url';
 
 export const Route = createRootRouteWithContext<{
@@ -56,7 +56,7 @@ export const Route = createRootRouteWithContext<{
       },
       {
         rel: 'stylesheet',
-        href: css,
+        href: globalCss,
       },
     ],
   }),

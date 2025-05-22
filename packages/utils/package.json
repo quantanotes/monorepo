@@ -1,5 +1,5 @@
 {
   "name": "@quanta/utils",
-  "module": "index.ts",
-  "type": "module"
+  "type": "module",
+  "version": "0.0.1"
 }

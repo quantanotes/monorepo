@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useServerFn } from '@tanstack/react-start';
 import { Pinned } from '@quanta/types';
 import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
@@ -38,12 +38,9 @@ export function usePinnedRemote() {
     [pinned],
   );
 
-  return useMemo(
-    () => ({
-      pinned: pinned.map(snakeToCamlObject) as Pinned[],
-      togglePinItem: togglePinItem,
-      isItemPinned,
-    }),
-    [pinned, togglePinItem, isItemPinned],
-  );
+  return {
+    pinned: pinned.map(snakeToCamlObject) as Pinned[],
+    togglePinItem,
+    isItemPinned,
+  };
 }

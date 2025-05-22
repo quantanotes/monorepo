@@ -1,6 +1,7 @@
 {
   "name": "@quanta/db",
   "type": "module",
+  "version": "0.0.1",
   "scripts": {
     "remote.push": "drizzle-kit push",
     "local.gen": "drizzle-kit generate --config=drizzle-local.config.ts"
@@ -16,6 +17,6 @@
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",
     "nanoid": "^5.1.5",
-    "postgres": "^3.4.5"
+    "postgres": "^3.4.7"
   }
 }
