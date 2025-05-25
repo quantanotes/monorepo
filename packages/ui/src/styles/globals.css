@@ -8,12 +8,13 @@
 @plugin '@tailwindcss/typography';
 @plugin 'tailwindcss-animate';
 
-/* @import 'flowtoken/dist/style'; */
+/* @import 'flowtoken/dist/style.css'; */
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --radius: 0.7rem;
+  --radius: 0.65rem;
+
   --background: oklch(0.96 0.005 93);
   --foreground: oklch(0.23 0.006 93);
   --card: oklch(0.97 0.004 93);

@@ -19,7 +19,6 @@ export interface HumanChatComment {
 
 interface HumanChatContextType {
   comments: HumanChatComment[];
-  loading: boolean;
   value: string;
   setValue: (value: string) => void;
   addComment: () => void;
@@ -32,14 +31,14 @@ const HumanChatContext = createContext<HumanChatContextType | undefined>(
 
 export function HumanChatProvider({ children }: React.PropsWithChildren) {
   const [value, setValue] = useState('');
-  const addCommentServerFn = useServerFn(addCommentFn);
-  const deleteCommentServerFn = useServerFn(deleteCommentFn);
   const { spaceId, itemId } = useParams({ strict: false });
   const commentsUrl = useMemo(() => {
     return itemId
       ? `${process.env.PUBLIC_APP_URL}/api/db/comments/item/${itemId}`
       : `${process.env.PUBLIC_APP_URL}/api/db/comments/space/${spaceId}`;
   }, [itemId, spaceId]);
+  const _addComment = useServerFn(addCommentFn);
+  const _deleteComment_ = useServerFn(deleteCommentFn);
 
   const comments = useShapeWithJoin({
     shape1Url: commentsUrl,
@@ -56,7 +55,7 @@ export function HumanChatProvider({ children }: React.PropsWithChildren) {
   });
 
   const addComment = async () => {
-    await addCommentServerFn({
+    await _addComment({
       data: {
         content: value,
         itemId: itemId ?? undefined,
@@ -67,14 +66,13 @@ export function HumanChatProvider({ children }: React.PropsWithChildren) {
   };
 
   const deleteComment = async (id: string) => {
-    await deleteCommentServerFn({ data: { id } });
+    await _deleteComment_({ data: { id } });
   };
 
   return (
     <HumanChatContext.Provider
       value={{
         comments: comments.map(snakeToCamlObject) as HumanChatComment[],
-        loading: false,
         value,
         setValue,
         addComment,

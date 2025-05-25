@@ -9,7 +9,7 @@ export function AiChat() {
         <AiChatMessages />
       </ScrollArea>
 
-      <div className="absolute right-0 bottom-0 left-0 z-50 p-2">
+      <div className="sticky right-0 bottom-0 left-0 z-50 px-4 py-2">
         <AiChatInput />
       </div>
     </div>

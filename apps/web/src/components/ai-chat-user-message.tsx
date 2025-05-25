@@ -1,5 +1,5 @@
-import { Message } from '@quanta/web/contexts/ai-chat';
 import { AnimatedMarkdown } from 'flowtoken';
+import { Message } from '@quanta/agent';
 
 interface AiChatUserMessageProps {
   message: Message;
@@ -7,14 +7,16 @@ interface AiChatUserMessageProps {
 
 export function AiChatUserMessage({ message }: AiChatUserMessageProps) {
   return (
-    <div className="px-3">
-      <div className="themed-prose prose-xl! max-w-none">
-        {message.parts.map(
-          (part, index) =>
-            part.type === 'text' && (
-              <AnimatedMarkdown key={index} content={part.content} />
-            ),
-        )}
+    <div className="flex justify-end">
+      <div className="bg-card max-w-lg rounded-md px-3">
+        <div className="prose-lg">
+          {message.parts.map(
+            (part, index) =>
+              part.type === 'text' && (
+                <AnimatedMarkdown key={index} content={part.content} />
+              ),
+          )}
+        </div>
       </div>
     </div>
   );

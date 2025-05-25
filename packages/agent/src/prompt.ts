@@ -1,4 +1,4 @@
-import { AgentInputStep, ServerMessage } from './types';
+import { AgentInputStep, RawMessage } from './types';
 
 export const buildSystemPrompt = (environment: string) => `
 <purpose>
@@ -62,9 +62,13 @@ The latest news cycle indicates...
 <environment>
 ${environment}
 </environment>
+
+<instruction>
+Provide general chat assistance/task completion to the user.
+</instruction>
 `;
 
-export const buildAgentSteps = (steps: AgentInputStep[]): ServerMessage => {
+export const buildAgentSteps = (steps: AgentInputStep[]): RawMessage => {
   return {
     role: 'assistant',
     content: steps

@@ -5,17 +5,14 @@ import {
   Scripts,
 } from '@tanstack/react-router';
 import { type QueryClient } from '@tanstack/react-query';
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-// import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { z } from 'zod';
 import { Toaster } from '@quanta/ui/sonner';
 import { DBProvider } from '@quanta/web/contexts/db';
 import { SyncProvider } from '@quanta/web/contexts/sync';
 import { PinnedProvider } from '@quanta/web/contexts/pinned';
 import { ItemModelProvider } from '@quanta/web/contexts/item-model';
+import { AiChatProvider } from '@quanta/web/contexts/ai-chat';
 import { AuthDialogProvider } from '@quanta/web/components/auth-dialog';
-// import { authUserQueryOptions } from '@quanta/web/lib/user';
-// import { spaceQueryOptions } from '@quanta/web/lib/space-query';
 import { MainLayout } from '@quanta/web/components/main-layout';
 import globalCss from '@quanta/ui/styles/globals.css?url';
 import favicon from '@quanta/web/public/favicon.ico?url';
@@ -61,13 +58,6 @@ export const Route = createRootRouteWithContext<{
     ],
   }),
 
-  loader: async ({ context }) => {
-    await Promise.all([
-      // context.queryClient.ensureQueryData(authUserQueryOptions()),
-      // context.queryClient.ensureQueryData(spaceQueryOptions()),
-    ]);
-  },
-
   validateSearch: z.object({ unauthenticated: z.boolean().optional() }),
 
   component: RootComponent,
@@ -81,11 +71,13 @@ function RootComponent() {
         <SyncProvider>
           <ItemModelProvider>
             <PinnedProvider>
-              <AuthDialogProvider open={!!unauthenticated}>
-                <MainLayout>
-                  <Outlet />
-                </MainLayout>
-              </AuthDialogProvider>
+              <AiChatProvider>
+                <AuthDialogProvider open={!!unauthenticated}>
+                  <MainLayout>
+                    <Outlet />
+                  </MainLayout>
+                </AuthDialogProvider>
+              </AiChatProvider>
             </PinnedProvider>
           </ItemModelProvider>
         </SyncProvider>
@@ -104,8 +96,6 @@ function RootDocument({ children }: React.PropsWithChildren) {
         {children}
         <Toaster />
         <Scripts />
-        {/* <TanStackRouterDevtools position="bottom-right" /> */}
-        {/* <ReactQueryDevtools buttonPosition="bottom-left" /> */}
       </body>
     </html>
   );

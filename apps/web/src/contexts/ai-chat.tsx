@@ -1,227 +1,147 @@
-import { createContext, useContext, useState, useCallback } from 'react';
-import { doc, runAgentClient, type ServerMessage } from '@quanta/agent';
+import { createContext, useContext, useState } from 'react';
+import { useServerFn } from '@tanstack/react-start';
+import { Updater, useImmer } from 'use-immer';
+import { streamToAsyncIterableStream } from '@quanta/utils/stream-to-async-iterable-stream';
+import {
+  agentClient,
+  doc,
+  AgentStep,
+  Message,
+  MessagePart,
+  TextStreamFn,
+} from '@quanta/agent';
+import { llmTextStreamFn } from '@quanta/web/lib/ai';
 import { getBaseEnvironment } from '@quanta/web/lib/agent/base-environment';
 
-export type MessageRole = 'user' | 'assistant' | 'system';
-
-export interface MessagePart {
-  type: 'text' | 'action';
-  content: string;
-  title?: string;
-  status?: 'pending' | 'completed' | 'failed';
-}
-
-export interface Source {
-  type: 'web' | 'object' | 'file';
-  id?: string;
-  url?: string;
-  name?: string;
-  image?: string;
-}
-
-export interface Message {
-  role: MessageRole;
-  parts: MessagePart[];
-  sources: Source[];
-}
-
 interface AiChatContextType {
-  value: string;
-  messages: Message[];
+  input: string;
   files: File[];
+  messages: Message[];
   running: boolean;
+
   send: () => void;
-  handleAbort: () => void;
+  abort?: () => void;
+
+  setInput: (value: string) => void;
   setFiles: (files: File[]) => void;
-  setValue: (value: string) => void;
-  setActionStatus: (
-    messageIndex: number,
-    actionIndex: number,
-    status: 'pending' | 'completed' | 'failed',
-  ) => void;
 }
 
-const AiChatContext = createContext<AiChatContextType | undefined>(undefined);
+const AiChatContext = createContext<AiChatContextType>(undefined!);
 
-export function AiChatProvider({ children }: { children: React.ReactNode }) {
-  const [value, setValue] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+export function AiChatProvider({ children }: React.PropsWithChildren) {
+  const [input, setInput] = useState('');
   const [files, setFiles] = useState<File[]>([]);
+  const [messages, setMessages] = useImmer<Message[]>([]);
   const [running, setRunning] = useState(false);
-  const [abort, setAbort] = useState<null | (() => void)>(null);
+  const [abortController, setAbortController] = useState<AbortController>();
+  const _llmTextStreamFn = useServerFn(llmTextStreamFn);
+  const chatActions = getChatActions(setMessages);
 
-  const addMessage = useCallback((role: MessageRole, parts: MessagePart[]) => {
-    setMessages((prev) => [
-      ...prev,
-      {
-        role,
-        parts,
-        sources: [],
-      },
-    ]);
-  }, []);
+  const textStreamFn: TextStreamFn = async (messages, signal) => {
+    const abortController = new AbortController();
+    signal.addEventListener('abort', () => abortController.abort());
 
-  const handleChunk = useCallback(
-    (
-      reply: Message,
-      chunk: {
-        type: string;
-        content: string;
-        status?: 'pending' | 'completed' | 'failed';
-      },
-    ) => {
-      setMessages((prev) => {
-        const newMessages = [...prev];
-        const replyIndex = newMessages.indexOf(reply);
-        if (replyIndex === -1) return prev;
+    const response = await _llmTextStreamFn({ data: { messages }, signal });
+    if (!response.ok) {
+      throw new Error('Could not connect to AI.');
+    }
 
-        const lastPart = reply.parts.at(-1);
-        if (
-          !lastPart ||
-          lastPart.type !== chunk.type ||
-          chunk.type === 'action' ||
-          chunk.type === 'text'
-        ) {
-          newMessages[replyIndex].parts.push(chunk as MessagePart);
-        } else {
-          lastPart.content += chunk.content;
-          if (chunk.type === 'action' && chunk.status) {
-            lastPart.status = chunk.status;
-          }
-        }
-        return newMessages;
-      });
-    },
-    [],
-  );
+    const rawStream = response.body?.pipeThrough(new TextDecoderStream())!;
+    const stream = streamToAsyncIterableStream(rawStream);
 
-  const getChatActions = useCallback((message: Message) => {
-    return {
-      __doc__: `
-        Chat UI actions for source management.Sources are visual indicators showing information origin.
-        You do not need to annotate any actions that call these functions as the user automatically sees them.
-        Do not tell the user "I am going to add sources" because they will already see it and it sounds stupid.
-        Add sources as soon as as you see them and recognise their relevancy to the chat, do not add them at the end, for maximum responsiveness.
-        Always use the add_web_source function to add web sources after a search query.`,
-      add_object_source: doc(
-        'chat.add_object_source',
-        (object: string | any) => {
-          const id =
-            typeof object === 'string' ? object : (object.id as string);
-          setMessages((prev) => {
-            const newMessages = [...prev];
-            const messageIndex = newMessages.indexOf(message);
-            if (messageIndex !== -1) {
-              newMessages[messageIndex].sources.push({ type: 'object', id });
-            }
-            return newMessages;
-          });
-        },
-        `(object:string|{id:string}): void
-        Add object reference to chat
-        add_object_source("obj_123")`,
-      ),
-      add_web_source: doc(
-        'chat.add_web_source',
-        (source: { title: string; url: string; image?: string }) => {
-          setMessages((prev) => {
-            const newMessages = [...prev];
-            const messageIndex = newMessages.indexOf(message);
-            if (messageIndex !== -1) {
-              newMessages[messageIndex].sources.push({
-                type: 'web',
-                name: source.title,
-                url: source.url,
-                image: source.image,
-              });
-            }
-            return newMessages;
-          });
-        },
-        `(source: { title: string, url>: string, image?: string }): void
-        Add web link to chat - compatible with search results
-        add_web_source({ title: "Example", url: "https://example.com", image: "https://example.com/image.png" });
-        search_results = search('recent news');
-        add_web_source(search_results[0]); add_web_source(search_results[4]);`,
-      ),
-    };
-  }, []);
+    return { stream, abortController };
+  };
 
-  const runAgent = useCallback(
-    async (reply: Message) => {
-      const tools = [];
-      const abort = runAgentClient(
-        getBaseEnvironment(null, getChatActions(reply), files, tools),
-        convertToServerMessages(messages.slice(0, -1)),
-        (chunk) => handleChunk(reply, chunk),
-        () => {
-          setRunning(false);
-        },
-      );
-      setAbort(() => abort);
-    },
-    [files, messages, getChatActions, handleChunk],
-  );
-
-  const send = useCallback(() => {
-    if (running || !value.trim()) {
+  async function send() {
+    if (running || input.trim().length === 0) {
       return;
     }
+
+    const userMessage = {
+      role: 'user',
+      parts: [{ type: 'text', content: input }],
+      sources: [],
+    } as Message;
+    const newMessages = [...messages, userMessage];
+    const tools = [];
+    const environment = getBaseEnvironment(null, chatActions, files, tools);
+    const abortController = new AbortController();
+
+    setInput('');
+    setMessages(newMessages);
     setRunning(true);
-    addMessage('user', [{ type: 'text', content: value }]);
-    setValue('');
-    addMessage('assistant', []);
-    setMessages((prev) => {
-      const reply = prev[prev.length - 1];
-      if (reply) {
-        runAgent(reply);
+    setAbortController(abortController);
+
+    try {
+      const agentStream = agentClient(
+        environment,
+        newMessages,
+        textStreamFn,
+        abortController,
+      );
+
+      appendMessage({ role: 'assistant', parts: [], sources: [] });
+
+      for await (const part of agentStream) {
+        appendMessagePart(part);
       }
-      return prev;
-    });
-  }, [running, value, addMessage, runAgent]);
-
-  const handleAbort = useCallback(() => {
-    if (abort) {
-      abort();
-      setAbort(null);
+    } finally {
+      setRunning(false);
     }
-  }, [abort]);
+  }
 
-  const setActionStatus = useCallback(
-    (
-      messageIndex: number,
-      actionIndex: number,
-      status: 'pending' | 'completed' | 'failed',
-    ) => {
-      setMessages((prev) => {
-        const newMessages = [...prev];
-        const message = newMessages[messageIndex];
-        if (!message) return prev;
-        const action = message.parts[actionIndex];
-        if (!action || action.type !== 'action') return prev;
-        action.status = status;
-        return newMessages;
-      });
-    },
-    [],
-  );
+  function abort() {
+    abortController?.abort();
+  }
+
+  const appendMessage = (message: Message) =>
+    setMessages((messages) => {
+      messages.push(message);
+    });
+
+  const appendMessagePart = (part: AgentStep) =>
+    setMessages((messages: Message[]) => {
+      const lastMessage = messages.at(-1)!;
+      const lastPart = lastMessage.parts.at(-1);
+      switch (part.type) {
+        case 'text':
+          if (lastPart?.type === 'text') {
+            lastPart.content += part.content;
+          } else {
+            lastMessage.parts.push(part as MessagePart);
+          }
+          break;
+        case 'action':
+          lastMessage.parts.push(part as MessagePart);
+        case 'observe':
+          const index = lastMessage.parts.findIndex(
+            (actionPart) => actionPart.id === part.id,
+          );
+          if (index !== -1) {
+            lastMessage.parts[index] = {
+              ...lastMessage.parts[index],
+              status: part.status,
+            };
+          }
+          break;
+      }
+    });
 
   return (
-    <AiChatContext.Provider
+    <AiChatContext
       value={{
-        value,
+        input,
+        files,
         messages,
         running,
-        files,
         send,
-        handleAbort: handleAbort,
-        setValue,
+        abort,
+        setInput,
         setFiles,
-        setActionStatus,
       }}
     >
       {children}
-    </AiChatContext.Provider>
+    </AiChatContext>
   );
 }
 
@@ -233,14 +153,50 @@ export function useAiChat() {
   return context;
 }
 
-function convertToServerMessages(messages: Message[]): ServerMessage[] {
-  return messages.map((message) => {
-    return {
-      role: message.role,
-      content: message.parts
-        .filter((part) => part.type === 'text')
-        .map((part) => part.content)
-        .join('\n'),
-    };
-  });
+function getChatActions(setMessages: Updater<Message[]>) {
+  function addObjectSource(object: any) {
+    setMessages((messages) =>
+      messages[messages.length - 1].sources.push({
+        type: 'object',
+        id: typeof object === 'string' ? object : (object.id as string),
+      }),
+    );
+  }
+
+  function addWebSource(source: any) {
+    setMessages((messages) =>
+      messages[messages.length - 1].sources.push({
+        type: 'web',
+        name: source.title,
+        url: source.url,
+        image: source.image,
+      }),
+    );
+  }
+
+  return {
+    __doc__: `Chat UI actions for source management. Sources are visual indicators showing information origin.
+You do not need to annotate any actions that call these functions as the user automatically sees them.
+Do not tell the user "I am going to add sources" because they will already see it and it sounds stupid.
+Add sources as soon as as you see them and recognise their relevancy to the chat, do not add them at the end, for maximum responsiveness.
+Always use the add_web_source function to add web sources after a search query.`,
+
+    add_object_source: doc(
+      'chat.add_object_source',
+      addObjectSource,
+      `(object:string|{id:string}): void
+Add object reference to chat
+add_object_source("obj_123")`,
+    ),
+
+    add_web_source: doc(
+      'chat.add_web_source',
+      addWebSource,
+      `(source: { title: string, url>: string, image?: string }): void
+Add web link to chat - compatible with search results
+add_web_source({ title: "Example", url: "https://example.com", image: "https://example.com/image.png" });
+search_results = search('recent news');
+add_web_source(search_results[0]); add_web_source(search_results[4]);`,
+    ),
+  };
 }

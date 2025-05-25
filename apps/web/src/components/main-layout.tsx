@@ -69,13 +69,13 @@ export function MainLayout({ children }: React.PropsWithChildren) {
           />
         </ResizablePanel>
 
-        <ResizableHandle className="w-2 bg-transparent" />
+        <ResizableHandle className="bg-transparent" />
 
         <ResizablePanel className="relative flex h-full flex-col">
           {children}
         </ResizablePanel>
 
-        <ResizableHandle className="w-2 bg-transparent" />
+        <ResizableHandle className="bg-transparent" />
 
         <ResizablePanel
           ref={rightPanelRef}

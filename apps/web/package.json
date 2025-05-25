@@ -21,14 +21,16 @@
     "react-dom": "^19.1.0"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.2.18",
+    "@ai-sdk/openai": "^2.0.0-canary.20",
     "@electric-sql/pglite-react": "^0.2.19",
     "@electric-sql/react": "^1.0.4",
     "@tanstack/react-form": "^1.11.2",
     "@tanstack/react-query": "^5.75.5",
     "@tanstack/react-query-devtools": "^5.75.5",
-    "@tanstack/react-router": "https://pkg.pr.new/TanStack/router/@tanstack/react-router@5111406",
-    "@tanstack/react-router-with-query": "https://pkg.pr.new/TanStack/router/@tanstack/react-router-with-query@5111406",
-    "@tanstack/react-start": "https://pkg.pr.new/TanStack/router/@tanstack/react-start@5111406",
+    "@tanstack/react-router": "https://pkg.pr.new/TanStack/router/@tanstack/react-router@274819a",
+    "@tanstack/react-router-with-query": "https://pkg.pr.new/TanStack/router/@tanstack/react-router-with-query@274819a",
+    "@tanstack/react-start": "https://pkg.pr.new/TanStack/router/@tanstack/react-start@274819a",
     "@tanstack/react-table": "^8.21.3",
     "@tiptap/core": "^3.0.0-beta.4",
     "@tiptap/extension-document": "^3.0.0-beta.4",
@@ -37,15 +39,18 @@
     "@tiptap/react": "^3.0.0-beta.4",
     "@tiptap/starter-kit": "^3.0.0-beta.4",
     "@tiptap/suggestion": "^3.0.0-beta.4",
+    "ai": "^5.0.0-alpha.3",
     "exa-js": "^1.7.2",
     "flowtoken": "^1.0.40",
     "html-to-md": "^0.8.8",
+    "immer": "^10.1.1",
     "masonic": "^4.1.0",
     "nodemailer": "^7.0.3",
     "papaparse": "^5.5.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "sonner": "^2.0.3",
+    "use-immer": "^0.11.0",
     "zod": "^3.24.4"
   }
 }

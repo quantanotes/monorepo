@@ -11,7 +11,7 @@ export function RightPanelToggle({
   onChange,
 }: RightPanelToggleProps) {
   return (
-    <div className="flex h-10 w-full flex-none items-center justify-center gap-2">
+    <div className="flex h-10 w-full flex-none items-center justify-center gap-1">
       <Button
         variant="ghost"
         className={cn(

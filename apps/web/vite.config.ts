@@ -11,31 +11,12 @@ export default defineConfig(({ mode }) => ({
     tanstackStart({
       tsr: {
         generatedRouteTree: 'src/routes.gen.ts',
-        enableCodeSplitting: true,
       },
 
-      target: 'cloudflare-module',
+      target: 'netlify-edge',
 
       nitro: {
         compatibilityDate: '2025-05-21',
-        //sourceMap: false,
-
-        cloudflare: {
-          nodeCompat: true,
-        },
-
-        experimental: {
-          websocket: true,
-        },
-
-        // handlers: [
-        //   {
-        //     route: '/api/ai/agent',
-        //     handler: 'src/routes/api.ai.agent',
-        //   },
-        // ],
-        //
-
         rollupConfig: {
           external: ['cloudflare:sockets'],
           output: {
@@ -83,6 +64,7 @@ function env(): Plugin {
   };
 }
 
+// Temporary, less than ideal hotfix until h3 support http2
 function http2(): Plugin {
   return {
     name: 'http2',
@@ -91,7 +73,10 @@ function http2(): Plugin {
         if (req.httpVersionMajor >= 2 && req.headers[':method']) {
           const chunks: Buffer[] = [];
 
-          req.on('data', (chunk) => chunks.push(chunk));
+          req.on('data', (chunk) => {
+            chunks.push(chunk);
+          });
+
           req.on('end', () => {
             const buffer = Buffer.concat(chunks);
             const r = new Readable() as any;

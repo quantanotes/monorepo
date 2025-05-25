@@ -1,9 +1,7 @@
 function fmt(doc: string) {
   return doc
     .split('\n')
-    .map((line) => {
-      return line.trim();
-    })
+    .map((line) => line.trim())
     .join('\n');
 }
 
@@ -46,16 +44,16 @@ export function docs(env: any, path: string = '') {
       }
 
       if (path !== '') {
-        result += `</module>\n\n`;
+        result += `</module>\n`;
       }
     } else if (value && typeof value === 'function') {
       result += `<function name="${currentPath}">\n`;
       result += `  ${fmt(value.__doc__ || '')}\n`;
-      result += `</function>\n\n`;
+      result += `</function>\n`;
     } else {
       result += `<variable name="${currentPath}">\n`;
       result += `  ${fmt(env['__doc__' + key] || '')}\n`;
-      result += `</variable>\n\n`;
+      result += `</variable>\n`;
     }
   }
   return result;

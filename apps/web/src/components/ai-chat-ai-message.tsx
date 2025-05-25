@@ -15,7 +15,7 @@ export function AiChatAIMessage({
   return (
     <div className="px-3">
       <div className="text-muted-foreground">ai</div>
-      <div className="themed-prose flex max-w-none flex-col gap-1">
+      <div className="prose-lg flex max-w-none flex-col gap-1">
         {message.parts.map((part: MessagePart, index: number) =>
           part.type === 'text' ? (
             <AnimatedMarkdown
@@ -27,14 +27,7 @@ export function AiChatAIMessage({
               animationTimingFunction="ease-in"
             />
           ) : part.type === 'action' ? (
-            <AiChatAction
-              key={index}
-              messageIndex={messageIndex}
-              actionIndex={index}
-              title={part.title}
-              content={part.content}
-              status={part.status}
-            />
+            <AiChatAction key={index} title={part.title} status={part.status} />
           ) : (
             <></>
           ),

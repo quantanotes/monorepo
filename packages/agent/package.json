@@ -3,7 +3,6 @@
   "type": "module",
   "version": "0.0.1",
   "dependencies": {
-    "@ai-sdk/anthropic": "latest",
-    "ai": "latest"
+    "nanoid": "^5.1.5"
   }
 }

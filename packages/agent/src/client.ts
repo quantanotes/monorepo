@@ -1,80 +1,76 @@
+import { nanoid } from 'nanoid';
+import { callbacksToAsyncIterator } from '@quanta/utils/callbacks-to-async-iterator';
+import { AgentActionStep, AgentStep, Message, TextStreamFn } from './types';
+import { messagesToRawMessages } from './utils';
 import { docs } from './doc';
+import { agent } from './agent';
 
-interface AgentOutputStep {
-  type: string;
-  content: string;
-  title?: string;
-  observe?: boolean;
-}
-
-interface AgentActionStep extends AgentOutputStep {
-  type: 'action';
-  status?: 'pending' | 'completed' | 'failed';
-}
+type AgentYielder = (step: AgentStep) => void;
 
 const AsyncFunction = (async () => {}).constructor;
 
-export function runAgentClient(
-  environment: any,
-  messages: any[],
-  onchunk: (chunk: AgentOutputStep | AgentActionStep) => void,
-  onfinish: () => void,
-) {
-  const ws = new WebSocket(process.env.PUBLIC_APP_URL + '/api/ai/agent');
+export function agentClient(
+  environment: Record<string, any>,
+  messages: Message[],
+  textStreamFn: TextStreamFn,
+  abortController: AbortController,
+): AsyncGenerator<AgentStep, void, void> {
+  const rawMessages = messagesToRawMessages(messages);
 
-  ws.onopen = () => {
-    const req = {
-      environment: docs(environment),
-      messages,
-    };
-    ws.send(JSON.stringify(req));
-  };
+  const handleText = (yielder: AgentYielder) => (content: string) =>
+    void yielder({
+      type: 'text',
+      content,
+    });
 
-  ws.onmessage = async (event) => {
-    const data = JSON.parse(event.data) as AgentOutputStep;
-
-    if (data.type === 'action') {
+  const handleAction =
+    (yielder: AgentYielder) => (content: string, title: string) => {
+      const id = nanoid(4);
       const action: AgentActionStep = {
-        ...data,
+        id,
+        title,
+        content,
         type: 'action',
         status: 'pending',
       };
-      onchunk(action);
+      yielder(action);
 
-      let result = '';
-      try {
+      // Async so step execution is non blocking for the reader
+      return (async () => {
+        const fnBody = `with (this) {${action.content}}`;
+        let result = '';
+
         if (process.env.NODE_ENV !== 'production') {
           console.log('executing', action.content);
         }
-        const body = `with (this) {${action.content}}`;
-        const evalResult = await AsyncFunction(body).call(environment);
-        result = JSON.stringify(evalResult);
 
-        action.status = 'completed';
-        onchunk(action);
-
-        if (action.observe) {
-          ws.send(result);
+        try {
+          const evalResult = await AsyncFunction(fnBody).call(environment);
+          result = JSON.stringify(evalResult);
+          action.status = 'completed';
+        } catch (err: unknown) {
+          result = err instanceof Error ? err.message : String(err);
+          action.status = 'failed';
         }
-      } catch (err: unknown) {
-        const error = err instanceof Error ? err.message : String(err);
-        result = error;
 
-        action.status = 'failed';
-        onchunk(action);
+        yielder({ ...action, type: 'observe' });
 
-        if (action.observe) {
-          ws.send(error);
-        }
-      }
-    } else {
-      onchunk(data);
-    }
-  };
+        return result;
+      })();
+    };
 
-  ws.onclose = () => {
-    onfinish();
-  };
-
-  return () => ws.close();
+  return callbacksToAsyncIterator((yielder, breaker) =>
+    agent(
+      docs(environment),
+      rawMessages,
+      {
+        onText: handleText(yielder),
+        onAct: handleAction(yielder),
+        onActObserve: handleAction(yielder),
+        onFinish: breaker,
+      },
+      textStreamFn,
+      abortController.signal,
+    ),
+  );
 }

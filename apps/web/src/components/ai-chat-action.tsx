@@ -1,30 +1,27 @@
+import { Check, LoaderCircle, X } from 'lucide-react';
 import { useAiChat } from '@quanta/web/contexts/ai-chat';
 
 interface AiChatActionProps {
-  messageIndex: number;
-  actionIndex: number;
-  title?: string;
-  content: string;
-  status?: 'pending' | 'completed' | 'failed';
+  title: string;
+  status: 'pending' | 'completed' | 'failed';
 }
 
-export function AiChatAction({
-  messageIndex,
-  actionIndex,
-  title,
-  content,
-  status = 'pending',
-}: AiChatActionProps) {
-  const { setActionStatus } = useAiChat();
-
-  function executeAction() {
-    setActionStatus(messageIndex, actionIndex, 'completed');
-  }
+export function AiChatAction({ title, status }: AiChatActionProps) {
+  const ActionStatusIndicator = () => {
+    switch (status) {
+      case 'completed':
+        return <Check className="size-5" />;
+      case 'pending':
+        return <LoaderCircle className="size-5 animate-spin" />;
+      case 'failed':
+        return <X className="size-5" />;
+    }
+  };
 
   return (
-    <div className="mt-1 rounded-md border p-3">
-      {title && <div className="mb-1 font-semibold">{title}</div>}
-      <pre className="overflow-auto text-sm whitespace-pre-wrap">{content}</pre>
+    <div className="bg-muted/25 text-muted-foreground flex items-center gap-4 rounded-md px-3 py-1">
+      <ActionStatusIndicator />
+      {title && <div className="mb-1">{title}</div>}
     </div>
   );
 }

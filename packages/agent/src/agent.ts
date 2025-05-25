@@ -1,18 +1,13 @@
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { streamText } from 'ai';
+import type { AgentServerCallbacks, RawMessage, TextStreamFn } from './types';
 import { buildAgentSteps, buildSystemPrompt } from './prompt';
-import { type AgentServerCallbacks, type ServerMessage } from './types';
 import { parseStream } from './parser';
 
-const anthropic = createAnthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
-export async function runAgent(
+export async function agent(
   environment: string,
-  messages: ServerMessage[],
+  messages: RawMessage[],
   callbacks: AgentServerCallbacks,
-  signal: AbortSignal,
+  textStreamFn: TextStreamFn,
+  abortSignal: AbortSignal,
 ) {
   try {
     const steps: any[] = [{ type: 'text', content: '' }];
@@ -31,13 +26,11 @@ export async function runAgent(
       return steps[steps.length - 1];
     }
 
-    outer: while (!signal.aborted) {
+    outer: while (!abortSignal.aborted) {
       messages[messages.length - 1] = buildAgentSteps(steps);
 
-      const { textStream, textStreamAbortController } = startTextStream(
-        messages,
-        signal,
-      );
+      const { stream: textStream, abortController: textStreamAbortController } =
+        await textStreamFn(messages, abortSignal);
 
       for await (const { state, text, transition, attributes } of parseStream(
         textStream,
@@ -59,21 +52,20 @@ export async function runAgent(
         currentStep().content += text;
 
         if (currentStep().type === 'text') {
-          callbacks.ontext?.(text);
+          callbacks.onText?.(text);
         }
       }
 
       if (currentStep().type === 'action') {
-        callbacks.onact?.(currentStep().content, currentStep().title);
+        callbacks.onAct?.(currentStep().content, currentStep().title);
       }
 
       break;
     }
   } catch (error) {
-    console.error(error);
     throw error;
   } finally {
-    callbacks.onfinish?.();
+    callbacks.onFinish?.();
   }
 }
 
@@ -84,29 +76,16 @@ async function handleParserStateTransition(
   steps: any[],
   callbacks: AgentServerCallbacks,
 ): Promise<boolean> {
-  if (currentStep().type === 'action') {
-    if (state === 'observe') {
-      const observation = await callbacks.onactobserve(
-        currentStep().content,
-        currentStep().title,
-      );
-      steps.push({ type: 'observe', content: observation });
-      return true;
-    } else {
-      callbacks.onact?.(currentStep().content, currentStep().title);
-    }
+  const { type, content, title } = currentStep();
+
+  if (type === 'action' && state === 'observe') {
+    const observation = await callbacks.onActObserve(content, title);
+    steps.push({ type: 'observe', content: observation });
+    return true;
+  } else if (type === 'action') {
+    callbacks.onAct?.(currentStep().content, currentStep().title);
   }
+
   steps.push({ type: state, content: '', title: attributes.title });
   return false;
-}
-
-function startTextStream(messages: ServerMessage[], signal: AbortSignal) {
-  const textStreamAbortController = new AbortController();
-  signal.addEventListener('abort', () => textStreamAbortController.abort());
-  const { textStream } = streamText({
-    model: anthropic('claude-3-5-sonnet-latest'),
-    abortSignal: textStreamAbortController.signal,
-    messages,
-  });
-  return { textStream, textStreamAbortController };
 }

@@ -1,38 +1,39 @@
 import { useEffect } from 'react';
-import { useAiChat } from '@quanta/web/contexts/ai-chat';
-import { useCallback, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { Plus, X, Loader2, ArrowUp } from 'lucide-react';
+import { Button } from '@quanta/ui/button';
 import {
   AutosizeTextarea,
   type AutosizeTextAreaRef,
 } from '@quanta/ui/autoresize-textarea';
-import { Button } from '@quanta/ui/button';
-import { Plus, X, Loader2, ArrowUp } from 'lucide-react';
+import { useAiChat } from '@quanta/web/contexts/ai-chat';
 
 export function AiChatInput() {
-  const { value, setValue, running, send, files, setFiles, handleAbort } =
-    useAiChat();
+  const {
+    input,
+    setInput,
+    running,
+    send,
+    files,
+    setFiles,
+    abort: handleAbort,
+  } = useAiChat();
   const textareaRef = useRef<AutosizeTextAreaRef>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [chatShadowHue, setChatShadowHue] = useState(0);
-  const isTyping = value.length > 0;
+  const isTyping = input.length > 0;
 
-  const handleSubmit = useCallback(
-    (e: React.FormEvent) => {
-      e.preventDefault();
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    send();
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
       send();
-    },
-    [send],
-  );
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        send();
-      }
-    },
-    [send],
-  );
+    }
+  };
 
   useEffect(() => {
     let animationFrameId: number;
@@ -42,7 +43,6 @@ export function AiChatInput() {
     const animateHue = (time: number) => {
       const deltaTime = time - lastTime;
       lastTime = time;
-
       setChatShadowHue((prevHue) => (prevHue + hueSpeed * deltaTime) % 360);
       animationFrameId = requestAnimationFrame(animateHue);
     };
@@ -51,15 +51,11 @@ export function AiChatInput() {
       animationFrameId = requestAnimationFrame(animateHue);
     }
 
-    return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
-    };
+    return () => cancelAnimationFrame(animationFrameId);
   }, [running]);
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="bg-card flex flex-col gap-2 rounded-md">
       <div
         className="rounded-lg transition-all duration-200"
         style={
@@ -102,20 +98,20 @@ export function AiChatInput() {
 
           <AutosizeTextarea
             ref={textareaRef}
-            value={value}
+            value={input}
             minHeight={0}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Ask me anything..."
             rows={1}
-            className="placeholder:text-muted-foreground/60 h-fit min-h-0 w-full resize-none border-0 bg-transparent text-base focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-0"
+            className="placeholder:text-muted-foreground h-fit min-h-0 w-full resize-none border-0 bg-transparent text-base focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:outline-0"
           />
 
           <Button
             variant={isTyping ? 'default' : 'ghost'}
             size="icon"
             onClick={running ? handleAbort : handleSubmit}
-            disabled={!running && !value.trim()}
+            disabled={!running && !input.trim()}
           >
             {running ? (
               <Loader2 className="size-5 animate-spin" />
