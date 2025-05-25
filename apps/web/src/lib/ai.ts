@@ -2,6 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { z } from 'zod';
 import { streamText } from 'ai';
 import type { RawMessage } from '@quanta/agent';
+import { assertSessionFn } from '@quanta/web/lib/auth-fns';
 
 import { createOpenAI } from '@ai-sdk/openai';
 const model = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })(
@@ -23,6 +24,8 @@ export const llmTextStreamFn = createServerFn({
     }),
   )
   .handler(({ signal, data: { messages } }) => {
+    assertSessionFn();
+
     const { textStream } = streamText({
       model,
       abortSignal: signal,

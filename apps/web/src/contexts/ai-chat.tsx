@@ -10,6 +10,10 @@ import {
   MessagePart,
   TextStreamFn,
 } from '@quanta/agent';
+import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
+import { useSpace } from '@quanta/web/hooks/use-space';
+import { useDB } from '@quanta/web/contexts/db';
+import { ItemModelLocal } from '@quanta/web/lib/item-model-local';
 import { llmTextStreamFn } from '@quanta/web/lib/ai';
 import { getBaseEnvironment } from '@quanta/web/lib/agent/base-environment';
 
@@ -34,6 +38,11 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
   const [messages, setMessages] = useImmer<Message[]>([]);
   const [running, setRunning] = useState(false);
   const [abortController, setAbortController] = useState<AbortController>();
+  const db = useDB();
+  const user = useAuthUser();
+  const space = useSpace();
+  const itemModel =
+    db && user && space ? new ItemModelLocal(db, user.id, space.id) : undefined;
   const _llmTextStreamFn = useServerFn(llmTextStreamFn);
   const chatActions = getChatActions(setMessages);
 
@@ -64,7 +73,12 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
     } as Message;
     const newMessages = [...messages, userMessage];
     const tools = [];
-    const environment = getBaseEnvironment(null, chatActions, files, tools);
+    const environment = getBaseEnvironment(
+      chatActions,
+      files,
+      tools,
+      itemModel,
+    );
     const abortController = new AbortController();
 
     setInput('');

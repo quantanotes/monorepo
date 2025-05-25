@@ -1,10 +1,9 @@
 node_modules
-bun.lock
 yarn.lock
 package-lock.json
 .npmrc
 
-.env*
+.env.*
 
 .app.config.timestamp_*
 

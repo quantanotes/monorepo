@@ -1,5 +1,18 @@
 import html2md from 'html-to-md';
 import { doc } from '@quanta/agent';
+import {
+  begin,
+  end,
+  list,
+  get,
+  goto,
+  click,
+  type,
+  run,
+  waitForNetworkIdle,
+  waitForSelector,
+  waitForEvent,
+} from '@quanta/browser';
 
 const ignoreTags = [
   '',
@@ -38,150 +51,132 @@ const ignoreTags = [
   'code',
 ];
 
-function sendMessageToExtension(message: any): Promise<any> {
-  return new Promise((resolve, reject) => {
-    chrome.runtime.sendMessage(
-      'djpelnepfeeoghemachhkeaefejioloe',
-      message,
-      (response: { ok: any; error: any; data: any }) => {
-        if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError.message);
-        } else if (!response?.ok) {
-          reject(response?.error || 'Unknown error');
-        } else {
-          resolve(response.data);
-        }
-      },
-    );
-  });
-}
-
-async function begin() {
-  const session = await sendMessageToExtension({ action: 'quanta-begin' });
-  return session.sessionId;
-}
-
-function end(sessionId: number) {
-  return sendMessageToExtension({ action: 'quanta-end', sessionId });
-}
-
-async function goto(sessionId: number, url: string) {
-  const result = await sendMessageToExtension({
-    action: 'quanta-goto',
-    sessionId,
-    url,
-  });
-  result.html = html2md(result.html, { ignoreTags });
-  return result;
-}
-
-function click(sessionId: number, elementIndex: number) {
-  return sendMessageToExtension({
-    action: 'quanta-click',
-    sessionId,
-    elementIndex,
-  });
-}
-
-function type(sessionId: number, elementIndex: number, text: string) {
-  return sendMessageToExtension({
-    action: 'quanta-type',
-    sessionId,
-    elementIndex,
-    text,
-  });
-}
-
-function run(sessionId: number, code: string) {
-  return sendMessageToExtension({ action: 'quanta-run', sessionId, code });
-}
-
-async function getAllTabs() {
-  return sendMessageToExtension({ action: 'quanta-get-all-tabs' });
-}
-
-async function useTab(tabId: number) {
-  const session = await sendMessageToExtension({
-    action: 'quanta-use-tab',
-    tabId,
-  });
-  return session.sessionId;
-}
-
 export const browser = {
-  __doc__: `
-    An API to manipulate the user's browser, create tabs and interact with forms/input.
-    Before interacting with a page make sure you observe the output of navigation so you know the indexes of the interactable elements.
-    Do not use click/type until you observe the value of goto otherwise you will hallucinate.
-    You should be using this API in sequential action-observation steps as it is important you read the output of goto before trying to interact with a page. How can you interact with what you can't see?
-    Use browser over search when trying to scrape for structured data/more specific data.
-    You can now work with all browser tabs, not just ones created by this extension.
-  `,
+  __doc__: `An API to manipulate the user's browser, create tabs and interact with forms/input.
+Before interacting with a page make sure you observe the output of navigation so you know the indexes of the interactable elements.
+Do not use click/type until you observe the value of goto otherwise you will hallucinate.
+You should be using this API in sequential action-observation steps as it is important you read the output of goto before trying to interact with a page. How can you interact with what you can't see?
+Use browser over search when trying to scrape for structured data/more specific data.
+For modern web applications, it's crucial to wait for page hydration and dynamic content loading.
+Navigate directly to the page you want to scrape, without attempting to follow internal links.
+Examples:
+// Scraping a linkedin profile
+const tab = await browser.begin();
+await browser.goto(tab, "https://www.linkedin.com/in/johndoe/");
+await browser.wait_for_network_idle(tab);
+const { content } = await browser.get(tab);
+return content;
 
+// Making a tweet
+__doc__tab = 'Current working tab, on the twitter page.'
+tab = await browser.begin();
+await browser.goto(tab, "https://x.com/");
+await browser.wait_for_network_idle(tab);
+const { interactables } = await browser.get(tab);
+// Observe the output from get, to ensure you're typing into the right element.
+return interactables;
+// Continuing from previous observation
+await browser.type(tab, 4, "Hello World!");
+await browser.click(tab, 1);
+`,
   begin: doc(
     'browser.begin',
     begin,
-    `(): Promise<BrowserSession>
-Creates and returns a new browser session ID with a new tab.
-const session = await browser.begin();`,
+    `(): Promise<number>
+Creates and returns a new browser tab.
+const tab = await browser.begin();`,
   ),
 
   end: doc(
     'browser.end',
     end,
-    `(session: BrowserSession): Promise<void>
-Ends an active browser session.
-await browser.end(session);
+    `(tab: number): Promise<void>
+Ends an active browser tab.
+await browser.end(tab);
     `,
   ),
 
-  getAllTabs: doc(
-    'browser.getAllTabs',
-    getAllTabs,
+  list: doc(
+    'browser.list',
+    list,
     `(): Promise<Array<{id: number, url: string, title: string }>>
 Returns information about all open tabs in the browser.
 Observe open tabs in case the user has a tab open that their instructions reference.
-const tabs = await browser.getAllTabs();`,
+const tabs = await browser.list();`,
   ),
 
-  useTab: doc(
-    'browser.useTab',
-    useTab,
-    `(tabId: number): Promise<BrowserSession>
-Creates a session using an existing tab instead of creating a new one.
-const session = await browser.useTab(tabId);`,
+  get: doc(
+    'browser.get',
+    async function (tab: number) {
+      const { html, interactables } = await get(tab);
+      const content = html2md(html, { ignoreTags });
+      return { content, interactables };
+    },
+    `(tab: number): Promise<{ content: string; interactables: any[] }>
+Gets the markdown version of the page content and interactable elements of a tab.
+Always use this before interacting with a page - you can't interact with what you can't see.
+Observe the returned element indexes before using click/type.
+const page = await browser.get(tab);`,
   ),
 
   goto: doc(
     'browser.goto',
     goto,
-    `(session: BrowserSession, url: string): Promise<{ html: string; interactableElements: any[] }>
-Navigates to a URL and returns the page content with interactable elements.
-Important: Observe the returned element indexes before using click/type.
-const page = await browser.goto(session, "https://example.com");`,
+    `(tab: number, url: string)
+Navigates to a URL.
+await browser.goto(tab, "https://example.com");`,
   ),
 
   click: doc(
     'browser.click',
     click,
-    `(session: BrowserSession, elementIndex: number): Promise<void>
-Clicks an element by its index (from goto's response).
-await browser.click(session, 1);`,
+    `(tab: number, elementIndex: number): Promise<void>
+Clicks an element by its index.
+Make sure you observe the output from get, to ensure you're clicking the right element.
+await browser.click(tab, 1);`,
   ),
 
   type: doc(
     'browser.type',
     type,
-    `(session: BrowserSession, elementIndex: number, text: string): Promise<void>
-Types text into an input field by its index (from goto's response).
-await browser.type(session, 0, "Hello World!");`,
+    `(tab: number, elementIndex: number, text: string): Promise<void>
+Types text into an input field by its index.
+Make sure you observe the output from get, to ensure you're typing into the right element.
+await browser.type(tab, 0, "Hello World!");`,
   ),
 
   run: doc(
     'browser.run',
     run,
-    `(session: BrowserSession, code: string): Promise<any>
-Executes JavaScript code in the current page context.
-await browser.run(session, "document.title");`,
+    `(tab: number, code: string): Promise<any>
+Evaluates JavaScript code in the current page context.
+await browser.run(tab, "document.title");`,
+  ),
+
+  wait_for_network_idle: doc(
+    'browser.wait_for_network_idle',
+    waitForNetworkIdle,
+    `(tab: number, timeout?: number): Promise<boolean>
+Waits until there are no network requests for the specified duration.
+Use this after goto() to ensure all initial resources are loaded.
+const isIdle = await browser.wait_for_network_idle(tab, 5000);`,
+  ),
+
+  wait_for_selector: doc(
+    'browser.wait_for_selector',
+    waitForSelector,
+    `(tab: number, selector: string, timeout?: number): Promise<boolean>
+Waits for a DOM element matching the selector to appear.
+Use this to wait for specific content to be loaded or rendered.
+const elementFound = await browser.wait_for_selector(tab, "#main-content", 5000);`,
+  ),
+
+  wait_for_event: doc(
+    'browser.wait_for_event',
+    waitForEvent,
+    `(tab: number, eventName: string, timeout?: number): Promise<boolean>
+Waits for a specific event to occur on the document.
+Use this to wait for page load events or custom application events.
+const eventFired = await browser.wait_for_event(tab, "load", 5000);`,
   ),
 };
