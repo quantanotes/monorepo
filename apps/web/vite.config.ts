@@ -12,18 +12,7 @@ export default defineConfig(({ mode }) => ({
       tsr: {
         generatedRouteTree: 'src/routes.gen.ts',
       },
-
       target: 'netlify-edge',
-
-      nitro: {
-        compatibilityDate: '2025-05-21',
-        rollupConfig: {
-          external: ['cloudflare:sockets'],
-          output: {
-            format: 'es',
-          },
-        },
-      },
     }),
 
     tsconfigPaths({ projects: ['../../tsconfig.json'] }),

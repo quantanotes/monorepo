@@ -19,6 +19,5 @@ package-lock.json
 .vercel
 .wrangler
 dist
-wrangler.toml
 
-.vscode/*
+.vscode
