@@ -4,7 +4,7 @@ import { cache } from '@quanta/cache';
 export const sessionStore = {
   get: async (key: string) => {
     const value = await cache.get(key);
-    return typeof value === 'string' ? value : null;
+    return JSON.stringify(value);
   },
   set: async (key: string, value: unknown, ttl?: number) => {
     if (ttl) {

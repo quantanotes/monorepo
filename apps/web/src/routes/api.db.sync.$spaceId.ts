@@ -1,11 +1,11 @@
 import { json } from '@tanstack/react-start';
 import type { PgQueryResultHKT, PgTransaction } from 'drizzle-orm/pg-core';
 import { snakeToCamel } from '@quanta/utils/snake-to-camel';
-import { and, eq, TablesRelationalConfig } from '@quanta/db/drizzle';
-import { ChangeSet, schema, tables } from '@quanta/db/local';
-import { db } from '@quanta/db/remote';
-import { getSpaceWhereOwner } from '@quanta/web/lib/space-model';
 import { auth } from '@quanta/auth/server';
+import { and, eq, TablesRelationalConfig } from '@quanta/db/drizzle';
+import { ChangeSet, tables } from '@quanta/db/local';
+import { db, schema } from '@quanta/db/remote';
+import { getSpaceWhereOwner } from '@quanta/web/lib/space-model';
 
 export const ServerRoute = createServerFileRoute().methods({
   POST: async ({ request, params }) => {
@@ -86,11 +86,13 @@ async function applyChangesOnTable<
   }
 }
 
-function buildChanges(row: Record<string, unknown>, withPks?: string[]) {
+function buildChanges(row: Record<string, unknown>, pks?: string[]) {
   let modifiedColumns = row.modifiedColumns as string[];
-  modifiedColumns = (
-    withPks ? [...modifiedColumns, ...withPks] : modifiedColumns
-  ).map(snakeToCamel);
+
+  modifiedColumns = (pks ? [...modifiedColumns, ...pks] : modifiedColumns).map(
+    snakeToCamel,
+  );
+
   return Object.keys(row)
     .filter((key) => modifiedColumns.includes(key))
     .reduce(

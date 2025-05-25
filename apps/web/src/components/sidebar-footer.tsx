@@ -52,7 +52,7 @@ export function SidebarFooter({ isCollapsed = false }: SidebarFooterProps) {
             variant="ghost"
             className={`text-muted-foreground size-8 ${!isCollapsed ? 'w-full justify-start' : 'rounded-full'}`}
           >
-            <Avatar className="size-8 text-xs">
+            <Avatar className="size-6 text-xs">
               <AvatarImage src={user.image ?? ''} />
               <AvatarFallback>
                 {user.username?.[0]?.toUpperCase()}
