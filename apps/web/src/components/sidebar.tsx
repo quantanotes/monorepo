@@ -32,7 +32,7 @@ export function Sidebar({
   const [ref, { width }] = useMeasure<HTMLDivElement>();
   const isCollapsed = width <= 56;
 
-  const handleCreateItem = async () => {
+  async function handleCreateItem() {
     const item = await itemModel?.createItem({ name: '', content: '' });
     if (item) {
       if (space) {
@@ -44,7 +44,7 @@ export function Sidebar({
         navigate({ to: '/$itemId', params: { itemId: item.id } });
       }
     }
-  };
+  }
 
   return (
     <div className="bg-card/25 flex h-full w-full flex-col p-1" ref={ref}>
@@ -92,37 +92,39 @@ export function Sidebar({
         </div>
       </div>
 
-      <div className="flex flex-col items-center gap-2 py-10">
-        <Button
-          className={`text-muted-foreground size-8 ${!isCollapsed && 'w-full justify-start'} text-base`}
-          variant="ghost"
-          asChild
-        >
-          <Link
-            href={space ? '/s/$spaceId/tags' : '/tags'}
-            params={{ spaceId: space?.id }}
+      {space && (
+        <div className="flex flex-col items-center gap-2 py-10">
+          <Button
+            className={`text-muted-foreground size-8 ${!isCollapsed && 'w-full justify-start'} text-base`}
+            variant="ghost"
+            asChild
           >
-            <Hash className="size-6!" />
-            {!isCollapsed && 'Tags'}
-          </Link>
-        </Button>
+            <Link
+              href={space ? '/s/$spaceId/tags' : '/tags'}
+              params={{ spaceId: space?.id }}
+            >
+              <Hash className="size-6!" />
+              {!isCollapsed && 'Tags'}
+            </Link>
+          </Button>
 
-        <Button
-          className={`text-muted-foreground size-8 ${!isCollapsed && 'w-full justify-start'} text-base`}
-          variant="ghost"
-        >
-          <Brain className="size-6!" />
-          {!isCollapsed && 'Tasks'}
-        </Button>
+          <Button
+            className={`text-muted-foreground size-8 ${!isCollapsed && 'w-full justify-start'} text-base`}
+            variant="ghost"
+          >
+            <Brain className="size-6!" />
+            {!isCollapsed && 'Tasks'}
+          </Button>
 
-        <Button
-          className={`text-muted-foreground size-8 ${!isCollapsed && 'w-full justify-start'} text-base`}
-          variant="ghost"
-        >
-          <Plug className="size-6!" />
-          {!isCollapsed && 'Tools'}
-        </Button>
-      </div>
+          <Button
+            className={`text-muted-foreground size-8 ${!isCollapsed && 'w-full justify-start'} text-base`}
+            variant="ghost"
+          >
+            <Plug className="size-6!" />
+            {!isCollapsed && 'Tools'}
+          </Button>
+        </div>
+      )}
 
       <SidebarPinnedList isCollapsed={isCollapsed} />
 

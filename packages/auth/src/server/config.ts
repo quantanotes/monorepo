@@ -24,7 +24,6 @@ export default {
   },
 
   advanced: {
-    generateId: false,
     database: {
       generateId: false,
     },

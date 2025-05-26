@@ -1,8 +1,8 @@
 import { useLiveQuery } from '@electric-sql/pglite-react';
+import type { ItemTag, TagQuery, TagType } from '@quanta/types';
 import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
 import { and, eq, sql } from '@quanta/db/drizzle';
 import { DB, schema } from '@quanta/db/local';
-import { ItemTag, TagQuery, TagType } from '@quanta/types';
 import {
   flattenItemTagResult,
   flattenItemTagResults,
@@ -37,8 +37,16 @@ export class ItemModelLocal {
     }
   }
 
-  async create({ name, content }: { name: string; content: string }) {
-    return await this.#db.orm
+  async create({
+    name,
+    content,
+    tags,
+  }: {
+    name: string;
+    content: string;
+    tags?: Record<string, { type?: TagType; value?: any }>;
+  }) {
+    const item = await this.#db.orm
       .insert(schema.items)
       .values({
         name,
@@ -48,13 +56,31 @@ export class ItemModelLocal {
       })
       .returning()
       .then((items) => items.at(0));
+
+    if (!item) {
+      return;
+    }
+
+    if (tags) {
+      await this.addTags(item.id, tags);
+    }
+
+    return await this.get(item.id);
   }
 
   async update(
     id: string,
-    { name, content }: { name: string; content: string },
+    {
+      name,
+      content,
+      tags,
+    }: {
+      name: string;
+      content: string;
+      tags?: Record<string, { type?: TagType; value?: any }>;
+    },
   ) {
-    await this.#db.orm
+    const item = await this.#db.orm
       .update(schema.items)
       .set({
         name,
@@ -65,6 +91,16 @@ export class ItemModelLocal {
       )
       .returning()
       .then((items) => items.at(0));
+
+    if (!item) {
+      return;
+    }
+
+    if (tags) {
+      await this.addTags(item.id, tags);
+    }
+
+    return await this.get(item.id);
   }
 
   async delete(id: string) {
@@ -92,6 +128,7 @@ export class ItemModelLocal {
     if (tag.type) {
       value = validateTagValue(value, tag.type);
     }
+
     await this.#db.orm
       .insert(schema.itemTags)
       .values({
@@ -111,10 +148,12 @@ export class ItemModelLocal {
   }
 
   async untag(id: string, tagName: string) {
-    const tag = this.tagModel.getByName(tagName);
+    const tag = await this.tagModel.getByName(tagName);
+
     if (!tag) {
       return;
     }
+
     await this.#db.orm
       .delete(schema.itemTags)
       .where(
@@ -125,6 +164,17 @@ export class ItemModelLocal {
         ),
       )
       .returning();
+  }
+
+  async addTags(
+    id: string,
+    tags: Record<string, { type?: TagType; value?: any }>,
+  ) {
+    Promise.all(
+      Object.entries(tags).map(([tag, { type, value }]) =>
+        this.tag(id, tag, value, type),
+      ),
+    );
   }
 
   useItemLive(id: string) {

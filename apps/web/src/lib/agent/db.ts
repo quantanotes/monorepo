@@ -1,6 +1,6 @@
 import pick from 'lodash/pick';
-import { doc } from '@quanta/agent';
 import type { TagType } from '@quanta/types';
+import { doc } from '@quanta/agent';
 import { ItemModelLocal } from '@quanta/web/lib/item-model-local';
 
 export const db = (itemModel: ItemModelLocal) => {

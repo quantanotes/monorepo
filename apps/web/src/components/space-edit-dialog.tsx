@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@quanta/ui/button';
 import {
   Dialog,
@@ -7,7 +8,6 @@ import {
   DialogTitle,
 } from '@quanta/ui/dialog';
 import { useDeleteSpaceMutation } from '@quanta/web/lib/space-query';
-import { toast } from 'sonner';
 
 interface SpaceEditDialogProps {
   spaceId: string;

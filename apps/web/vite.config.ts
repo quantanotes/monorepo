@@ -2,8 +2,8 @@ import { IncomingMessage } from 'http';
 import { Readable } from 'stream';
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import tailwindcss from '@tailwindcss/vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
 import mkcert from 'vite-plugin-mkcert';
 
 export default defineConfig(({ mode }) => ({
