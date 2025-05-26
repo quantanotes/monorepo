@@ -1,10 +1,7 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { drizzle } from 'drizzle-orm/neon-http';
 
 export const db = drizzle({
-  connection: {
-    url: process.env.DATABASE_URL!,
-    prepare: false,
-  },
+  connection: process.env.DATABASE_URL!,
   casing: 'snake_case',
 });
 

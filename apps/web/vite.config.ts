@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => ({
       tsr: {
         generatedRouteTree: 'src/routes.gen.ts',
       },
-      target: 'bun',
+      target: 'deno-deploy',
     }),
 
     tsconfigPaths({ projects: ['../../tsconfig.json'] }),
