@@ -4,6 +4,7 @@ import { useShape } from '@electric-sql/react';
 import { TagQuery } from '@quanta/types';
 import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
 import {
+  getItemsFn,
   createItemFn,
   updateItemFn,
   deleteItemFn,
@@ -11,6 +12,7 @@ import {
 } from '@quanta/web/lib/item-fns';
 
 export function useItemModelRemote() {
+  const _getItemsFn = useServerFn(getItemsFn);
   const _createItemFn = useServerFn(createItemFn);
   const _updateItemFn = useServerFn(updateItemFn);
   const _deleteItemFn = useServerFn(deleteItemFn);
@@ -33,6 +35,8 @@ export function useItemModelRemote() {
     return useMemo(() => snakeToCamlObject(itemShape.data), [itemShape]);
   };
 
+  const getItems = (ids: string[]) => _getItemsFn({ data: { ids } });
+
   const createItem = (data: { name: string; content: string }) =>
     _createItemFn({ data });
 
@@ -51,6 +55,7 @@ export function useItemModelRemote() {
   return {
     useItemLive,
     useItemsLive,
+    getItems,
     createItem,
     updateItem,
     deleteItem,

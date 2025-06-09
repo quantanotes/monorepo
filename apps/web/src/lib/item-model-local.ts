@@ -1,7 +1,7 @@
 import { useLiveQuery } from '@electric-sql/pglite-react';
 import type { ItemTag, TagQuery, TagType } from '@quanta/types';
 import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
-import { and, eq, exists, sql } from '@quanta/db/drizzle';
+import { and, eq, exists, inArray, sql } from '@quanta/db/drizzle';
 import { DB, schema } from '@quanta/db/local';
 import {
   flattenItemTagResult,
@@ -20,13 +20,13 @@ export class ItemModelLocal {
   readonly #db: DB;
   readonly #spaceId: string;
   readonly #userId: string;
-  readonly tagModel: TagModel;
+  readonly #tagModel: TagModel;
 
   constructor(db: DB, userId: string, spaceId: string) {
     this.#db = db;
     this.#spaceId = spaceId;
     this.#userId = userId;
-    this.tagModel = new TagModel(db.orm, spaceId);
+    this.#tagModel = new TagModel(db.orm, spaceId);
   }
 
   async get(id: string) {
@@ -35,6 +35,11 @@ export class ItemModelLocal {
     if (item) {
       return flattenItemTagResult(item);
     }
+  }
+
+  async getMany(ids: string[]) {
+    const items = await this.getQuery('', inArray(schema.items.id, ids));
+    return items.map(flattenItemTagResult);
   }
 
   async create({
@@ -124,7 +129,7 @@ export class ItemModelLocal {
   }
 
   async tag(id: string, tagName: string, value?: any, type?: TagType) {
-    const tag = await this.tagModel.getOrCreate(tagName, type);
+    const tag = await this.#tagModel.getOrCreate(tagName, type);
     if (tag.type) {
       value = validateTagValue(value, tag.type);
     }
@@ -148,7 +153,7 @@ export class ItemModelLocal {
   }
 
   async untag(id: string, tagName: string) {
-    const tag = await this.tagModel.getByName(tagName);
+    const tag = await this.#tagModel.getByName(tagName);
 
     if (!tag) {
       return;
@@ -207,7 +212,7 @@ export class ItemModelLocal {
     );
   }
 
-  getQuery(id: string) {
+  getQuery(id: string, filter?: any) {
     return this.#db.orm
       .select({
         item: schema.items,
@@ -231,7 +236,7 @@ export class ItemModelLocal {
       .leftJoin(schema.tags, eq(schema.itemTags.tagId, schema.tags.id))
       .where(
         and(
-          eq(schema.items.id, id),
+          filter || eq(schema.items.id, id),
           eq(schema.items.spaceId, this.#spaceId),
           // eq(schema.items.isDeleted, false),
           // eq(schema.tags.isDeleted, false),

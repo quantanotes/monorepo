@@ -10,6 +10,13 @@ export const getItemFn = createServerFn()
     return await model.get(data.id);
   });
 
+export const getItemsFn = createServerFn()
+  .validator(z.object({ ids: z.array(z.string()) }))
+  .handler(async ({ data }) => {
+    const model = new ItemModelRemote('');
+    return await model.getMany(data.ids);
+  });
+
 export const createItemFn = createServerFn()
   .validator(
     z.object({

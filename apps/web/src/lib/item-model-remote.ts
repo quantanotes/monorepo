@@ -1,4 +1,4 @@
-import { eq, and, sql, isNull } from '@quanta/db/drizzle';
+import { eq, and, sql, isNull, inArray } from '@quanta/db/drizzle';
 import { db, DB, schema } from '@quanta/db/remote';
 import { TagQuery } from '@quanta/types';
 import {
@@ -14,6 +14,35 @@ export class ItemModelRemote {
   constructor(userId: string) {
     this.#db = db;
     this.#userId = userId;
+  }
+
+  async getMany(ids: string[]) {
+    return await this.#db
+      .select({
+        item: schema.items,
+        tags: sql<any>`
+          jsonb_agg(
+            CASE WHEN tags.id IS NOT NULL THEN
+              jsonb_build_object(
+                'id', tags.id,
+                'name', tags.name,
+                'color', tags.color,
+                'type', tags.type,
+                'value', item_tags.value,
+                'tagType', item_tags.type
+              )
+            ELSE NULL END
+          )
+        `,
+        username: schema.users.username,
+      })
+      .from(schema.items)
+      .groupBy(schema.items.id, schema.users.username)
+      .leftJoin(schema.users, eq(schema.items.authorId, schema.users.id))
+      .leftJoin(schema.itemTags, eq(schema.items.id, schema.itemTags.itemId))
+      .leftJoin(schema.tags, eq(schema.itemTags.tagId, schema.tags.id))
+      .where(and(inArray(schema.items.id, ids), isNull(schema.items.spaceId)))
+      .then((items) => items.map(flattenItemTagResult));
   }
 
   async get(id: string) {
@@ -100,7 +129,7 @@ export class ItemModelRemote {
     const textSimilarityColumn = {
       text_similarity: sql<number>`
         ts_rank_cd(
-          setweight(to_tsvector('english', ${schema.items.name}), 'A') || 
+          setweight(to_tsvector('english', ${schema.items.name}), 'A') ||
           setweight(to_tsvector('english', ${schema.items.content}), 'B'),
           plainto_tsquery('english', ${query})
         ) AS text_similarity

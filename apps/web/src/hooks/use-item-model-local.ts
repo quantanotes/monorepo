@@ -24,6 +24,8 @@ export function useItemModelLocal() {
     offset: number = 0,
   ) => model.useSearchLive(query, tags, limit, offset);
 
+  const getItems = (ids: string[]) => model.getMany(ids);
+
   const createItem = (data: { name: string; content: string }) =>
     model.create(data);
 
@@ -47,6 +49,7 @@ export function useItemModelLocal() {
   return {
     useItemLive,
     useSearchItemsLive,
+    getItems,
     createItem,
     updateItem,
     deleteItem,

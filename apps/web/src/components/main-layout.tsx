@@ -18,37 +18,37 @@ export function MainLayout({ children }: React.PropsWithChildren) {
   const [measureRef, { width }] = useMeasure<HTMLDivElement>();
   const [showSearch, setShowSearch] = useState(false);
 
-  function getRelativeWidth(widthPx: number) {
+  useEffect(() => {
+    setShowSearch(false);
+  }, [location.pathname]);
+
+  const getRelativeWidth = (widthPx: number) => {
     if (!width) {
       return 0;
     }
     const availableWidth = width - 16 - 8;
     return (widthPx / availableWidth) * 100;
-  }
+  };
 
-  function toggleSidebar() {
+  const toggleSidebar = () => {
     if (sidebarRef.current?.isExpanded()) {
       sidebarRef.current?.resize(getRelativeWidth(40));
     } else {
       sidebarRef.current?.resize(getRelativeWidth(256));
     }
-  }
+  };
 
-  function toggleRightPanel() {
+  const toggleRightPanel = () => {
     if (rightPanelRef.current?.isExpanded()) {
       rightPanelRef.current?.resize(0);
     } else {
-      rightPanelRef.current?.resize(getRelativeWidth(256));
+      rightPanelRef.current?.resize(getRelativeWidth(432));
     }
-  }
+  };
 
-  function toggleSearch() {
+  const toggleSearch = () => {
     setShowSearch(!showSearch);
-  }
-
-  useEffect(() => {
-    setShowSearch(false);
-  }, [location.pathname]);
+  };
 
   return (
     <div ref={measureRef} className="h-screen">
@@ -80,7 +80,7 @@ export function MainLayout({ children }: React.PropsWithChildren) {
         <ResizablePanel
           ref={rightPanelRef}
           className="bg-card/10 relative z-50 flex h-full flex-col"
-          minSize={getRelativeWidth(320)}
+          minSize={getRelativeWidth(336)}
           maxSize={getRelativeWidth(768)}
           collapsedSize={0}
           collapsible

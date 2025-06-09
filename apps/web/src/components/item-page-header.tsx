@@ -1,12 +1,10 @@
-import { Link } from '@tanstack/react-router';
-import { X } from 'lucide-react';
-import { Button } from '@quanta/ui/button';
 import { useSpace } from '@quanta/web/hooks/use-space';
 import { PinButton } from '@quanta/web/components/pin-button';
 import { LikeButton } from '@quanta/web/components/like-button';
 import { ItemPageMenu } from '@quanta/web/components/item-page-menu';
 
 interface ItemHeaderProps {
+  itemId: string;
   isPinned: boolean;
   isLiked?: boolean;
   pinCount?: number;
@@ -17,6 +15,7 @@ interface ItemHeaderProps {
 }
 
 export function ItemPageHeader({
+  itemId,
   isPinned,
   isLiked,
   pinCount,
@@ -46,6 +45,7 @@ export function ItemPageHeader({
       )}
 
       <ItemPageMenu
+        itemId={itemId}
         isPinned={isPinned}
         onTogglePin={onTogglePin}
         onDelete={onDelete}

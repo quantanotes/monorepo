@@ -69,11 +69,15 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
     }
 
     const abortController = new AbortController();
-    const files = attachments.map((a) => a.file).filter((a) => a) as File[];
+
+    const itemIds = attachments.map((a) => a.itemId).filter((a) => a);
+    const items = await itemModel!.getItems(itemIds as string[]);
+    const files = attachments.map((a) => a.file).filter((a) => a);
     const tools = [];
+
     const environment = getBaseEnvironment(
       chatActions,
-      files,
+      files as File[],
       tools,
       itemModel,
     );

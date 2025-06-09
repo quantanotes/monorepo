@@ -59,8 +59,6 @@ function http2(): Plugin {
     name: 'http2',
     configureServer(server) {
       server.middlewares.use((req, _, next) => {
-        console.log(req.url);
-
         if (req.httpVersionMajor >= 2 && req.headers[':method']) {
           const chunks: Buffer[] = [];
 

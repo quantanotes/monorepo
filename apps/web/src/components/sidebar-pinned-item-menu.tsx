@@ -10,27 +10,35 @@ interface SidebarPinnedProps {
 
 export function SidebarPinnedItemMenu({ pinned }: SidebarPinnedProps) {
   const navigate = useNavigate();
-  const { togglePinItem } = usePinned();
-  const { deleteItem } = useItemModel();
-  const { itemId, spaceId } = useParams({ strict: false });
+  const { togglePinItem } = usePinned()!;
+  const { deleteItem } = useItemModel()!;
+  const { itemId: pageItemId, spaceId: pageSpaceId } = useParams({
+    strict: false,
+  });
+  const itemId = pinned?.itemId!;
 
   const onDeleteItem = () => {
-    if (itemId === pinned.itemId) {
-      if (spaceId) {
-        navigate({ to: '/s/$spaceId', params: { spaceId } });
+    if (pageItemId === itemId) {
+      if (pageSpaceId) {
+        navigate({ to: '/s/$spaceId', params: { spaceId: pageSpaceId } });
       } else {
         navigate({ to: '/' });
       }
     }
-    deleteItem(pinned.itemId);
+    deleteItem(itemId);
+  };
+
+  const onPinItem = () => {
+    togglePinItem(itemId);
   };
 
   return (
     <ItemPageMenu
       className="peer-hover/menu-button:text-accent-foreground absolute right-1 size-8 opacity-0 transition-opacity group-hover/menu-item:opacity-100"
-      isPinned={true}
-      onTogglePin={() => togglePinItem(pinned.itemId)}
+      itemId={itemId}
+      onTogglePin={onPinItem}
       onDelete={onDeleteItem}
+      isPinned={true}
     />
   );
 }

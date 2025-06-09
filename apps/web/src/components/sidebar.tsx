@@ -64,6 +64,7 @@ export function Sidebar({
           isCollapsed={isCollapsed}
           onClick={toggleSidebar}
         />
+
         <div
           className={`flex items-center gap-2 ${
             isCollapsed ? 'flex-reverse flex-col' : 'flex-row'

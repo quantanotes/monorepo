@@ -33,6 +33,7 @@ export function ItemPage({
       title={item.name}
       headerMenu={
         <ItemPageHeader
+          itemId={item.id}
           isPinned={isPinned}
           isLiked={isLiked}
           likeCount={item.likeCount}

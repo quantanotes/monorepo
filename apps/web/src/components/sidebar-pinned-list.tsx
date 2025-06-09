@@ -1,4 +1,3 @@
-import { PinIcon } from 'lucide-react';
 import { useSpace } from '@quanta/web/hooks/use-space';
 import { usePinned } from '@quanta/web/contexts/pinned';
 import { SidebarPinned } from '@quanta/web/components/sidebar-pinned';
