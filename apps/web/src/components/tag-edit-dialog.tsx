@@ -3,8 +3,8 @@ import { Plus, Save, X } from 'lucide-react';
 import { Button } from '@quanta/ui/button';
 import { Dialog, DialogContent, DialogHeader } from '@quanta/ui/dialog';
 import { Input } from '@quanta/ui/input';
-import { useTagModelLocal } from '@quanta/web/hooks/use-tag-model-local';
 import { Badge } from '@quanta/ui/badge';
+import { useTagModelLocal } from '@quanta/web/hooks/use-tag-model-local';
 
 interface TagEditDialogProps {
   name: string;

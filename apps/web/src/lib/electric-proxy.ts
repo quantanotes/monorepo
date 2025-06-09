@@ -20,8 +20,10 @@ export async function proxyElectricRequest(
   url.searchParams.set('source_secret', process.env.ELECTRIC_SECRET!);
 
   let res = await fetch(url.toString());
+
   if (res.headers.get(`content-encoding`)) {
     const headers = new Headers(res.headers);
+
     headers.delete(`content-encoding`);
     headers.delete(`content-length`);
     headers.delete(`transfer-encoding`);

@@ -1,6 +1,6 @@
-import { TextEditor } from '@quanta/web/components/text-editor';
 import { Item } from '@quanta/types';
 import { ItemProvider } from '@quanta/web/contexts/item';
+import { TextEditor } from '@quanta/web/components/text-editor';
 
 interface TextProps {
   item: Item;

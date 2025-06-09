@@ -1,7 +1,7 @@
+import { ScrollArea } from '@quanta/ui/scroll-area';
 import { HumanChatProvider } from '@quanta/web/contexts/human-chat';
 import { HumanChatMessages } from '@quanta/web/components/human-chat-messages';
 import { HumanChatInput } from '@quanta/web/components/human-chat-input';
-import { ScrollArea } from '@quanta/ui/scroll-area';
 
 export function HumanChat() {
   return (

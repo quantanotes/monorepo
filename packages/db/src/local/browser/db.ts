@@ -5,11 +5,12 @@ var db: Promise<DB>;
 
 export function getDB(): Promise<DB> {
   if (typeof window === 'undefined') {
-    return undefined!;
+    return (async () => null as unknown as DB)();
   }
-  if (db) {
-    return db;
+
+  if (!db) {
+    db = initDB();
   }
-  db = initDB();
+
   return db;
 }

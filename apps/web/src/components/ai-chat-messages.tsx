@@ -15,7 +15,7 @@ export function AiChatMessages() {
           )}
         </div>
       ))}
-      <div className="h-96" />
+      <div className="h-[768px]" />
     </div>
   );
 }

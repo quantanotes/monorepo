@@ -1,5 +1,4 @@
 import { createContext, useContext } from 'react';
-import { useDB } from '@quanta/web/contexts/db';
 import { useSpace } from '@quanta/web/hooks/use-space';
 import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
 import { usePinnedRemote } from '@quanta/web/hooks/use-pinned-remote';
@@ -12,7 +11,7 @@ type PinnedContextType =
 const PinnedContext = createContext<PinnedContextType>(null!);
 
 // TODO: open auth dialog when toggleitemPin
-const emptyContextValue = {
+export const emptyPinnedContextValue = {
   pinned: [],
   isItemPinned: (id: string) => false,
   togglePinItem: async (id: string) => void 0,
@@ -21,27 +20,26 @@ const emptyContextValue = {
 export function PinnedProvider({ children }: React.PropsWithChildren) {
   const user = useAuthUser();
   const space = useSpace();
-  const db = useDB();
 
   if (!user) {
-    return <PinnedContext value={emptyContextValue}>{children}</PinnedContext>;
-  } else if (space && db) {
+    return (
+      <PinnedContext value={emptyPinnedContextValue}>{children}</PinnedContext>
+    );
+  } else if (space) {
     return <PinnedLocalProvider>{children}</PinnedLocalProvider>;
-  } else if (!space) {
-    return <PinnedRemoteProvider>{children}</PinnedRemoteProvider>;
   } else {
-    return <></>;
+    return <PinnedRemoteProvider>{children}</PinnedRemoteProvider>;
   }
 }
 
 function PinnedRemoteProvider({ children }: React.PropsWithChildren) {
-  const remote = usePinnedRemote();
-  return <PinnedContext value={remote}>{children}</PinnedContext>;
+  const pinned = usePinnedRemote();
+  return <PinnedContext value={pinned}>{children}</PinnedContext>;
 }
 
 function PinnedLocalProvider({ children }: React.PropsWithChildren) {
-  const local = usePinnedLocal();
-  return <PinnedContext value={local}>{children}</PinnedContext>;
+  const pinned = usePinnedLocal();
+  return <PinnedContext value={pinned}>{children}</PinnedContext>;
 }
 
 export function usePinned() {

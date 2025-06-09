@@ -1,6 +1,5 @@
 import { useHumanChat } from '@quanta/web/contexts/human-chat';
 import { HumanChatMessage } from '@quanta/web/components/human-chat-message';
-import { Loader2 } from 'lucide-react';
 
 export function HumanChatMessages() {
   const { comments, deleteComment } = useHumanChat();
@@ -14,7 +13,7 @@ export function HumanChatMessages() {
           onDelete={deleteComment}
         />
       ))}
-      <div className="h-96" />
+      <div className="h-[768px]" />
     </div>
   );
 }

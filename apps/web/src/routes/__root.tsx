@@ -65,6 +65,7 @@ export const Route = createRootRouteWithContext<{
 
 function RootComponent() {
   const { unauthenticated } = Route.useSearch();
+
   return (
     <RootDocument>
       <DBProvider>

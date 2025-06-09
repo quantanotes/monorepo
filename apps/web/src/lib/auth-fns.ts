@@ -1,14 +1,13 @@
 import { createServerFn } from '@tanstack/react-start';
-import { redirect } from '@tanstack/react-router';
-import { getSessionFromRequestContext } from '@quanta/web/lib/auth';
+import {
+  getSessionFromRequestContext,
+  throwUnauthenticatedRedirect,
+} from '@quanta/web/lib/auth';
 
 export const assertSessionFn = createServerFn().handler(async () => {
   const session = await getSessionFromRequestContext();
   if (!session) {
-    throw redirect({
-      to: '.',
-      search: { unauthenticated: true },
-    });
+    throwUnauthenticatedRedirect();
   }
-  return session;
+  return session!;
 });

@@ -1,10 +1,4 @@
-import {
-  createContext,
-  SVGProps,
-  useContext,
-  useState,
-  useEffect,
-} from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@quanta/ui/button';
 import {
@@ -40,12 +34,12 @@ export function AuthDialogProvider({
     setIsOpen(open);
   }, [open]);
 
-  function handleOpenChange(open: boolean) {
+  const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
       navigate({ to: '.', search: { unauthenticated: undefined } });
     }
-  }
+  };
 
   return (
     <AuthDialogContext.Provider value={{ isOpen, setIsOpen: handleOpenChange }}>
@@ -87,7 +81,7 @@ function AuthDialog() {
   );
 }
 
-function GoogleIcon(props: SVGProps<SVGSVGElement>) {
+function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

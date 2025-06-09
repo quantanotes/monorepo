@@ -27,12 +27,6 @@ export default defineConfig(({ mode }) => ({
     exclude: ['@electric-sql/pglite', 'react-resizable-panels'],
   },
 
-  resolve: {
-    alias: {
-      flowtoken: 'flowtoken/src',
-    },
-  },
-
   worker: {
     format: 'es',
   },

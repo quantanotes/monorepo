@@ -6,21 +6,17 @@ import { useDB } from '@quanta/web/contexts/db';
 import { useSpace } from '@quanta/web/hooks/use-space';
 
 export function usePinnedLocal() {
-  const space = useSpace();
-  const db = useDB();
-
-  if (!space || !db) {
-    return;
-  }
+  const space = useSpace()!;
+  const db = useDB()!;
 
   const model = new PinnedModel(db.orm, space.id, null);
-  const pinnedQuery = model.getAllQuery().toSQL();
-  const pinned =
-    useLiveQuery(pinnedQuery.sql, pinnedQuery.params)?.rows.map(
-      snakeToCamlObject,
-    ) || [];
+
+  const { sql, params } = model.getAllQuery().toSQL();
+
+  const pinned = useLiveQuery(sql, params)?.rows.map(snakeToCamlObject) || [];
 
   const togglePinItem = (itemId: string) => model.togglePinItem(itemId);
+
   const togglePinTag = (tagId: string) => model.togglePinTag(tagId);
 
   const isItemPinned = useCallback(

@@ -5,11 +5,11 @@ import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
 import { useSpace } from '@quanta/web/hooks/use-space';
 
 export function useItemModelLocal() {
-  const space = useSpace();
-  const user = useAuthUser();
-  const db = useDB();
+  const space = useSpace()!;
+  const user = useAuthUser()!;
+  const db = useDB()!;
 
-  if (!space || !user || !db) {
+  if (!db) {
     return;
   }
 

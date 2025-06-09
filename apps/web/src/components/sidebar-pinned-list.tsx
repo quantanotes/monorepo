@@ -7,7 +7,7 @@ interface SidebarPinnedListProps {
 }
 
 export function SidebarPinnedList({ isCollapsed }: SidebarPinnedListProps) {
-  const { pinned } = usePinned()!;
+  const pinned = usePinned()!;
   const space = useSpace();
 
   if (isCollapsed) {
@@ -16,7 +16,7 @@ export function SidebarPinnedList({ isCollapsed }: SidebarPinnedListProps) {
 
   return (
     <div className="flex flex-col">
-      {pinned.map((pinned) => (
+      {pinned?.pinned.map((pinned) => (
         <SidebarPinned key={pinned.id} pinned={pinned} spaceId={space?.id} />
       ))}
     </div>

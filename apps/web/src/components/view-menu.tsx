@@ -1,5 +1,4 @@
-import { ChevronDown } from 'lucide-react';
-import { Button } from '@quanta/ui/button';
+import { buttonVariants } from '@quanta/ui/button';
 import {
   Select,
   SelectContent,
@@ -17,7 +16,7 @@ interface ViewMenuProps {
 export function ViewMenu({ views, currentView, onViewChange }: ViewMenuProps) {
   return (
     <Select onValueChange={onViewChange} value={currentView}>
-      <SelectTrigger>
+      <SelectTrigger className="border-0">
         <SelectValue placeholder="View" />
       </SelectTrigger>
       <SelectContent>

@@ -14,8 +14,8 @@ export const Route = createFileRoute({
 function RouteComponent() {
   const { limit, tags = [], query = '', offset } = Route.useSearch();
   const { useSearchItemsLive } = useItemModelLocal()!;
-  const items = useSearchItemsLive(query, tags, limit, offset);
   const [view, setView] = useState('grid');
+  const items = useSearchItemsLive(query, tags, limit, offset);
 
   return (
     <PageLayout

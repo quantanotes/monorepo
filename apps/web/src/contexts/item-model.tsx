@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext } from 'react';
+import { createContext, useContext } from 'react';
 import { useSpace } from '@quanta/web/hooks/use-space';
 import { useDB } from '@quanta/web/contexts/db';
 import { useItemModelRemote } from '@quanta/web/hooks/use-item-model-remote';
@@ -10,21 +10,20 @@ type ItemModelContextType =
 
 const ItemModelContext = createContext<ItemModelContextType>(null!);
 
-export function ItemModelProvider({ children }: { children: ReactNode }) {
+export function ItemModelProvider({ children }: React.PropsWithChildren) {
   const space = useSpace();
   const db = useDB();
 
   if (space && db) {
     return <ItemModelLocalProvider>{children}</ItemModelLocalProvider>;
-  } else if (!space) {
-    return <ItemModelRemoteProvider>{children}</ItemModelRemoteProvider>;
   } else {
-    return <></>;
+    return <ItemModelRemoteProvider>{children}</ItemModelRemoteProvider>;
   }
 }
 
-function ItemModelRemoteProvider({ children }: { children: ReactNode }) {
+function ItemModelRemoteProvider({ children }: React.PropsWithChildren) {
   const remote = useItemModelRemote();
+
   return (
     <ItemModelContext.Provider value={remote}>
       {children}
@@ -32,8 +31,9 @@ function ItemModelRemoteProvider({ children }: { children: ReactNode }) {
   );
 }
 
-function ItemModelLocalProvider({ children }: { children: ReactNode }) {
+function ItemModelLocalProvider({ children }: React.PropsWithChildren) {
   const local = useItemModelLocal();
+
   return (
     <ItemModelContext.Provider value={local}>
       {children}

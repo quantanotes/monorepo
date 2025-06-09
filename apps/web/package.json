@@ -43,6 +43,7 @@
     "ai": "^5.0.0-canary.24",
     "exa-js": "^1.8.8",
     "flowtoken": "^1.0.40",
+    "framer-motion": "^12.16.0",
     "html-to-md": "^0.8.8",
     "immer": "^10.1.1",
     "masonic": "^4.1.0",

@@ -1,4 +1,4 @@
-import { useNavigate, Link } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import {
   Brain,
   Hash,
@@ -95,7 +95,7 @@ export function Sidebar({
 
       <div className="flex flex-col items-center gap-2 py-8">
         <SidebarLink
-          href={space ? '/s/$spaceId/tags' : '/'}
+          href={space ? '/s/$spaceId' : '/'}
           params={{ spaceId: space?.id }}
           icon={<Home className="size-6!" />}
           label="Home"

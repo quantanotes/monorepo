@@ -35,7 +35,7 @@ export function AiChatInput() {
   return (
     <div className="bg-card flex flex-col gap-2 rounded-md">
       <div
-        className="rounded-lg transition-all duration-200"
+        className="rounded-md transition-all duration-200"
         style={{
           boxShadow: running
             ? `0 0 16px 8px hsla(${chatShadowHue}, 80%, 80%, 0.3)`

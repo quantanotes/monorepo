@@ -1,5 +1,5 @@
-import { Button } from '@quanta/ui/button';
 import { Heart } from 'lucide-react';
+import { Button } from '@quanta/ui/button';
 
 export interface LikeButtonProps {
   isLiked?: boolean;

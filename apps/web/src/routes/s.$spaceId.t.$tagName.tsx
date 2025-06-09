@@ -17,9 +17,9 @@ export const Route = createFileRoute({
 });
 
 function RouteComponent() {
+  const { tagName } = Route.useParams();
   const navigate = useNavigate();
   const space = useSpace()!;
-  const { tagName } = Route.useParams();
   const { useTagChildrenLive, deleteTag } = useTagModelLocal();
   const { useSearchItemsLive } = useItemModelLocal()!;
   const { isTagPinned, togglePinTag } = usePinnedLocal()!;
@@ -32,16 +32,6 @@ function RouteComponent() {
       title={`#${tagName}`}
       headerMenu={
         <>
-          <TagPageMenu
-            tagName={tagName}
-            isPinned={isTagPinned(tagName)}
-            onTogglePin={() => togglePinTag(tagName)}
-            onDelete={() => {
-              deleteTag(tagName);
-              navigate({ to: '/s/$spaceId', params: { spaceId: space.id } });
-            }}
-          />
-
           <PinButton
             isPinned={isTagPinned(tagName)}
             onTogglePin={() => togglePinTag(tagName)}
@@ -53,14 +43,15 @@ function RouteComponent() {
             onViewChange={setView}
           />
 
-          <Button className="size-8 p-2!" variant="ghost" asChild>
-            <Link
-              to={space ? '/s/$spaceId' : '/'}
-              params={space ? { spaceId: space.id } : undefined}
-            >
-              <X className="size-5" />
-            </Link>
-          </Button>
+          <TagPageMenu
+            tagName={tagName}
+            isPinned={isTagPinned(tagName)}
+            onTogglePin={() => togglePinTag(tagName)}
+            onDelete={() => {
+              deleteTag(tagName);
+              navigate({ to: '/s/$spaceId', params: { spaceId: space.id } });
+            }}
+          />
         </>
       }
     >

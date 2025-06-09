@@ -1,16 +1,16 @@
-import { useHumanChat } from '@quanta/web/contexts/human-chat';
+import { useCallback } from 'react';
+import { Send } from 'lucide-react';
 import { Button } from '@quanta/ui/button';
 import { AutosizeTextarea } from '@quanta/ui/autoresize-textarea';
-import { Send } from 'lucide-react';
-import { useCallback } from 'react';
+import { useHumanChat } from '@quanta/web/contexts/human-chat';
 
 export function HumanChatInput() {
   const { value, setValue, addComment } = useHumanChat();
 
   const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
+    (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
         addComment();
       }
     },

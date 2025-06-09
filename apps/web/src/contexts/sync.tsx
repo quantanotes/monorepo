@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { useParams } from '@tanstack/react-router';
 import { startDBSync } from '@quanta/db/local';
 import { useDB } from '@quanta/web/contexts/db';
-import { useSpace } from '../hooks/use-space';
+import { useSpace } from '@quanta/web/hooks/use-space';
 
 export function SyncProvider({ children }: React.PropsWithChildren) {
   const space = useSpace();
+
   if (!space) {
     return children;
   } else {

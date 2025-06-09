@@ -1,4 +1,4 @@
-import { AnimatedMarkdown } from 'flowtoken';
+import { AnimatedMarkdown } from 'flowtoken/src';
 import { Message } from '@quanta/agent';
 
 interface AiChatUserMessageProps {
@@ -13,7 +13,11 @@ export function AiChatUserMessage({ message }: AiChatUserMessageProps) {
           {message.parts.map(
             (part, index) =>
               part.type === 'text' && (
-                <AnimatedMarkdown key={index} content={part.content} />
+                <AnimatedMarkdown
+                  animationDuration="0.3"
+                  key={index}
+                  content={part.content}
+                />
               ),
           )}
         </div>

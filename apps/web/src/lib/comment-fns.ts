@@ -14,10 +14,8 @@ export const addCommentFn = createServerFn()
   )
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
-    await new CommendModel(db, data.spaceId ?? null, session.user.id).add(
-      data.content,
-      data.itemId,
-    );
+    const model = new CommendModel(db, data.spaceId ?? null, session.user.id);
+    return model.add(data.content, data.itemId);
   });
 
 export const deleteCommentFn = createServerFn()
@@ -29,9 +27,8 @@ export const deleteCommentFn = createServerFn()
   )
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
-    await new CommendModel(db, data.spaceId ?? null, session.user.id).delete(
-      data.id,
-    );
+    const model = new CommendModel(db, data.spaceId ?? null, session.user.id);
+    return await model.delete(data.id);
   });
 
 export const getItemCommentsFn = createServerFn()
@@ -43,11 +40,8 @@ export const getItemCommentsFn = createServerFn()
   )
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
-    return await new CommendModel(
-      db,
-      data.spaceId ?? null,
-      session.user.id,
-    ).getWhereItem(data.id);
+    const model = new CommendModel(db, data.spaceId ?? null, session.user.id);
+    return await model.getWhereItem(data.id);
   });
 
 export const getSpaceCommentsFn = createServerFn()
@@ -58,5 +52,6 @@ export const getSpaceCommentsFn = createServerFn()
   )
   .handler(async ({ data }) => {
     const session = await assertSessionFn();
-    return await new CommendModel(db, data.id, session.user.id).getWhereSpace();
+    const model = new CommendModel(db, data.id, session.user.id);
+    return model.getWhereSpace();
   });
