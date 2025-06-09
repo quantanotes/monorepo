@@ -36,6 +36,7 @@ export function SidebarFooter({ isCollapsed = false }: SidebarFooterProps) {
           variant="ghost"
           className={`text-muted-foreground size-8 text-base ${!isCollapsed && 'w-full justify-start'}`}
           onClick={() => setAuthDialogOpen(true)}
+          key={isCollapsed.toString()}
         >
           <LogIn className="size-6!" />
           {!isCollapsed && 'Sign In'}
@@ -51,6 +52,7 @@ export function SidebarFooter({ isCollapsed = false }: SidebarFooterProps) {
           <Button
             variant="ghost"
             className={`text-muted-foreground size-8 ${!isCollapsed ? 'w-full justify-start' : 'rounded-full'}`}
+            key={isCollapsed.toString()}
           >
             <Avatar className="size-6 text-xs">
               <AvatarImage src={user.image ?? ''} />

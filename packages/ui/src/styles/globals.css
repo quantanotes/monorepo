@@ -33,6 +33,15 @@
   --border: oklch(0.88 0.005 93);
   --input: oklch(0.88 0.005 93);
   --ring: oklch(0.73 0.006 93);
+
+  --card: oklch(0.97 0.004 93 / 25%);
+  --sidebar-foreground: var(--card-foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
 }
 
 .dark {
@@ -54,6 +63,8 @@
   --border: oklch(1 0 0 / 7%);
   --input: oklch(1 0 0 / 10%);
   --ring: oklch(0.43 0.006 93);
+
+  --sidebar: oklch(0.23 0.006 93);
 }
 
 @theme inline {
@@ -84,6 +95,15 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
 }
 
 * {
@@ -104,4 +124,13 @@ body {
 
 .collaboration-cursor__label {
   @apply absolute -top-[1.4em] -left-[1px] px-[0.1rem] py-[0.3rem] text-sm font-normal whitespace-nowrap select-none;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

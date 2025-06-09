@@ -23,6 +23,16 @@ export function useItemModelRemote() {
     return useMemo(() => snakeToCamlObject(itemShape.data.at(0)!), [itemShape]);
   };
 
+  const useItemsLive = (ids: string[]) => {
+    const itemShape = useShape({
+      url: `${process.env.PUBLIC_APP_URL}/api/db/items`,
+      params: {
+        where: ids.map((id) => `id = ${id}`).join(' OR '),
+      },
+    });
+    return useMemo(() => snakeToCamlObject(itemShape.data), [itemShape]);
+  };
+
   const createItem = (data: { name: string; content: string }) =>
     _createItemFn({ data });
 
@@ -40,6 +50,7 @@ export function useItemModelRemote() {
 
   return {
     useItemLive,
+    useItemsLive,
     createItem,
     updateItem,
     deleteItem,

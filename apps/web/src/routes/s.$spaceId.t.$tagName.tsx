@@ -9,8 +9,8 @@ import { usePinnedLocal } from '@quanta/web/hooks/use-pinned-local';
 import { PageLayout } from '@quanta/web/components/page-layout';
 import { Query } from '@quanta/web/components/query';
 import { ViewMenu } from '@quanta/web/components/view-menu';
-import { PinButton } from '../components/pin-button';
-import { TagPageMenu } from '../components/tag-page-menu';
+import { PinButton } from '@quanta/web/components/pin-button';
+import { TagPageMenu } from '@quanta/web/components/tag-page-menu';
 
 export const Route = createFileRoute({
   component: RouteComponent,
@@ -18,11 +18,11 @@ export const Route = createFileRoute({
 
 function RouteComponent() {
   const navigate = useNavigate();
+  const space = useSpace()!;
   const { tagName } = Route.useParams();
   const { useTagChildrenLive, deleteTag } = useTagModelLocal();
   const { useSearchItemsLive } = useItemModelLocal()!;
   const { isTagPinned, togglePinTag } = usePinnedLocal()!;
-  const space = useSpace()!;
   const items = useSearchItemsLive('', [{ tag: tagName }]);
   const tagChildren = useTagChildrenLive(tagName);
   const [view, setView] = useState('grid');

@@ -1,6 +1,6 @@
 import { search } from './search';
-// import { browser } from './browser';
-import { email } from './email';
+import { browser } from './browser';
+// import { email } from './email';
 import { csv } from './csv';
 import { db } from './db';
 import type { ItemModelLocal } from '@quanta/web/lib/item-model-local';
@@ -13,10 +13,10 @@ export function getBaseEnvironment(
 ) {
   return {
     search,
-    email,
+    // email,
     db: itemModel ? db(itemModel) : undefined,
     chat,
-    // browser,
+    browser,
     csv,
 
     __doc__files: filesDoc(files),

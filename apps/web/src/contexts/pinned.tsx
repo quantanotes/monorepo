@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+import { useDB } from '@quanta/web/contexts/db';
 import { useSpace } from '@quanta/web/hooks/use-space';
 import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
 import { usePinnedRemote } from '@quanta/web/hooks/use-pinned-remote';
@@ -20,12 +21,16 @@ const emptyContextValue = {
 export function PinnedProvider({ children }: React.PropsWithChildren) {
   const user = useAuthUser();
   const space = useSpace();
+  const db = useDB();
+
   if (!user) {
     return <PinnedContext value={emptyContextValue}>{children}</PinnedContext>;
-  } else if (space) {
+  } else if (space && db) {
     return <PinnedLocalProvider>{children}</PinnedLocalProvider>;
-  } else {
+  } else if (!space) {
     return <PinnedRemoteProvider>{children}</PinnedRemoteProvider>;
+  } else {
+    return <></>;
   }
 }
 

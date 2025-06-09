@@ -17,14 +17,14 @@ export default defineConfig(({ mode }) => ({
 
     tsconfigPaths({ projects: ['../../tsconfig.json'] }),
     tailwindcss(),
-    env(),
+    env(mode),
 
     mode === 'development' && mkcert(),
     mode === 'development' && http2(),
   ],
 
   optimizeDeps: {
-    exclude: ['@electric-sql/pglite'],
+    exclude: ['@electric-sql/pglite', 'react-resizable-panels'],
   },
 
   resolve: {
@@ -42,10 +42,10 @@ export default defineConfig(({ mode }) => ({
   },
 }));
 
-function env(): Plugin {
+function env(mode?: string): Plugin {
   return {
     name: 'env',
-    config: ({ mode }) => ({
+    config: () => ({
       define: {
         'process.env': loadEnv(mode!, '../../', ''),
       },
@@ -59,6 +59,8 @@ function http2(): Plugin {
     name: 'http2',
     configureServer(server) {
       server.middlewares.use((req, _, next) => {
+        console.log(req.url);
+
         if (req.httpVersionMajor >= 2 && req.headers[':method']) {
           const chunks: Buffer[] = [];
 

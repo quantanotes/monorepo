@@ -28,7 +28,7 @@ export function Table({ items, tags }: TableProps) {
   });
 
   const tagColumns = tags.map((tag) =>
-    columnHelper.accessor((row: any) => row.tags[tag].value, {
+    columnHelper.accessor((row: any) => row.tags[tag]?.value, {
       header: `#${tag}`,
       cell: (info) => info.getValue(),
     }),
@@ -43,9 +43,9 @@ export function Table({ items, tags }: TableProps) {
   });
 
   return (
-    <div className="rounded-md">
+    <div className="rounded-md border">
       <TableRoot>
-        <TableHeader className="bg-card/25 text-base">
+        <TableHeader className="text-base">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {

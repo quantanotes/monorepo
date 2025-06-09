@@ -29,12 +29,6 @@ export function ItemPageHeader({
 
   return (
     <>
-      <ItemPageMenu
-        isPinned={isPinned}
-        onTogglePin={onTogglePin}
-        onDelete={onDelete}
-      />
-
       {onTogglePin && (
         <PinButton
           isPinned={isPinned}
@@ -51,14 +45,11 @@ export function ItemPageHeader({
         />
       )}
 
-      <Button className="size-8 p-2!" variant="ghost" asChild>
-        <Link
-          to={space ? '/s/$spaceId' : '/'}
-          params={space ? { spaceId: space.id } : undefined}
-        >
-          <X className="size-5" />
-        </Link>
-      </Button>
+      <ItemPageMenu
+        isPinned={isPinned}
+        onTogglePin={onTogglePin}
+        onDelete={onDelete}
+      />
     </>
   );
 }

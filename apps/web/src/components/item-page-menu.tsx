@@ -24,7 +24,7 @@ export function ItemPageMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className={cn('size-8', className)} variant="ghost" size="icon">
+        <Button className={className} variant="ghost" size="icon">
           <Ellipsis className="text-muted-foreground size-5" />
         </Button>
       </DropdownMenuTrigger>
@@ -33,10 +33,13 @@ export function ItemPageMenu({
           <Pin className={`${isPinned && 'fill-foreground'}`} />
           {isPinned ? 'Unpin' : 'Pin'}
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onDelete} variant="destructive">
-          <Trash />
-          Delete
-        </DropdownMenuItem>
+
+        {onDelete && (
+          <DropdownMenuItem onClick={onDelete} variant="destructive">
+            <Trash />
+            Delete
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

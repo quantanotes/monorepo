@@ -8,8 +8,8 @@ interface ItemPageProps {
   isAuthor?: boolean;
   isPinned: boolean;
   isLiked?: boolean;
-  onUpdate: (name: string, content: string) => void;
-  onDelete: () => void;
+  onUpdate?: (name: string, content: string) => void;
+  onDelete?: () => void;
   onTogglePin: () => void;
   onToggleLike?: () => void;
 }

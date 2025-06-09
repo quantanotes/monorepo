@@ -8,7 +8,7 @@ interface AiChatUserMessageProps {
 export function AiChatUserMessage({ message }: AiChatUserMessageProps) {
   return (
     <div className="flex justify-end">
-      <div className="bg-card max-w-lg rounded-md px-3">
+      <div className="bg-card rounded-2xl px-4">
         <div className="prose-lg">
           {message.parts.map(
             (part, index) =>

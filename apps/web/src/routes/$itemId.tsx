@@ -1,10 +1,11 @@
 import { useNavigate } from '@tanstack/react-router';
 import { debounce } from '@quanta/utils/debounce';
+import { Item } from '@quanta/types';
 import { usePinned } from '@quanta/web/contexts/pinned';
 import { useItemModel } from '@quanta/web/contexts/item-model';
 import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
-import { itemQueryOptions } from '@quanta/web/lib/item-query';
 import { useLike } from '@quanta/web/hooks/use-like';
+import { itemQueryOptions } from '@quanta/web/lib/item-query';
 import { ItemPage } from '@quanta/web/components/item-page';
 
 export const Route = createFileRoute({
@@ -21,7 +22,7 @@ function RouteComponent() {
   const { isItemPinned, togglePinItem } = usePinned()!;
   const { isLiked, toggleLike } = useLike(itemId);
   const user = useAuthUser();
-  const item = useItemLive(itemId);
+  const item = useItemLive(itemId) as Item;
   const isAuthor = user?.id === item?.authorId;
 
   const handleUpdate = isAuthor

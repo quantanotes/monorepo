@@ -7,12 +7,12 @@ import { useSpace } from '@quanta/web/hooks/use-space';
 export function useItemModelLocal() {
   const space = useSpace();
   const user = useAuthUser();
+  const db = useDB();
 
-  if (!space || !user) {
+  if (!space || !user || !db) {
     return;
   }
 
-  const db = useDB();
   const model = new ItemModelLocal(db, user.id, space.id);
 
   const useItemLive = (id: string) => model.useItemLive(id);

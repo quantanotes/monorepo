@@ -23,6 +23,7 @@ export interface Item {
   name: string;
   content: string;
   tags?: Record<string, ItemTag>;
+  authorId?: string;
   pinCount?: number;
   likeCount?: number;
 }

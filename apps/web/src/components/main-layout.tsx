@@ -13,9 +13,9 @@ import { Search } from '@quanta/web/components/search';
 
 export function MainLayout({ children }: React.PropsWithChildren) {
   const location = useLocation();
-  const [measureRef, { width }] = useMeasure<HTMLDivElement>();
   const sidebarRef = useRef<ImperativePanelHandle>(null);
   const rightPanelRef = useRef<ImperativePanelHandle>(null);
+  const [measureRef, { width }] = useMeasure<HTMLDivElement>();
   const [showSearch, setShowSearch] = useState(false);
 
   function getRelativeWidth(widthPx: number) {
@@ -55,7 +55,7 @@ export function MainLayout({ children }: React.PropsWithChildren) {
       <ResizablePanelGroup className="h-screen" direction="horizontal">
         <ResizablePanel
           ref={sidebarRef}
-          className="h-full"
+          className="h-full transition-transform"
           defaultSize={getRelativeWidth(256)}
           minSize={getRelativeWidth(40)}
           maxSize={getRelativeWidth(320)}
@@ -80,7 +80,8 @@ export function MainLayout({ children }: React.PropsWithChildren) {
         <ResizablePanel
           ref={rightPanelRef}
           className="bg-card/10 relative z-50 flex h-full flex-col"
-          minSize={getRelativeWidth(256)}
+          minSize={getRelativeWidth(320)}
+          maxSize={getRelativeWidth(768)}
           collapsedSize={0}
           collapsible
         >

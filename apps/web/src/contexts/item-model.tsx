@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useContext } from 'react';
 import { useSpace } from '@quanta/web/hooks/use-space';
+import { useDB } from '@quanta/web/contexts/db';
 import { useItemModelRemote } from '@quanta/web/hooks/use-item-model-remote';
 import { useItemModelLocal } from '@quanta/web/hooks/use-item-model-local';
 
@@ -11,10 +12,14 @@ const ItemModelContext = createContext<ItemModelContextType>(null!);
 
 export function ItemModelProvider({ children }: { children: ReactNode }) {
   const space = useSpace();
-  if (space) {
+  const db = useDB();
+
+  if (space && db) {
     return <ItemModelLocalProvider>{children}</ItemModelLocalProvider>;
-  } else {
+  } else if (!space) {
     return <ItemModelRemoteProvider>{children}</ItemModelRemoteProvider>;
+  } else {
+    return <></>;
   }
 }
 

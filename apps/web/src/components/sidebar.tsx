@@ -2,18 +2,20 @@ import { useNavigate, Link } from '@tanstack/react-router';
 import {
   Brain,
   Hash,
+  Home,
   MessageCircle,
   PanelLeft,
   Plug,
-  Plus,
   Search,
+  SquarePen,
 } from 'lucide-react';
-import { Button } from '@quanta/ui/button';
 import { useItemModel } from '@quanta/web/contexts/item-model';
 import { useSpace } from '@quanta/web/hooks/use-space';
 import { useMeasure } from '@quanta/web/hooks/use-measure';
 import { SidebarFooter } from '@quanta/web/components/sidebar-footer';
 import { SidebarPinnedList } from '@quanta/web/components/sidebar-pinned-list';
+import { SidebarButton } from '@quanta/web/components/sidebar-button';
+import { SidebarLink } from '@quanta/web/components/sidebar-link';
 
 interface SidebarProps {
   toggleSidebar: () => void;
@@ -47,84 +49,82 @@ export function Sidebar({
   }
 
   return (
-    <div className="bg-card/25 flex h-full w-full flex-col p-1" ref={ref}>
+    <div
+      className="bg-card/50 text-sidebar-foreground flex h-full w-full flex-col p-1"
+      ref={ref}
+    >
       <div
         className={`flex items-center gap-2 ${
           isCollapsed ? 'flex-col' : 'flex-row justify-between'
         }`}
       >
-        <Button
-          className="text-muted-foreground size-8"
-          variant="ghost"
+        <SidebarButton
+          icon={<PanelLeft className="size-6!" />}
+          variant="icon"
+          isCollapsed={isCollapsed}
           onClick={toggleSidebar}
-        >
-          <PanelLeft className="size-6!" />
-        </Button>
-
+        />
         <div
           className={`flex items-center gap-2 ${
             isCollapsed ? 'flex-reverse flex-col' : 'flex-row'
           }`}
         >
-          <Button
-            className="text-muted-foreground size-8"
-            variant="ghost"
+          <SidebarButton
+            icon={<MessageCircle className="size-6!" />}
+            variant="icon"
             onClick={toggleRightPanel}
-          >
-            <MessageCircle className="size-6!" />
-          </Button>
+            isCollapsed={isCollapsed}
+          />
 
-          <Button
-            className="text-muted-foreground size-8"
-            variant="ghost"
+          <SidebarButton
+            icon={<Search className="size-6!" />}
+            variant="icon"
+            isCollapsed={isCollapsed}
             onClick={toggleSearch}
-          >
-            <Search className="size-6!" />
-          </Button>
+          />
 
-          <Button
-            className="text-muted-foreground size-8"
-            variant="ghost"
+          <SidebarButton
+            icon={<SquarePen className="size-6!" />}
+            variant="icon"
+            isCollapsed={isCollapsed}
             onClick={handleCreateItem}
-          >
-            <Plus className="size-6!" />
-          </Button>
+          />
         </div>
       </div>
 
-      {space && (
-        <div className="flex flex-col items-center gap-2 py-10">
-          <Button
-            className={`text-muted-foreground size-8 ${!isCollapsed && 'w-full justify-start'} text-base`}
-            variant="ghost"
-            asChild
-          >
-            <Link
-              href={space ? '/s/$spaceId/tags' : '/tags'}
-              params={{ spaceId: space?.id }}
-            >
-              <Hash className="size-6!" />
-              {!isCollapsed && 'Tags'}
-            </Link>
-          </Button>
+      <div className="flex flex-col items-center gap-2 py-8">
+        <SidebarLink
+          href={space ? '/s/$spaceId/tags' : '/'}
+          params={{ spaceId: space?.id }}
+          icon={<Home className="size-6!" />}
+          label="Home"
+          isCollapsed={isCollapsed}
+        />
 
-          <Button
-            className={`text-muted-foreground size-8 ${!isCollapsed && 'w-full justify-start'} text-base`}
-            variant="ghost"
-          >
-            <Brain className="size-6!" />
-            {!isCollapsed && 'Tasks'}
-          </Button>
+        {space && (
+          <>
+            <SidebarLink
+              href="/s/$spaceId/tags"
+              params={{ spaceId: space.id }}
+              icon={<Hash className="size-6!" />}
+              label="Tags"
+              isCollapsed={isCollapsed}
+            />
 
-          <Button
-            className={`text-muted-foreground size-8 ${!isCollapsed && 'w-full justify-start'} text-base`}
-            variant="ghost"
-          >
-            <Plug className="size-6!" />
-            {!isCollapsed && 'Tools'}
-          </Button>
-        </div>
-      )}
+            <SidebarButton
+              icon={<Brain className="size-6!" />}
+              label="Tasks"
+              isCollapsed={isCollapsed}
+            />
+
+            <SidebarButton
+              icon={<Plug className="size-6!" />}
+              label="Tools"
+              isCollapsed={isCollapsed}
+            />
+          </>
+        )}
+      </div>
 
       <SidebarPinnedList isCollapsed={isCollapsed} />
 

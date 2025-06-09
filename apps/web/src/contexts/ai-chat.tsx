@@ -3,47 +3,49 @@ import { useServerFn } from '@tanstack/react-start';
 import { Updater, useImmer } from 'use-immer';
 import { streamToAsyncIterableStream } from '@quanta/utils/stream-to-async-iterable-stream';
 import {
-  agentClient,
-  doc,
   AgentStep,
   Message,
   MessagePart,
   TextStreamFn,
+  agentClient,
+  doc,
 } from '@quanta/agent';
-import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
-import { useSpace } from '@quanta/web/hooks/use-space';
-import { useDB } from '@quanta/web/contexts/db';
-import { ItemModelLocal } from '@quanta/web/lib/item-model-local';
-import { llmTextStreamFn } from '@quanta/web/lib/ai';
+import { useItemModel } from '@quanta/web/contexts/item-model';
 import { getBaseEnvironment } from '@quanta/web/lib/agent/base-environment';
+import { llmTextStreamFn } from '@quanta/web/lib/ai';
+
+interface Attachment {
+  type: 'file' | 'item';
+  file?: File;
+  itemId?: string;
+}
 
 interface AiChatContextType {
   input: string;
-  files: File[];
   messages: Message[];
+  attachments: Attachment[];
   running: boolean;
 
   send: () => void;
   abort?: () => void;
+  resetChat: () => void;
+
+  addAttachment: (type: 'file' | 'item', data: File | string) => void;
+  removeAttachment: (index: number) => void;
 
   setInput: (value: string) => void;
-  setFiles: (files: File[]) => void;
 }
 
 const AiChatContext = createContext<AiChatContextType>(undefined!);
 
 export function AiChatProvider({ children }: React.PropsWithChildren) {
+  const itemModel = useItemModel();
+  const _llmTextStreamFn = useServerFn(llmTextStreamFn);
   const [input, setInput] = useState('');
-  const [files, setFiles] = useState<File[]>([]);
+  const [attachments, setAttachments] = useImmer<Attachment[]>([]);
   const [messages, setMessages] = useImmer<Message[]>([]);
   const [running, setRunning] = useState(false);
   const [abortController, setAbortController] = useState<AbortController>();
-  const db = useDB();
-  const user = useAuthUser();
-  const space = useSpace();
-  const itemModel =
-    db && user && space ? new ItemModelLocal(db, user.id, space.id) : undefined;
-  const _llmTextStreamFn = useServerFn(llmTextStreamFn);
   const chatActions = getChatActions(setMessages);
 
   const textStreamFn: TextStreamFn = async (messages, signal) => {
@@ -61,17 +63,13 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
     return { stream, abortController };
   };
 
-  async function send() {
+  const send = async () => {
     if (running || input.trim().length === 0) {
       return;
     }
 
-    const userMessage = {
-      role: 'user',
-      parts: [{ type: 'text', content: input }],
-      sources: [],
-    } as Message;
-    const newMessages = [...messages, userMessage];
+    const abortController = new AbortController();
+    const files = attachments.map((a) => a.file).filter((a) => a) as File[];
     const tools = [];
     const environment = getBaseEnvironment(
       chatActions,
@@ -79,11 +77,19 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
       tools,
       itemModel,
     );
-    const abortController = new AbortController();
+
+    const newMessages = [
+      ...messages,
+      {
+        role: 'user',
+        parts: [{ type: 'text', content: input }],
+        sources: [],
+      },
+    ] as Message[];
 
     setInput('');
-    setMessages(newMessages);
     setRunning(true);
+    setMessages(newMessages);
     setAbortController(abortController);
 
     try {
@@ -102,11 +108,32 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
     } finally {
       setRunning(false);
     }
-  }
+  };
 
-  function abort() {
+  const abort = () => {
     abortController?.abort();
-  }
+  };
+
+  const resetChat = () => {
+    setMessages([]);
+  };
+
+  const addAttachment = (type: 'file' | 'item', data: File | string) =>
+    setAttachments((attachments) => {
+      switch (type) {
+        case 'file':
+          attachments.push({ type, file: data as File });
+          break;
+        case 'item':
+          attachments.push({ type, itemId: data as string });
+      }
+      attachments.push();
+    });
+
+  const removeAttachment = (index: number) =>
+    setAttachments((attachments) => {
+      attachments.splice(index, 1);
+    });
 
   const appendMessage = (message: Message) =>
     setMessages((messages) => {
@@ -127,6 +154,7 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
           break;
         case 'action':
           lastMessage.parts.push(part as MessagePart);
+          break;
         case 'observe':
           const index = lastMessage.parts.findIndex(
             (actionPart) => actionPart.id === part.id,
@@ -145,13 +173,15 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
     <AiChatContext
       value={{
         input,
-        files,
         messages,
+        attachments,
         running,
         send,
         abort,
+        resetChat,
+        addAttachment,
+        removeAttachment,
         setInput,
-        setFiles,
       }}
     >
       {children}

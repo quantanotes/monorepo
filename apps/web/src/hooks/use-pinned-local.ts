@@ -7,11 +7,12 @@ import { useSpace } from '@quanta/web/hooks/use-space';
 
 export function usePinnedLocal() {
   const space = useSpace();
-  if (!space) {
+  const db = useDB();
+
+  if (!space || !db) {
     return;
   }
 
-  const db = useDB();
   const model = new PinnedModel(db.orm, space.id, null);
   const pinnedQuery = model.getAllQuery().toSQL();
   const pinned =

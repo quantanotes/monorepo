@@ -10,12 +10,7 @@ package-lock.json
 
 .tanstack-start
 .nitro
-.netlify
 .output
-.vercel
-.wrangler
 dist
-
-fly.toml
 
 .vscode

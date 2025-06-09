@@ -17,11 +17,8 @@ interface ViewMenuProps {
 export function ViewMenu({ views, currentView, onViewChange }: ViewMenuProps) {
   return (
     <Select onValueChange={onViewChange} value={currentView}>
-      <SelectTrigger asChild>
-        <Button variant="ghost" className="h-8! w-24 justify-between">
-          <SelectValue placeholder="View" />
-          <ChevronDown className="size-4 opacity-50" />
-        </Button>
+      <SelectTrigger>
+        <SelectValue placeholder="View" />
       </SelectTrigger>
       <SelectContent>
         {views.map((view) => (

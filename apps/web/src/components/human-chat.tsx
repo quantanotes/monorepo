@@ -11,7 +11,7 @@ export function HumanChat() {
           <HumanChatMessages />
         </ScrollArea>
 
-        <div className="absolute right-0 bottom-0 left-0 z-50 p-2">
+        <div className="sticky right-0 bottom-4 left-0 z-50 px-4">
           <HumanChatInput />
         </div>
       </div>

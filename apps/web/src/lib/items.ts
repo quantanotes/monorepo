@@ -29,11 +29,13 @@ export function flattenItemTagResults<I, T>(results: { item: I; tags: T[] }[]) {
 export function makeTagCondition(tag: TagQuery) {
   const tagCondition = eq(schema.tags.name, tag.tag);
   if (tag.operator && tag.value) {
+    const withOp = (op) =>
+      and(tagCondition, op(schema.itemTags.value, tag.value));
     switch (tag.operator) {
       case '=':
-        return and(tagCondition, eq(schema.itemTags.value, tag.value));
+        return withOp(eq);
       case '!=':
-        return and(tagCondition, ne(schema.itemTags.value, tag.value));
+        return withOp(ne);
     }
   }
   return tagCondition;

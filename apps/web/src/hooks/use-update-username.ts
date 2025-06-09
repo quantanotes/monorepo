@@ -4,6 +4,7 @@ import { updateUsernameFn } from '@quanta/web/lib/user';
 
 export function useUpdateUsername() {
   const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (data: { username: string }) => updateUsernameFn({ data }),
     onSuccess: () => {

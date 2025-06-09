@@ -14,7 +14,6 @@ export function AiChatAIMessage({
 }: AiChatAIMessageProps) {
   return (
     <div className="px-3">
-      <div className="text-muted-foreground">ai</div>
       <div className="prose-lg flex max-w-none flex-col gap-1">
         {message.parts.map((part: MessagePart, index: number) =>
           part.type === 'text' ? (

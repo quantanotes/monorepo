@@ -15,21 +15,23 @@ function RouteComponent() {
 
   return (
     <PageLayout title="tags">
-      {tags.map((tag) => (
-        <Badge
-          key={tag.id as string}
-          className="text-2xl"
-          variant="outline"
-          asChild
-        >
-          <Link
-            to="/s/$spaceId/t/$tagName"
-            params={{ spaceId: space.id, tagName: tag.name }}
+      <div className="flex flex-wrap gap-3">
+        {tags.map((tag) => (
+          <Badge
+            key={tag.id as string}
+            className="text-2xl"
+            variant="outline"
+            asChild
           >
-            #{tag.name}
-          </Link>
-        </Badge>
-      ))}
+            <Link
+              to="/s/$spaceId/t/$tagName"
+              params={{ spaceId: space.id, tagName: tag.name }}
+            >
+              #{tag.name}
+            </Link>
+          </Badge>
+        ))}
+      </div>
     </PageLayout>
   );
 }

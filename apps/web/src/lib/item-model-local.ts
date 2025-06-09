@@ -1,7 +1,7 @@
 import { useLiveQuery } from '@electric-sql/pglite-react';
 import type { ItemTag, TagQuery, TagType } from '@quanta/types';
 import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
-import { and, eq, sql } from '@quanta/db/drizzle';
+import { and, eq, exists, sql } from '@quanta/db/drizzle';
 import { DB, schema } from '@quanta/db/local';
 import {
   flattenItemTagResult,
@@ -249,6 +249,7 @@ export class ItemModelLocal {
   ) {
     const withTags = tags && tags.length > 0;
     const withTextSearch = query && query.trim().length > 0;
+
     const textSimilarityColumn = {
       text_similarity: sql<number>`
         ts_rank_cd(
@@ -258,6 +259,20 @@ export class ItemModelLocal {
         ) AS text_similarity
       `,
     };
+
+    const tagFilterQuery = exists(
+      this.#db.orm
+        .select({ id: schema.itemTags.itemId })
+        .from(schema.itemTags)
+        .innerJoin(schema.tags, eq(schema.itemTags.tagId, schema.tags.id))
+        .where(
+          and(
+            eq(schema.itemTags.itemId, schema.items.id),
+            makeTagFilter(tags!),
+          ),
+        ),
+    );
+
     return this.#db.orm
       .select({
         item: schema.items,
@@ -286,7 +301,7 @@ export class ItemModelLocal {
           // eq(schema.items.isDeleted, false),
           // eq(schema.tags.isDeleted, false),
           // eq(schema.itemTags.isDeleted, false),
-          withTags ? makeTagFilter(tags) : undefined,
+          withTags ? tagFilterQuery : undefined,
         ),
       )
       .groupBy(schema.items.id)

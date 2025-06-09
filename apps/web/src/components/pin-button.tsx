@@ -14,11 +14,11 @@ export function PinButton({
 }: PinButtonProps) {
   return (
     <Button
-      className={`h-8 p-2! ${isPinned && 'text-foreground'}`}
+      className={`p-2 ${isPinned && 'text-foreground'}`}
       variant="ghost"
       onClick={onTogglePin}
     >
-      <Pin className={`size-5! ${isPinned && 'fill-foreground'}`} />
+      <Pin className={`size-5 ${isPinned && 'fill-foreground'}`} />
       {typeof pinCount === 'number' && (
         <span className="w-3 text-xs">{pinCount}</span>
       )}
