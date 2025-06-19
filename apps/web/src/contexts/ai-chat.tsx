@@ -1,18 +1,23 @@
 import { createContext, useContext, useState } from 'react';
 import { useServerFn } from '@tanstack/react-start';
-import { Updater, useImmer } from 'use-immer';
+import { useImmer } from 'use-immer';
 import { streamToAsyncIterableStream } from '@quanta/utils/stream-to-async-iterable-stream';
-import {
+import { agentClient, doc } from '@quanta/agent';
+import { useDBLazy } from '@quanta/web/contexts/db';
+import { useItemModel } from '@quanta/web/contexts/item-model';
+import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
+import { useSpace } from '@quanta/web/hooks/use-space';
+import { ItemModelLocal } from '@quanta/web/lib/item-model-local';
+import { TagModel } from '@quanta/web/lib/tag-model';
+import { baseAgentEnvironment } from '@quanta/web/lib/agent/base-environment';
+import { llmTextStreamFn } from '@quanta/web/lib/ai';
+import type { Updater } from 'use-immer';
+import type {
   AgentStep,
   Message,
   MessagePart,
   TextStreamFn,
-  agentClient,
-  doc,
 } from '@quanta/agent';
-import { useItemModel } from '@quanta/web/contexts/item-model';
-import { getBaseEnvironment } from '@quanta/web/lib/agent/base-environment';
-import { llmTextStreamFn } from '@quanta/web/lib/ai';
 
 interface Attachment {
   type: 'file' | 'item';
@@ -39,14 +44,17 @@ interface AiChatContextType {
 const AiChatContext = createContext<AiChatContextType>(undefined!);
 
 export function AiChatProvider({ children }: React.PropsWithChildren) {
+  const db = useDBLazy();
+  const space = useSpace();
+  const user = useAuthUser();
   const itemModel = useItemModel();
-  const _llmTextStreamFn = useServerFn(llmTextStreamFn);
   const [input, setInput] = useState('');
   const [attachments, setAttachments] = useImmer<Attachment[]>([]);
   const [messages, setMessages] = useImmer<Message[]>([]);
   const [running, setRunning] = useState(false);
   const [abortController, setAbortController] = useState<AbortController>();
   const chatActions = getChatActions(setMessages);
+  const _llmTextStreamFn = useServerFn(llmTextStreamFn);
 
   const textStreamFn: TextStreamFn = async (messages, signal) => {
     const abortController = new AbortController();
@@ -72,14 +80,20 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
 
     const itemIds = attachments.map((a) => a.itemId).filter((a) => a);
     const items = await itemModel!.getItems(itemIds as string[]);
-    const files = attachments.map((a) => a.file).filter((a) => a);
+    const files = attachments.map((a) => a.file).filter((a) => a) as File[];
     const tools = [];
 
-    const environment = getBaseEnvironment(
+    const agentItemModel =
+      space && new ItemModelLocal(db!, user?.id!, space.id);
+    const agentTagModel = space && new TagModel(db?.orm!, space.id);
+
+    const environment = baseAgentEnvironment(
       chatActions,
       files as File[],
       tools,
-      itemModel,
+      //@ts-ignore
+      agentItemModel,
+      agentTagModel,
     );
 
     const newMessages = [
@@ -100,6 +114,7 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
       const agentStream = agentClient(
         environment,
         newMessages,
+        items,
         textStreamFn,
         abortController,
       );
@@ -116,10 +131,12 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
 
   const abort = () => {
     abortController?.abort();
+    setRunning(false);
   };
 
   const resetChat = () => {
     setMessages([]);
+    abort();
   };
 
   const addAttachment = (type: 'file' | 'item', data: File | string) =>
@@ -203,23 +220,23 @@ export function useAiChat() {
 
 function getChatActions(setMessages: Updater<Message[]>) {
   function addObjectSource(object: any) {
-    setMessages((messages) =>
+    setMessages((messages) => {
       messages[messages.length - 1].sources.push({
         type: 'object',
         id: typeof object === 'string' ? object : (object.id as string),
-      }),
-    );
+      });
+    });
   }
 
   function addWebSource(source: any) {
-    setMessages((messages) =>
+    setMessages((messages) => {
       messages[messages.length - 1].sources.push({
         type: 'web',
         name: source.title,
         url: source.url,
         image: source.image,
-      }),
-    );
+      });
+    });
   }
 
   return {

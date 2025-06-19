@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
 import { useServerFn } from '@tanstack/react-start';
-import { Pinned } from '@quanta/types';
-import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
+import { snakeToCamelObject } from '@quanta/utils/snake-to-camel';
 import { useShapeWithJoin } from '@quanta/web/hooks/use-shape-with-join';
 import { togglePinItemFn } from '@quanta/web/lib/pinned-fns';
+import type { Pinned } from '@quanta/types';
 
 export function usePinnedRemote() {
   const pinned = useShapeWithJoin({
@@ -39,7 +39,7 @@ export function usePinnedRemote() {
   );
 
   return {
-    pinned: pinned.map(snakeToCamlObject) as Pinned[],
+    pinned: pinned.map(snakeToCamelObject) as Pinned[],
     togglePinItem,
     isItemPinned,
   };

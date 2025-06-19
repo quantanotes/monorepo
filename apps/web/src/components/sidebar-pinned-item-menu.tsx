@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from '@tanstack/react-router';
-import { Pinned } from '@quanta/types';
 import { useItemModel } from '@quanta/web/contexts/item-model';
 import { usePinned } from '@quanta/web/contexts/pinned';
 import { ItemPageMenu } from '@quanta/web/components/item-page-menu';
+import type { Pinned } from '@quanta/types';
 
 interface SidebarPinnedProps {
   pinned: Pinned;
@@ -10,25 +10,23 @@ interface SidebarPinnedProps {
 
 export function SidebarPinnedItemMenu({ pinned }: SidebarPinnedProps) {
   const navigate = useNavigate();
-  const { togglePinItem } = usePinned()!;
-  const { deleteItem } = useItemModel()!;
   const { itemId: pageItemId, spaceId: pageSpaceId } = useParams({
     strict: false,
   });
+  const { togglePinItem } = usePinned()!;
+  const { deleteItem } = useItemModel()!;
   const itemId = pinned?.itemId!;
 
   const onDeleteItem = () => {
-    if (pageItemId === itemId) {
-      if (pageSpaceId) {
-        navigate({ to: '/s/$spaceId', params: { spaceId: pageSpaceId } });
-      } else {
-        navigate({ to: '/' });
-      }
+    if (pageItemId === itemId && pageSpaceId) {
+      navigate({ to: '/s/$spaceId', params: { spaceId: pageSpaceId } });
+    } else if (pageItemId === itemId) {
+      navigate({ to: '/' });
     }
     deleteItem(itemId);
   };
 
-  const onPinItem = () => {
+  const onTogglePinItem = () => {
     togglePinItem(itemId);
   };
 
@@ -36,7 +34,7 @@ export function SidebarPinnedItemMenu({ pinned }: SidebarPinnedProps) {
     <ItemPageMenu
       className="peer-hover/menu-button:text-accent-foreground absolute right-1 size-8 opacity-0 transition-opacity group-hover/menu-item:opacity-100"
       itemId={itemId}
-      onTogglePin={onPinItem}
+      onTogglePin={onTogglePinItem}
       onDelete={onDeleteItem}
       isPinned={true}
     />

@@ -6,18 +6,20 @@ import StarterKit from '@tiptap/starter-kit';
 import { Settings } from '@quanta/web/lib/text/extensions/settings';
 import { Tags } from '@quanta/web/lib/text/extensions/tags';
 
-const PLACEHOLDER_CLASS = `\
-   cursor-text before:absolute before:content-[attr(data-placeholder)]\
-   data-[placeholder=Title...]:text-7xl data-[placeholder=Title...]:p-3\
-   data-[placeholder=Title...]:font-bold before:text-muted-foreground\
-   before-pointer-events-none`;
+// const PLACEHOLDER_CLASS = `\
+//    cursor-text before:absolute before:content-[attr(data-placeholder)]\
+//    data-[placeholder=Title...]:text-7xl data-[placeholder=Title...]:p-3\
+//    data-[placeholder=Title...]:font-bold before:text-muted-foreground\
+//    before-pointer-events-none`;
 
-const placeholder = (node: any) =>
+const PLACEHOLDER_CLASS = `tiptap-placeholder`;
+
+const placeholder = ({ node }) =>
   node.type?.name === 'settings' ? 'Title...' : 'Create anything...';
 
 const extensions = () => [
   Document.extend({ content: 'settings block*' }),
-  Placeholder.configure({ placeholder }),
+  Placeholder.configure({ placeholder, emptyNodeClass: 'tiptap-placeholder' }),
   Settings,
   StarterKit.configure({ document: false }),
   Tags,
@@ -44,25 +46,26 @@ export const TextEditor = memo(function ({
 
   function parseEditor(editor: any) {
     const body = editor.getHTML();
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(body, 'text/html');
+    const doc = new DOMParser().parseFromString(body, 'text/html');
+
     const name = doc.body.firstElementChild
       ? doc.body.firstElementChild.innerHTML
       : '';
+
     const content = doc.body.innerHTML
       .replace(doc.body.firstElementChild?.outerHTML || '', '')
       .trim();
+
     return [name, content] as [string, string];
   }
 
   function handleUpdate() {
-    const [name, content] = parseEditor(editor);
-    onUpdate?.(name, content);
+    onUpdate?.(...parseEditor(editor));
   }
 
   return (
     <EditorContent
-      className="themed-prose prose-lg! mx-auto w-full max-w-4xl pb-32"
+      className="prose prose-lg mx-auto w-full max-w-4xl pb-32"
       editor={editor}
     />
   );

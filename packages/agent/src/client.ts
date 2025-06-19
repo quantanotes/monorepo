@@ -1,9 +1,15 @@
 import { nanoid } from 'nanoid';
 import { callbacksToAsyncIterator } from '@quanta/utils/callbacks-to-async-iterator';
-import { AgentActionStep, AgentStep, Message, TextStreamFn } from './types';
 import { messagesToRawMessages } from './utils';
 import { docs } from './doc';
 import { agent } from './agent';
+import type {
+  AgentActionStep,
+  AgentStep,
+  Message,
+  TextStreamFn,
+} from './types';
+import type { Item } from '@quanta/types';
 
 type AgentYielder = (step: AgentStep) => void;
 
@@ -12,6 +18,7 @@ const AsyncFunction = (async () => {}).constructor;
 export function agentClient(
   environment: Record<string, any>,
   messages: Message[],
+  items: Item[],
   textStreamFn: TextStreamFn,
   abortController: AbortController,
 ): AsyncGenerator<AgentStep, void, void> {
@@ -41,19 +48,25 @@ export function agentClient(
         let result = '';
 
         if (process.env.NODE_ENV !== 'production') {
-          console.log('executing', action.content);
+          console.log('agent executing:', action.content);
         }
 
+        let status = 'completed';
         try {
           const evalResult = await AsyncFunction(fnBody).call(environment);
           result = JSON.stringify(evalResult);
-          action.status = 'completed';
         } catch (err: unknown) {
           result = err instanceof Error ? err.message : String(err);
-          action.status = 'failed';
+
+          if (process.env.NODE_ENV !== 'production') {
+            console.error('agent execution error:', err);
+          }
+
+          status = 'failed';
         }
 
-        yielder({ ...action, type: 'observe' });
+        //@ts-ignore
+        yielder({ ...action, type: 'observe', status });
 
         return result;
       })();
@@ -63,6 +76,7 @@ export function agentClient(
     agent(
       docs(environment),
       rawMessages,
+      items,
       {
         onText: handleText(yielder),
         onAct: handleAction(yielder),

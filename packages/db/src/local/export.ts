@@ -1,8 +1,12 @@
 import fs from 'fs/promises';
 import { readMigrationFiles } from 'drizzle-orm/migrator';
+
 const folder = './migrations';
 const file = `${folder}/export.json`;
-const allMigrations = readMigrationFiles({ migrationsFolder: folder });
-await fs.writeFile(`${file}`, JSON.stringify(allMigrations, null, 2), {
-  flag: 'w',
-});
+
+const migrations = readMigrationFiles({ migrationsFolder: folder });
+
+const data = JSON.stringify(migrations, null, 2);
+const flags = { flag: 'w' };
+
+await fs.writeFile(`${file}`, data, flags);

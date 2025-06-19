@@ -2,7 +2,8 @@ import axios from 'axios';
 import { and, eq } from 'drizzle-orm';
 import { Mutex } from '@electric-sql/pglite';
 import { snakeToCamel } from '@quanta/utils/snake-to-camel';
-import { tables, type TableDefinition } from './tables';
+import { tables } from './tables';
+import type { TableDefinition } from './tables';
 import type { DB, ChangeSet } from './types';
 
 const writeSyncMutex = new Mutex();
@@ -19,13 +20,12 @@ export function waitForSync(db: DB, spaceId: string) {
         'SELECT * FROM sync_status WHERE is_synced = TRUE AND space_id = $1;',
         [spaceId],
       )
-      .then((query) => {
-        query.subscribe((result) => {
-          if (result.rows.length === tables.length) {
-            resolve(undefined);
-          }
-        });
-      })
+      .then((query) =>
+        query.subscribe(
+          (result) =>
+            result.rows.length === tables.length && resolve(undefined),
+        ),
+      )
       .catch(reject),
   );
 }
@@ -51,28 +51,28 @@ async function syncTable(
         columns,
       },
     },
+
     table,
     primaryKey: primaryKeys,
+    shapeKey: spaceId + ':' + table,
     useCopy: true,
+
     onInitialSync: () =>
       db.query(
         'UPDATE sync_status SET is_synced = $1 WHERE table_name = $2 AND space_id = $3;',
         [true, table, spaceId],
       ),
-    mapColumns: ({ value }) => {
-      const result = {
-        ...value,
-        ...jsonColumns?.reduce(
-          (acc, column) => ({
-            ...acc,
-            [column]: mapJSON(value[column]),
-          }),
-          {},
-        ),
-      };
-      return result;
-    },
-    shapeKey: spaceId + ':' + table,
+
+    mapColumns: ({ value }) => ({
+      ...value,
+      ...jsonColumns?.reduce(
+        (acc, column) => ({
+          ...acc,
+          [column]: mapJSON(value[column]),
+        }),
+        {},
+      ),
+    }),
   });
 }
 
@@ -89,13 +89,16 @@ async function startWriteSync(db: DB, spaceId: string) {
       )`,
     )
     .join(',');
+
   query = `SELECT ${query}`;
 
   db.live.query(query, [], async (results) => {
     const counts = results.rows[0];
     const count = Object.values(counts).reduce((acc, curr) => (acc += curr), 0);
+
     if (count > 0) {
       await writeSyncMutex.acquire();
+
       try {
         syncWrites(db, spaceId);
       } finally {
@@ -111,7 +114,7 @@ async function syncWrites(db: DB, spaceId: string) {
   await db.orm.transaction(async (tx) => {
     changeSet = (
       await Promise.all(
-        tables.map(async ({ schema, schemaName }) => {
+        tables.map(async ({ schema, schemaName }: any) => {
           const rows = await tx
             .select()
             .from(schema)
@@ -145,12 +148,15 @@ async function syncWrites(db: DB, spaceId: string) {
         const tableDef = tables.find(
           (table) => table.schemaName === schemaName,
         )!;
-        const table = tableDef.schema;
+
+        const table = tableDef.schema as any;
         const pks = tableDef.primaryKeys;
-        return changes.map(async (change) => {
+
+        return changes.map(async (change: any) => {
           const pkConds = pks
             .map(snakeToCamel)
             .map((pk) => eq(table[pk], change[pk]));
+
           await tx
             .update(table)
             .set({ isSent: true })

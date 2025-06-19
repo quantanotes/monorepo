@@ -34,11 +34,13 @@ export function PinnedProvider({ children }: React.PropsWithChildren) {
 
 function PinnedRemoteProvider({ children }: React.PropsWithChildren) {
   const pinned = usePinnedRemote();
+
   return <PinnedContext value={pinned}>{children}</PinnedContext>;
 }
 
 function PinnedLocalProvider({ children }: React.PropsWithChildren) {
   const pinned = usePinnedLocal();
+
   return <PinnedContext value={pinned}>{children}</PinnedContext>;
 }
 

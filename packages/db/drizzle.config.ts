@@ -2,7 +2,9 @@ import dotenv from 'dotenv';
 import { defineConfig } from 'drizzle-kit';
 
 const envPath =
-  process.env.NODE_ENV === 'production' ? '../../.env' : '../../.env.local';
+  process.env.NODE_ENV === 'production'
+    ? '../../.env.production'
+    : '../../.env.development';
 
 dotenv.config({ path: envPath });
 

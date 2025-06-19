@@ -1,14 +1,17 @@
 import { PGlite } from '@electric-sql/pglite';
 import { vector } from '@electric-sql/pglite/vector';
-import { type PGliteWorkerOptions, worker } from '@electric-sql/pglite/worker';
-import { PgDialect, PgSession } from 'drizzle-orm/pg-core';
+import { worker } from '@electric-sql/pglite/worker';
 import { drizzle } from 'drizzle-orm/pglite';
+import { PgDialect } from 'drizzle-orm/pg-core';
 import migrations from '../migrations/export.json';
 import * as schema from '../schema';
+import type { PgSession } from 'drizzle-orm/pg-core';
+import type { PGliteWorkerOptions } from '@electric-sql/pglite/worker';
 
 worker({
   async init(options: PGliteWorkerOptions) {
     const db = await PGlite.create({
+      relaxedDurability: true,
       dataDir: options.dataDir,
       fs: options.fs,
       extensions: {

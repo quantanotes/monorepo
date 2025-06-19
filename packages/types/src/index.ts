@@ -48,6 +48,11 @@ export const tagTypes = [
   'url',
 ] as const;
 
+export interface Tag {
+  id: string;
+  name: string;
+}
+
 export type TagType = (typeof tagTypes)[number];
 
 export interface TagQuery {
@@ -55,6 +60,7 @@ export interface TagQuery {
   operator?: string;
   value?: any;
 }
+
 export interface Pinned {
   id: string;
   name: string;

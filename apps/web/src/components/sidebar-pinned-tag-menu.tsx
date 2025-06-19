@@ -30,7 +30,7 @@ export function SidebarPinnedTagMenu({ pinned }: SidebarPinnedTagMenuProps) {
       tagName={pinned.name}
       className="peer-hover/menu-button:text-accent-foreground absolute right-1 h-8 w-8 opacity-0 transition-opacity group-hover/menu-item:opacity-100"
       isPinned={true}
-      onTogglePin={() => togglePinTag(pinned.name)}
+      onTogglePin={() => togglePinTag(pinned.tagId)}
       onDelete={onDeleteTag}
     />
   );

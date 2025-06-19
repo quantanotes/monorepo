@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from '@tanstack/react-router';
-import { Item } from '@quanta/types';
 import { debounce } from '@quanta/utils/debounce';
 import {
   CommandDialog,
@@ -11,8 +10,9 @@ import {
 } from '@quanta/ui/command';
 import { useItemModel } from '@quanta/web/contexts/item-model';
 import { useSpace } from '@quanta/web/hooks/use-space';
+import type { Item } from '@quanta/types';
 
-export interface SearchProps {
+interface SearchProps {
   show: boolean;
   setShow: (show: boolean) => void;
 }

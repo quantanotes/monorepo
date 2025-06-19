@@ -1,6 +1,6 @@
 import { useLiveQuery } from '@electric-sql/pglite-react';
 import type { ItemTag, TagQuery, TagType } from '@quanta/types';
-import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
+import { snakeToCamelObject } from '@quanta/utils/snake-to-camel';
 import { and, eq, exists, inArray, sql } from '@quanta/db/drizzle';
 import { DB, schema } from '@quanta/db/local';
 import {
@@ -188,7 +188,7 @@ export class ItemModelLocal {
     const item = items.at(0) as ItemWithTags | undefined;
     if (item) {
       //@ts-ignore
-      item.item = snakeToCamlObject(item);
+      item.item = snakeToCamelObject(item);
       return flattenItemTagResult(item);
     }
   }
@@ -208,7 +208,10 @@ export class ItemModelLocal {
     const items = useLiveQuery(sql, params)?.rows || [];
     return flattenItemTagResults(
       //@ts-ignore
-      items.map((item) => ({ item: snakeToCamlObject(item), tags: item.tags })),
+      items.map((item) => ({
+        item: snakeToCamelObject(item),
+        tags: item.tags,
+      })),
     );
   }
 

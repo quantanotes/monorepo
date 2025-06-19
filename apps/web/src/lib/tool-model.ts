@@ -1,7 +1,7 @@
 import { useLiveQuery } from '@electric-sql/pglite-react';
 import { and, eq } from '@quanta/db/drizzle';
 import { type DB, schema } from '@quanta/db/local';
-import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
+import { snakeToCamelObject } from '@quanta/utils/snake-to-camel';
 
 export class ToolModel {
   readonly #db: DB;
@@ -19,7 +19,7 @@ export class ToolModel {
       .where(eq(schema.tools.spaceId, this.#spaceId))
       .toSQL();
     const tools = useLiveQuery(sql, params)?.rows || [];
-    return tools.map(snakeToCamlObject);
+    return tools.map(snakeToCamelObject);
   }
 
   async create(type: string) {

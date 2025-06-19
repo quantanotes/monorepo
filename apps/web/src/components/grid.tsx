@@ -24,7 +24,7 @@ function GridInner({ items }) {
   }, [width]);
 
   return (
-    <div ref={ref} className="w-full">
+    <div ref={ref} className="w-full" key={items}>
       <Masonry
         key={masonryKey}
         columnGutter={8}

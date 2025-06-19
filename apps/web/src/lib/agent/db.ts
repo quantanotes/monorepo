@@ -1,9 +1,10 @@
-import pick from 'lodash/pick';
-import type { TagType } from '@quanta/types';
+import pick from 'lodash-es/pick';
 import { doc } from '@quanta/agent';
-import { ItemModelLocal } from '@quanta/web/lib/item-model-local';
+import type { TagType } from '@quanta/types';
+import type { TagModel } from '@quanta/web/lib/tag-model';
+import type { ItemModelLocal } from '@quanta/web/lib/item-model-local';
 
-export const db = (itemModel: ItemModelLocal) => {
+export const db = (itemModel: ItemModelLocal, tagModel: TagModel) => {
   const filterItem = (item: any) => {
     if (!item) return null;
     return pick(item, ['id', 'name', 'content', 'tags']);
@@ -15,8 +16,13 @@ export const db = (itemModel: ItemModelLocal) => {
   };
 
   return {
-    __doc__:
-      'Knowledge base operations for managing items and their relationships through tags.',
+    __doc__: `Knowledge base operations for managing items and their relationships through tags.
+Items are the fundamental datum of knowledge. They can represent anything - documents, contacts etc.
+User may refer to items as pages, objects, rows etc.
+Tags are like fields/types on each knowledge item. A tag can have a child tag which serves like a fields on that tag i.e.
+#person will have the child tags #age #job #gender e.t.c.
+Child tags are useful for constructing higher order models.
+Prefer lower kebab case for all tag names.`,
 
     get: doc(
       'db.get',
@@ -107,6 +113,22 @@ db.untag("doc_123", "priority")`,
 Search objects by semantic similarity
 Query must not be empty or it will fail
 db.semantic_search("project docs", 5)`,
+    ),
+
+    tagTag: doc(
+      `db.tag_tag`,
+      (parent: string, child: string) => tagModel.addChild(parent, child),
+      `(parent: string, child: string): Promise<void>
+Adds a child tag to a tag.
+db.tag("people", "age");`,
+    ),
+
+    untagTag: doc(
+      `db.untag_tag`,
+      (parent: string, child: string) => tagModel.removeChild(parent, child),
+      `(parent: string, child: string): Promise<void>
+Adds a child tag to a tag.
+db.tag("people", "age");`,
     ),
   };
 };

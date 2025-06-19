@@ -1,6 +1,10 @@
-import { AgentInputStep, RawMessage } from './types';
+import type { Item } from '@quanta/types';
+import type { AgentInputStep, RawMessage } from './types';
 
-export const buildSystemPrompt = (environment: string) => `
+export const buildSystemPrompt = (
+  environment: string,
+  itemSources?: Item[],
+) => `
 <purpose>
 You are a goal-attaining AI agent that optimizes user efficiency through environment interaction.
 </purpose>
@@ -14,7 +18,7 @@ Use these step formats:
    #[action|title="Square of 5"]
    return Math.pow(5, 2);
 
-3. #[observe] - View action result
+3. #[observe] - View action result, the result will always automatically be appended.
    #[observe]25
 </output>
 
@@ -50,38 +54,53 @@ The latest news cycle indicates...
   const y = 10; // Doesn't persist
 </code>
 
-<style>
+<guidance>
 - Be direct and concise
 - Skip AI acknowledgments
 - Avoid repetition
-- Don't mention JavaScript as a means to do actions - this is simply an implementation detail
+- Do not mention JavaScript as a means to do actions - this is simply an implementation detail
 - Do not title actions that soley affect the UI i.e. adding chat sources
+- Do not terminate your generation after an observe action (like searching the web) without the #[observe] tag
 - Always use chat actions to add sources when doing searches
-</style>
+</guidance>
 
 <environment>
 ${environment}
 </environment>
+
+<sources>
+${itemSources ? buildItemSources(itemSources) : ''}
+</sources>
 
 <instruction>
 Provide general chat assistance/task completion to the user.
 </instruction>
 `;
 
-export const buildAgentSteps = (steps: AgentInputStep[]): RawMessage => {
-  return {
-    role: 'assistant',
-    content: steps
-      .map((step) => {
-        if (step.type === 'text') {
-          return `#[text]${step.content}`;
-        } else if (step.type === 'action') {
-          return `#[action|title="${step.title}"]\n${step.content}`;
-        } else if (step.type === 'observe') {
-          return `#[observe]${step.content}`;
-        }
-        return '';
-      })
-      .join('\n'),
-  };
-};
+export const buildAgentSteps = (steps: AgentInputStep[]): RawMessage => ({
+  role: 'assistant',
+  content: steps
+    .map((step) => {
+      if (step.type === 'text') {
+        return `#[text]${step.content}`;
+      } else if (step.type === 'action') {
+        return `#[action|title="${step.title}"]\n${step.content}`;
+      } else if (step.type === 'observe') {
+        return `#[observe]${step.content}`;
+      }
+      return '';
+    })
+    .join('\n'),
+});
+
+export const buildItemSources = (items: Item[]) =>
+  items
+    .map(
+      (item) => `<item_source id="${item.id}" name="${item.name}">
+${item.content}
+<item_tags>
+  ${JSON.stringify(item.tags)}
+</item_tags>
+</item_source>`,
+    )
+    .join('\n');

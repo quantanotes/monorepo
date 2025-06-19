@@ -10,6 +10,7 @@ interface TextProps {
 
 export function Text({ item, editable = true, onUpdate }: TextProps) {
   const content = `<settings>${item.name || ''}</settings>${item.content || ''}`;
+
   return (
     <ItemProvider value={item}>
       <TextEditor onUpdate={onUpdate} editable={editable} content={content} />

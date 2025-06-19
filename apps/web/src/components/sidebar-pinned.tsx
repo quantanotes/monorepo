@@ -21,7 +21,7 @@ export function SidebarPinned({ pinned, spaceId }: SidebarPinnedProps) {
       result += `/${pinned.itemId}`;
     }
     if (pinned.type === 'tag') {
-      result += `/t/${pinned.itemId}`;
+      result += `/t/${pinned.name}`;
     }
     return result;
   }, [pinned.type, pinned.itemId, spaceId]);
@@ -40,9 +40,9 @@ export function SidebarPinned({ pinned, spaceId }: SidebarPinnedProps) {
   const Menu = () => {
     switch (pinned.type) {
       case 'item':
-        return <SidebarPinnedItemMenu />;
+        return <SidebarPinnedItemMenu pinned={pinned} />;
       case 'tag':
-        return <SidebarPinnedTagMenu />;
+        return <SidebarPinnedTagMenu pinned={pinned} />;
       default:
         return <div></div>;
     }
@@ -63,7 +63,7 @@ export function SidebarPinned({ pinned, spaceId }: SidebarPinnedProps) {
         </Link>
       </Button>
 
-      <Menu className="" />
+      <Menu />
     </div>
   );
 }

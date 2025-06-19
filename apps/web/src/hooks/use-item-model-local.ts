@@ -9,11 +9,7 @@ export function useItemModelLocal() {
   const user = useAuthUser()!;
   const db = useDB()!;
 
-  if (!db) {
-    return;
-  }
-
-  const model = new ItemModelLocal(db, user.id, space.id);
+  const model = new ItemModelLocal(db, user?.id, space?.id);
 
   const useItemLive = (id: string) => model.useItemLive(id);
 

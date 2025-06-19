@@ -1,21 +1,14 @@
 import { desc, eq, and, or, isNotNull, sql } from '@quanta/db/drizzle';
-import { type DB as DBLocal } from '@quanta/db/local';
-import type { DB as DBRemote } from '@quanta/db/remote/db';
-import * as schema from '@quanta/db/remote/schema';
+import { schema } from '@quanta/db/local';
+import type { DB } from '@quanta/db/local';
 
-export class PinnedModel {
-  readonly #db: DBLocal['orm'] | DBRemote;
-  readonly #spaceId: string | null;
-  readonly #userId: string | null;
+export class PinnedModelLocal {
+  readonly #db: DB['orm'];
+  readonly #spaceId: string;
 
-  constructor(
-    db: DBLocal['orm'] | DBRemote,
-    spaceId: string | null,
-    userId: string | null,
-  ) {
+  constructor(db: DB['orm'], spaceId: string) {
     this.#db = db;
     this.#spaceId = spaceId;
-    this.#userId = userId;
   }
 
   async getAll() {
@@ -42,7 +35,12 @@ export class PinnedModel {
     const existing = await this.#db
       .select()
       .from(schema.pinned)
-      .where(eq(schema.pinned.itemId, itemId))
+      .where(
+        and(
+          eq(schema.pinned.itemId, itemId),
+          eq(schema.pinned.isDeleted, false),
+        ),
+      )
       .limit(1);
     return existing.length > 0;
   }
@@ -51,7 +49,9 @@ export class PinnedModel {
     const existing = await this.#db
       .select()
       .from(schema.pinned)
-      .where(eq(schema.pinned.tagId, tagId))
+      .where(
+        and(eq(schema.pinned.tagId, tagId), eq(schema.pinned.isDeleted, false)),
+      )
       .limit(1);
     return existing.length > 0;
   }
@@ -63,7 +63,6 @@ export class PinnedModel {
       .values({
         itemId,
         spaceId: this.#spaceId || undefined,
-        userId: this.#userId || undefined,
         type: 'item',
         order,
       })
@@ -76,8 +75,7 @@ export class PinnedModel {
       .insert(schema.pinned)
       .values({
         tagId,
-        spaceId: this.#spaceId || undefined,
-        userId: this.#userId || undefined,
+        spaceId: this.#spaceId,
         type: 'tag',
         order,
       })
@@ -124,9 +122,8 @@ export class PinnedModel {
       )
       .where(
         and(
-          this.#spaceId
-            ? eq(schema.pinned.spaceId, this.#spaceId)
-            : eq(schema.pinned.userId, this.#userId!),
+          eq(schema.pinned.spaceId, this.#spaceId),
+          eq(schema.pinned.isDeleted, false),
           or(
             and(eq(schema.pinned.type, 'item'), isNotNull(schema.items.id)),
             and(eq(schema.pinned.type, 'tag'), isNotNull(schema.tags.id)),
@@ -141,9 +138,10 @@ export class PinnedModel {
       .select({ order: schema.pinned.order })
       .from(schema.pinned)
       .where(
-        this.#spaceId
-          ? eq(schema.pinned.spaceId, this.#spaceId)
-          : eq(schema.pinned.userId, this.#userId!),
+        and(
+          eq(schema.pinned.spaceId, this.#spaceId),
+          eq(schema.pinned.isDeleted, false),
+        ),
       )
       .orderBy(desc(schema.pinned.order))
       .limit(1)

@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from '@tanstack/react-router';
-import { X } from 'lucide-react';
-import { Button } from '@quanta/ui/button';
+import { useNavigate } from '@tanstack/react-router';
 import { useTagModelLocal } from '@quanta/web/hooks/use-tag-model-local';
 import { useItemModelLocal } from '@quanta/web/hooks/use-item-model-local';
 import { useSpace } from '@quanta/web/hooks/use-space';
@@ -20,22 +18,32 @@ function RouteComponent() {
   const { tagName } = Route.useParams();
   const navigate = useNavigate();
   const space = useSpace()!;
-  const { useTagChildrenLive, deleteTag } = useTagModelLocal();
+  const { useTagLive, useTagChildrenLive, deleteTag } = useTagModelLocal();
   const { useSearchItemsLive } = useItemModelLocal()!;
   const { isTagPinned, togglePinTag } = usePinnedLocal()!;
+  const [view, setView] = useState('grid');
+  const tag = useTagLive(tagName);
   const items = useSearchItemsLive('', [{ tag: tagName }]);
   const tagChildren = useTagChildrenLive(tagName);
-  const [view, setView] = useState('grid');
+  const isPinned = tag && isTagPinned(tagName);
+
+  const handleTogglePin = () => {
+    if (tag) {
+      togglePinTag(tag.id);
+    }
+  };
+
+  const handleDelete = () => {
+    deleteTag(tagName);
+    navigate({ to: '/s/$spaceId', params: { spaceId: space.id } });
+  };
 
   return (
     <PageLayout
       title={`#${tagName}`}
       headerMenu={
         <>
-          <PinButton
-            isPinned={isTagPinned(tagName)}
-            onTogglePin={() => togglePinTag(tagName)}
-          />
+          <PinButton isPinned={isPinned} onTogglePin={handleTogglePin} />
 
           <ViewMenu
             views={['table', 'grid']}
@@ -45,12 +53,9 @@ function RouteComponent() {
 
           <TagPageMenu
             tagName={tagName}
-            isPinned={isTagPinned(tagName)}
-            onTogglePin={() => togglePinTag(tagName)}
-            onDelete={() => {
-              deleteTag(tagName);
-              navigate({ to: '/s/$spaceId', params: { spaceId: space.id } });
-            }}
+            isPinned={isPinned}
+            onTogglePin={handleTogglePin}
+            onDelete={handleDelete}
           />
         </>
       }

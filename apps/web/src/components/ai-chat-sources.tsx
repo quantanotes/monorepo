@@ -1,50 +1,90 @@
-import { Source } from '@quanta/web/contexts/ai-chat';
+import { useState } from 'react';
+import { Globe, StickyNote, FileText, ChevronDown } from 'lucide-react';
+import { Button } from '@quanta/ui/button';
+import { AiChatSource } from '@quanta/web/components/ai-chat-source';
+
+const INITIAL_DISPLAY_COUNT = 3;
 
 interface AiChatSourcesProps {
-  sources: Source[];
+  sources: any[];
 }
 
 export function AiChatSources({ sources }: AiChatSourcesProps) {
+  const [expandedSections, setExpandedSections] = useState<
+    Record<string, boolean>
+  >({
+    web: false,
+    item: false,
+    file: false,
+  });
+
+  const toggleSection = (type: string) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [type]: !prev[type],
+    }));
+  };
+
+  const getDisplaySources = (sources: any[], type: string) => {
+    return expandedSections[type]
+      ? sources
+      : sources.slice(0, INITIAL_DISPLAY_COUNT);
+  };
+
+  const webSources = sources.filter((s) => s.type === 'web');
+  const itemSources = sources.filter((s) => s.type === 'item');
+  const fileSources = sources.filter((s) => s.type === 'file');
+
+  const sections = [
+    { type: 'web', icon: Globe, label: 'Web Sources', sources: webSources },
+    { type: 'item', icon: StickyNote, label: 'Items', sources: itemSources },
+    { type: 'file', icon: FileText, label: 'Files', sources: fileSources },
+  ];
+
+  if (sources.length === 0) return null;
+
   return (
-    <div className="mt-2 flex flex-wrap gap-2">
-      {sources.map((source, index) => (
-        <div
-          key={index}
-          className="flex items-center gap-2 rounded-lg bg-gray-100 p-2 text-sm dark:bg-gray-800"
-        >
-          {source.type === 'web' && (
-            <a
-              href={source.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-500"
-            >
-              {source.image && (
-                <img
-                  src={source.image}
-                  alt={source.name}
-                  className="h-4 w-4 rounded-sm object-cover"
-                />
+    <div className="mt-3 flex flex-col gap-4">
+      {sections.map((section) =>
+        section.sources.length > 0 ? (
+          <div key={section.type} className="flex flex-col gap-2">
+            <div className="text-muted-foreground flex items-center gap-2 text-sm">
+              <section.icon className="size-4" />
+              <span className="font-medium">{section.label}</span>
+              <span className="text-muted-foreground/60">
+                ({section.sources.length})
+              </span>
+            </div>
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-2">
+              {getDisplaySources(section.sources, section.type).map(
+                (source, i) => (
+                  <AiChatSource key={i} source={source} />
+                ),
               )}
-              {source.name}
-            </a>
-          )}
-          {source.type === 'object' && (
-            <div className="flex items-center gap-2">
-              <span className="text-gray-600 dark:text-gray-400">
-                {source.id}
-              </span>
             </div>
-          )}
-          {source.type === 'file' && (
-            <div className="flex items-center gap-2">
-              <span className="text-gray-600 dark:text-gray-400">
-                {source.name}
-              </span>
-            </div>
-          )}
-        </div>
-      ))}
+            {section.sources.length > INITIAL_DISPLAY_COUNT && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-1 w-fit"
+                onClick={() => toggleSection(section.type)}
+              >
+                <ChevronDown
+                  size={16}
+                  className={
+                    expandedSections[section.type]
+                      ? 'rotate-180 transform transition-transform'
+                      : 'transition-transform'
+                  }
+                />
+                {expandedSections[section.type]
+                  ? 'Show less'
+                  : `Show ${section.sources.length - INITIAL_DISPLAY_COUNT} more`}
+              </Button>
+            )}
+          </div>
+        ) : null,
+      )}
     </div>
   );
 }

@@ -10,14 +10,14 @@ export function snakeToCamel(str: string): string {
   return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
 }
 
-export function snakeToCamlObject<T extends ObjectWithSnakeCase>(
+export function snakeToCamelObject<T extends ObjectWithSnakeCase>(
   obj: T,
 ): {
   [K in keyof T as SnakeToCamelCase<K & string>]: T[K];
 } {
   if (Array.isArray(obj)) {
     return obj.map((item) =>
-      typeof item === 'object' ? snakeToCamlObject(item) : item,
+      typeof item === 'object' ? snakeToCamelObject(item) : item,
     ) as any;
   }
 
@@ -25,7 +25,7 @@ export function snakeToCamlObject<T extends ObjectWithSnakeCase>(
     return Object.fromEntries(
       Object.entries(obj).map(([key, value]) => [
         snakeToCamel(key),
-        typeof value === 'object' ? snakeToCamlObject(value) : value,
+        typeof value === 'object' ? snakeToCamelObject(value) : value,
       ]),
     ) as any;
   }

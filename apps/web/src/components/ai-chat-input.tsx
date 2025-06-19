@@ -16,12 +16,12 @@ export function AiChatInput() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [chatShadowHue, setChatShadowHue] = useState(0);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     send();
   };
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
       send();

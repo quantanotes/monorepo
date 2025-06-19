@@ -15,7 +15,7 @@ export function GridCard({ data }: GridCardProps) {
       to={data.spaceId ? `/s/$spaceId/$itemId` : `/$itemId`}
       params={{ itemId: data.id, spaceId: data.spaceId }}
     >
-      <div className="bg-card hover:bg-accent dark:hover:bg-accent/50 h-full overflow-hidden rounded-md p-4 transition-colors">
+      <div className="bg-card hover:bg-accent/50 h-full overflow-hidden rounded-md p-4 transition-colors">
         <h3 className="text-card-foreground mb-6 truncate text-xl font-black">
           {data.name || 'Untitled'}
         </h3>

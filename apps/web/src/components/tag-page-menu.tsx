@@ -31,11 +31,7 @@ export function TagPageMenu({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            className={cn('size-8', className)}
-            variant="ghost"
-            size="icon"
-          >
+          <Button className={className} variant="ghost" size="icon">
             <Ellipsis className="text-muted-foreground size-5" />
           </Button>
         </DropdownMenuTrigger>

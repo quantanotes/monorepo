@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { startDBSync } from '@quanta/db/local';
-import { useDB } from '@quanta/web/contexts/db';
+import { useDBLazy } from '@quanta/web/contexts/db';
 import { useSpace } from '@quanta/web/hooks/use-space';
 
 export function SyncProvider({ children }: React.PropsWithChildren) {
@@ -19,8 +19,7 @@ export function SyncProviderInner({
   spaceId,
 }: React.PropsWithChildren<{ spaceId: string }>) {
   const synced = useRef(new Set<string>());
-  const space = useSpace();
-  const db = useDB();
+  const db = useDBLazy();
 
   useEffect(() => {
     if (db && spaceId && !synced.current.has(spaceId)) {

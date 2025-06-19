@@ -36,15 +36,13 @@ export function Sidebar({
 
   async function handleCreateItem() {
     const item = await itemModel?.createItem({ name: '', content: '' });
-    if (item) {
-      if (space) {
-        navigate({
-          to: '/s/$spaceId/$itemId',
-          params: { spaceId: space.id, itemId: item.id },
-        });
-      } else {
-        navigate({ to: '/$itemId', params: { itemId: item.id } });
-      }
+    if (item && space) {
+      navigate({
+        to: '/s/$spaceId/$itemId',
+        params: { spaceId: space.id, itemId: item.id },
+      });
+    } else if (item) {
+      navigate({ to: '/$itemId', params: { itemId: item.id } });
     }
   }
 

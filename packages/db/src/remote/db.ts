@@ -1,8 +1,8 @@
-import { drizzle } from 'drizzle-orm/neon-serverless';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 
-export const db = drizzle({
-  connection: process.env.DATABASE_URL!,
-  casing: 'snake_case',
-});
+const client = postgres(process.env.DATABASE_URL!);
+
+export const db = drizzle({ client, casing: 'snake_case' });
 
 export type DB = typeof db;

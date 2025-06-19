@@ -1,21 +1,23 @@
 import {
-  Outlet,
   createRootRouteWithContext,
   HeadContent,
   Scripts,
 } from '@tanstack/react-router';
-import { type QueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import { Toaster } from '@quanta/ui/sonner';
+import { ThemeProvider } from '@quanta/web/contexts/theme';
 import { DBProvider } from '@quanta/web/contexts/db';
 import { SyncProvider } from '@quanta/web/contexts/sync';
 import { PinnedProvider } from '@quanta/web/contexts/pinned';
 import { ItemModelProvider } from '@quanta/web/contexts/item-model';
+import { TagModelProvider } from '@quanta/web/contexts/tag-model';
 import { AiChatProvider } from '@quanta/web/contexts/ai-chat';
 import { AuthDialogProvider } from '@quanta/web/components/auth-dialog';
 import { MainLayout } from '@quanta/web/components/main-layout';
+import { AnimatedOutlet } from '@quanta/web/components/animated-outlet';
 import globalCss from '@quanta/ui/styles/globals.css?url';
 import favicon from '@quanta/web/public/favicon.ico?url';
+import type { QueryClient } from '@tanstack/react-query';
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -68,28 +70,32 @@ function RootComponent() {
 
   return (
     <RootDocument>
-      <DBProvider>
-        <SyncProvider>
-          <ItemModelProvider>
-            <PinnedProvider>
-              <AiChatProvider>
-                <AuthDialogProvider open={!!unauthenticated}>
-                  <MainLayout>
-                    <Outlet />
-                  </MainLayout>
-                </AuthDialogProvider>
-              </AiChatProvider>
-            </PinnedProvider>
-          </ItemModelProvider>
-        </SyncProvider>
-      </DBProvider>
+      <ThemeProvider>
+        <DBProvider>
+          <SyncProvider>
+            <ItemModelProvider>
+              <TagModelProvider>
+                <PinnedProvider>
+                  <AiChatProvider>
+                    <AuthDialogProvider open={!!unauthenticated}>
+                      <MainLayout>
+                        <AnimatedOutlet />
+                      </MainLayout>
+                    </AuthDialogProvider>
+                  </AiChatProvider>
+                </PinnedProvider>
+              </TagModelProvider>
+            </ItemModelProvider>
+          </SyncProvider>
+        </DBProvider>
+      </ThemeProvider>
     </RootDocument>
   );
 }
 
 function RootDocument({ children }: React.PropsWithChildren) {
   return (
-    <html className="dark">
+    <html>
       <head>
         <HeadContent />
       </head>

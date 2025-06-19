@@ -8,7 +8,7 @@ export function HumanChatInput() {
   const { value, setValue, addComment } = useHumanChat();
 
   const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    (event: KeyboardEvent<HTMLTextAreaElement>) => {
       if (event.key === 'Enter' && !event.shiftKey) {
         event.preventDefault();
         addComment();

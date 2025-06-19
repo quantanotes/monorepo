@@ -9,7 +9,7 @@ export function AiChatUserMessage({ message }: AiChatUserMessageProps) {
   return (
     <div className="flex justify-end">
       <div className="bg-card rounded-2xl px-4">
-        <div className="prose-lg">
+        <div className="prose">
           {message.parts.map(
             (part, index) =>
               part.type === 'text' && (

@@ -2,7 +2,6 @@ import { AnimatedMarkdown } from 'flowtoken/src';
 import { Message } from '@quanta/agent';
 import { AiChatAction } from '@quanta/web/components/ai-chat-action';
 import { AiChatSources } from '@quanta/web/components/ai-chat-sources';
-import 'flowtoken/dist/styles.css';
 
 interface AiChatAIMessageProps {
   message: Message;
@@ -15,10 +14,22 @@ export function AiChatAIMessage({
 }: AiChatAIMessageProps) {
   return (
     <div className="px-3">
-      <div className="prose-lg flex max-w-none flex-col gap-1">
+      {message.sources.length > 0 && (
+        <AiChatSources sources={message.sources} />
+      )}
+
+      <div className="prose flex max-w-none flex-col gap-1">
         {message.parts.map((part, index) =>
           part.type === 'text' ? (
-            <AnimatedMarkdown key={index} content={part.content} />
+            <AnimatedMarkdown
+              key={index}
+              content={part.content}
+              customComponents={{
+                code: ({ node, ...props }: any) => (
+                  <code {...props}>{props.children}</code>
+                ),
+              }}
+            />
           ) : part.type === 'action' ? (
             <AiChatAction
               key={index}
@@ -30,9 +41,6 @@ export function AiChatAIMessage({
           ),
         )}
       </div>
-      {message.sources.length > 0 && (
-        <AiChatSources sources={message.sources} />
-      )}
     </div>
   );
 }

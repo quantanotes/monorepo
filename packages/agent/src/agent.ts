@@ -1,10 +1,12 @@
-import type { AgentServerCallbacks, RawMessage, TextStreamFn } from './types';
 import { buildAgentSteps, buildSystemPrompt } from './prompt';
 import { parseStream } from './parser';
+import type { AgentServerCallbacks, RawMessage, TextStreamFn } from './types';
+import type { Item } from '@quanta/types';
 
 export async function agent(
   environment: string,
   messages: RawMessage[],
+  items: Item[],
   callbacks: AgentServerCallbacks,
   textStreamFn: TextStreamFn,
   abortSignal: AbortSignal,
@@ -14,7 +16,7 @@ export async function agent(
 
     messages.unshift({
       role: 'system',
-      content: buildSystemPrompt(environment),
+      content: buildSystemPrompt(environment, items),
     });
 
     messages.push({
@@ -42,9 +44,9 @@ export async function agent(
             currentStep,
             steps,
             callbacks,
+            textStreamAbortController,
           );
           if (shouldReset) {
-            textStreamAbortController.abort();
             continue outer;
           }
         }
@@ -75,10 +77,12 @@ async function handleParserStateTransition(
   currentStep: () => any,
   steps: any[],
   callbacks: AgentServerCallbacks,
+  abortController: AbortController,
 ): Promise<boolean> {
   const { type, content, title } = currentStep();
 
   if (type === 'action' && state === 'observe') {
+    abortController.abort();
     const observation = await callbacks.onActObserve(content, title);
     steps.push({ type: 'observe', content: observation });
     return true;

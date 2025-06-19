@@ -1,23 +1,26 @@
 import { search } from './search';
 import { browser } from './browser';
-// import { email } from './email';
+import { email } from './email';
 import { csv } from './csv';
 import { db } from './db';
 import type { ItemModelLocal } from '@quanta/web/lib/item-model-local';
+import type { TagModel } from '@quanta/web/lib/tag-model';
 
-export function getBaseEnvironment(
+export function baseAgentEnvironment(
   chat: Record<string, any>,
   files: File[],
   tools: any[],
   itemModel?: ItemModelLocal,
+  tagModel?: TagModel,
 ) {
   return {
     search,
-    // email,
-    db: itemModel ? db(itemModel) : undefined,
+    email,
     chat,
     browser,
     csv,
+
+    db: itemModel && tagModel ? db(itemModel, tagModel) : undefined,
 
     __doc__files: filesDoc(files),
     files,

@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
-import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
+import { snakeToCamelObject } from '@quanta/utils/snake-to-camel';
 import { addCommentFn, deleteCommentFn } from '@quanta/web/lib/comment-fns';
 import { useShapeWithJoin } from '@quanta/web/hooks/use-shape-with-join';
 
@@ -72,7 +72,7 @@ export function HumanChatProvider({ children }: React.PropsWithChildren) {
   return (
     <HumanChatContext.Provider
       value={{
-        comments: comments.map(snakeToCamlObject) as HumanChatComment[],
+        comments: comments.map(snakeToCamelObject) as HumanChatComment[],
         value,
         setValue,
         addComment,

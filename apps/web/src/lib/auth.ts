@@ -4,7 +4,6 @@ import { auth } from '@quanta/auth/server';
 
 export function throwUnauthenticatedRedirect() {
   throw redirect({
-    to: '.',
     search: { unauthenticated: true },
   });
 }

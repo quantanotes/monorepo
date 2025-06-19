@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useLiveQuery } from '@electric-sql/pglite-react';
-import { snakeToCamlObject } from '@quanta/utils/snake-to-camel';
-import { PinnedModel } from '@quanta/web/lib/pinned-model';
+import { snakeToCamelObject } from '@quanta/utils/snake-to-camel';
+import { PinnedModelLocal } from '@quanta/web/lib/pinned-model-local';
 import { useDB } from '@quanta/web/contexts/db';
 import { useSpace } from '@quanta/web/hooks/use-space';
 
@@ -9,11 +9,11 @@ export function usePinnedLocal() {
   const space = useSpace()!;
   const db = useDB()!;
 
-  const model = new PinnedModel(db.orm, space.id, null);
+  const model = new PinnedModelLocal(db.orm, space.id);
 
   const { sql, params } = model.getAllQuery().toSQL();
 
-  const pinned = useLiveQuery(sql, params)?.rows.map(snakeToCamlObject) || [];
+  const pinned = useLiveQuery(sql, params)?.rows.map(snakeToCamelObject) || [];
 
   const togglePinItem = (itemId: string) => model.togglePinItem(itemId);
 
@@ -26,8 +26,10 @@ export function usePinnedLocal() {
   );
 
   const isTagPinned = useCallback(
-    (itemId: string) =>
-      pinned?.some((pinned) => pinned.itemId === itemId) ?? false,
+    (tagName: string) =>
+      pinned?.some(
+        (pinned) => pinned.name === tagName && pinned.type === 'tag',
+      ) ?? false,
     [pinned],
   );
 

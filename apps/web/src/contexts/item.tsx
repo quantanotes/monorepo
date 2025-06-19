@@ -5,10 +5,10 @@ const ItemContext = createContext<Item>(null!);
 
 export const ItemProvider = ItemContext;
 
-export function useItemContext() {
+export function useItem() {
   const context = useContext(ItemContext);
   if (!context) {
-    throw new Error('useItemContext must be used within an ItemProvider');
+    throw new Error('useItem must be used within an ItemProvider');
   }
   return context;
 }

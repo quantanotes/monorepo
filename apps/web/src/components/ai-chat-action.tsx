@@ -19,7 +19,7 @@ export function AiChatAction({ title, status }: AiChatActionProps) {
   };
 
   return (
-    <div className="bg-muted/25 text-muted-foreground flex items-center gap-4 rounded-md px-3 py-1">
+    <div className="bg-muted text-muted-foreground flex items-center gap-4 rounded-md px-3 py-1">
       <ActionStatusIndicator />
       {title && <div className="mb-1">{title}</div>}
     </div>

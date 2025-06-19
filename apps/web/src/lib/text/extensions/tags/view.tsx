@@ -3,7 +3,7 @@ import { SuggestionProps } from '@tiptap/suggestion';
 import { Popover, PopoverAnchor, PopoverContent } from '@quanta/ui/popover';
 import { Command, CommandItem, CommandList } from '@quanta/ui/command';
 import { useItemModel } from '@quanta/web/contexts/item-model';
-import { useItemContext } from '@quanta/web/contexts/item';
+import { useItem } from '@quanta/web/contexts/item';
 
 export interface TagsViewRef {
   onKeyDown: (event: KeyboardEvent) => boolean;
@@ -16,7 +16,7 @@ export const TagsView = forwardRef<TagsViewRef, SuggestionProps>(
     const anchorRef = useRef({ getBoundingClientRect: () => clientRect!()! });
     const commandListRef = useRef<HTMLDivElement>(null);
     const { tagItem } = useItemModel();
-    const item = useItemContext();
+    const item = useItem();
     const tag = query.replace(/:.*/, '');
     const value =
       query.indexOf(':') > 0 ? query.slice(query.indexOf(':') + 1) : null;
