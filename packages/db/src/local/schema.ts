@@ -55,26 +55,34 @@ const table = <N extends string, C extends Record<string, any>>(
     (t) => [...syncIndexes(t), ...indexes(t)],
   );
 
-export { tagTypeEnum } from '../shared';
 export const items = table('items', itemColumns());
+
 export const tags = table('tags', tagColumns(), (t: any) => [
   unique().on(t.spaceId, t.name),
 ]);
+
 export const itemTags = table(
   'item_tags',
   itemTagColumns(null, items, tags),
   (t: any) => [primaryKey({ columns: [t.itemId, t.tagId] })],
 );
+
 export const tagTags = table(
   'tag_tags',
   tagTagColumns(null, tags),
   (t: any) => [primaryKey({ columns: [t.tagId, t.parentId] })],
 );
+
 export const tasks = table('tasks', taskColumns());
+
 export const tools = table('tools', toolColumns());
+
 export const pinned = table(
   'pinned',
   pinnedColumns(null, null, items, tags),
   (t: any) => [unique().on(t.itemId), unique().on(t.tagId)],
 );
+
 export const personas = table('personas', personaColumns());
+
+export { tagTypeEnum } from '../shared';

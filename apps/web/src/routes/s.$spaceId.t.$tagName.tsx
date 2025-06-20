@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { useTagModelLocal } from '@quanta/web/hooks/use-tag-model-local';
 import { useItemModelLocal } from '@quanta/web/hooks/use-item-model-local';
 import { useSpace } from '@quanta/web/hooks/use-space';
@@ -10,7 +10,7 @@ import { ViewMenu } from '@quanta/web/components/view-menu';
 import { PinButton } from '@quanta/web/components/pin-button';
 import { TagPageMenu } from '@quanta/web/components/tag-page-menu';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/s/$spaceId/t/$tagName')({
   component: RouteComponent,
 });
 

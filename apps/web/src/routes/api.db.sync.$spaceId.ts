@@ -1,13 +1,18 @@
+import { createServerFileRoute } from '@tanstack/react-start/server';
 import { json } from '@tanstack/react-start';
-import type { PgQueryResultHKT, PgTransaction } from 'drizzle-orm/pg-core';
 import { snakeToCamel } from '@quanta/utils/snake-to-camel';
 import { auth } from '@quanta/auth/server';
-import { and, eq, TablesRelationalConfig } from '@quanta/db/drizzle';
-import { ChangeSet, tables } from '@quanta/db/local';
+import { and, eq } from '@quanta/db/drizzle';
+import { tables } from '@quanta/db/local';
 import { db, schema } from '@quanta/db/remote';
 import { getSpaceWhereOwner } from '@quanta/web/lib/space-model';
+import type { TablesRelationalConfig } from '@quanta/db/drizzle';
+import type { ChangeSet } from '@quanta/db/local';
+import type { PgQueryResultHKT, PgTransaction } from 'drizzle-orm/pg-core';
 
-export const ServerRoute = createServerFileRoute().methods({
+export const ServerRoute = createServerFileRoute(
+  '/api/db/sync/$spaceId',
+).methods({
   POST: async ({ request, params }) => {
     const spaceId = params.spaceId;
 

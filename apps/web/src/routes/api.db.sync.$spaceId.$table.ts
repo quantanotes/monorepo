@@ -1,8 +1,9 @@
+import { createServerFileRoute } from '@tanstack/react-start/server'
 import { auth } from '@quanta/auth/server';
 import { getSpaceWhereOwner } from '@quanta/web/lib/space-model';
 import { proxyElectricRequest } from '@quanta/web/lib/electric-proxy';
 
-export const ServerRoute = createServerFileRoute().methods({
+export const ServerRoute = createServerFileRoute('/api/db/sync/$spaceId/$table').methods({
   GET: async ({ request, params }) => {
     const spaceId = params.spaceId;
     const table = params.table;

@@ -1,3 +1,5 @@
+import * as schema from './schema';
+import { tables } from './tables';
 import type { PgliteDatabase } from 'drizzle-orm/pglite';
 import type { LiveNamespace } from '@electric-sql/pglite/live';
 import type {
@@ -5,8 +7,6 @@ import type {
   SyncShapeToTableOptions,
   SyncShapeToTableResult,
 } from '@electric-sql/pglite-sync';
-import * as schema from './schema';
-import { tables } from './tables';
 
 export type DB = PGliteWithSync & {
   orm: PgliteDatabase<typeof schema>;

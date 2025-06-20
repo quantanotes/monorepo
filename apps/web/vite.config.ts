@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => ({
       tsr: {
         generatedRouteTree: 'src/routes.gen.ts',
       },
-      target: 'netlify',
+      target: 'bun',
     }),
 
     tsconfigPaths({ projects: ['../../tsconfig.json'] }),
@@ -52,7 +52,7 @@ function http2(): Plugin {
   return {
     name: 'http2',
     configureServer(server) {
-      server.middlewares.use((req, _, next) => {
+      server.middlewares.use((req, res, next) => {
         if (req.httpVersionMajor >= 2 && req.headers[':method']) {
           const chunks: Buffer[] = [];
 
@@ -80,6 +80,8 @@ function http2(): Plugin {
 
             Object.setPrototypeOf(req, IncomingMessage.prototype);
             Object.assign(req, r);
+
+            res.removeHeader('transfer-encoding');
 
             next();
           });

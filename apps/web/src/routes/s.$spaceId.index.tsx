@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
 import { searchQuerySchema } from '@quanta/web/lib/search';
 import { useItemModelLocal } from '@quanta/web/hooks/use-item-model-local';
@@ -5,7 +6,7 @@ import { PageLayout } from '@quanta/web/components/page-layout';
 import { Query } from '@quanta/web/components/query';
 import { ViewMenu } from '@quanta/web/components/view-menu';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/s/$spaceId/')({
   component: RouteComponent,
   validateSearch: searchQuerySchema,
   ssr: false,

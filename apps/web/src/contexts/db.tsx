@@ -9,7 +9,11 @@ export function DBProvider({ children }: React.PropsWithChildren) {
   const db = useDBLazy();
 
   if (!db && space) {
-    return <>Loading DB...</>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        Loading Cool Stuff...
+      </div>
+    );
   } else {
     return <PGliteProvider db={db}>{children}</PGliteProvider>;
   }

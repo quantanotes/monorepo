@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router';
+import { Link, createFileRoute } from '@tanstack/react-router';
 import { Badge } from '@quanta/ui/badge';
 import { useSpace } from '@quanta/web/hooks/use-space';
 import { useTagModelLocal } from '@quanta/web/hooks/use-tag-model-local';
@@ -6,7 +6,7 @@ import { usePinnedLocal } from '@quanta/web/hooks/use-pinned-local';
 import { PageLayout } from '@quanta/web/components/page-layout';
 import { TagPageMenu } from '@quanta/web/components/tag-page-menu';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/s/$spaceId/tags')({
   component: RouteComponent,
 });
 

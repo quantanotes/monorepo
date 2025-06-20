@@ -1,5 +1,5 @@
-import type { PgTable } from 'drizzle-orm/pg-core';
 import * as schema from './schema';
+import type { PgTable } from 'drizzle-orm/pg-core';
 
 export type TableDefinition = {
   table: string;

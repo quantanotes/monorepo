@@ -1,8 +1,4 @@
 node_modules
-bun.lock
-.npmrc
-
-.env*
 
 .app.config.timestamp_*
 
@@ -10,7 +6,6 @@ bun.lock
 .tanstack
 .nitro
 .output
-.git
 dist
 
 fly.toml

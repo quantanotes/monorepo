@@ -24,9 +24,9 @@ export async function proxyElectricRequest(
   if (res.headers.get(`content-encoding`)) {
     const headers = new Headers(res.headers);
 
+    headers.delete(`transfer-encoding`);
     headers.delete(`content-encoding`);
     headers.delete(`content-length`);
-    headers.delete(`transfer-encoding`);
 
     res = new Response(res.body, {
       status: res.status,

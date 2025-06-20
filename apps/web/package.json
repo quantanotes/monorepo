@@ -12,7 +12,7 @@
     "@types/react-dom": "^19.1.6",
     "@vitejs/plugin-react": "^4.5.1",
     "tailwindcss": "^4.1.8",
-    "vite": "^6.3.18",
+    "vite": "^6.3.5",
     "vite-plugin-mkcert": "^1.17.8",
     "vite-tsconfig-paths": "^5.1.4"
   },

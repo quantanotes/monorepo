@@ -69,17 +69,17 @@ export function MainLayout({ children }: React.PropsWithChildren) {
           />
         </ResizablePanel>
 
-        <ResizableHandle />
+        <ResizableHandle className="bg-transparent" />
 
         <ResizablePanel className="relative flex h-full flex-col">
           {children}
         </ResizablePanel>
 
-        <ResizableHandle />
+        <ResizableHandle className="bg-transparent" />
 
         <ResizablePanel
           ref={rightPanelRef}
-          className="bg-card/10 relative z-50 flex h-full flex-col"
+          className="bg-card/20 relative z-50 flex h-full flex-col"
           minSize={getRelativeWidth(336)}
           maxSize={getRelativeWidth(768)}
           collapsedSize={0}

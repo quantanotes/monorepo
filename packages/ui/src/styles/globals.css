@@ -1,12 +1,12 @@
 @import 'tailwindcss';
 
-@config '../../tailwind.config.ts';
-
 @source '../**/*.{tsx,ts}';
 @source '@radix-ui/**/*.{tsx,ts}';
 
 @plugin '@tailwindcss/typography';
 @plugin 'tailwindcss-animate';
+
+@config '../../tailwind.config.ts';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -34,7 +34,7 @@
   --font-sans: Manrope, sans;
   --font-mono: JetBrains Mono, monospace;
 
-  --radius: 0.1rem;
+  --radius: 0.35rem;
 }
 
 .dark {

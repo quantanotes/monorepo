@@ -1,5 +1,5 @@
-import { DB } from '../types';
 import { initDB } from './init';
+import type { DB } from '../types';
 
 var db: Promise<DB>;
 

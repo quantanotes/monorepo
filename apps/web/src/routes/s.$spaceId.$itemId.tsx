@@ -1,11 +1,11 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { debounce } from '@quanta/utils/debounce';
 import { usePinned } from '@quanta/web/contexts/pinned';
 import { useItemModelLocal } from '@quanta/web/hooks/use-item-model-local';
 import { ItemPage } from '@quanta/web/components/item-page';
 import type { Item } from '@quanta/types';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/s/$spaceId/$itemId')({
   component: RouteComponent,
   ssr: false,
 });

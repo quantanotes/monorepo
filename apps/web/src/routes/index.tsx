@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { itemsQueryOptions } from '@quanta/web/lib/item-query';
@@ -6,7 +7,7 @@ import { PageLayout } from '@quanta/web/components/page-layout';
 import { Query } from '@quanta/web/components/query';
 import { ViewMenu } from '@quanta/web/components/view-menu';
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/')({
   validateSearch: searchQuerySchema,
   loaderDeps: ({ search }) => search,
   loader: async ({ deps, context }) => {

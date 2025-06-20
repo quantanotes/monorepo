@@ -8,26 +8,20 @@ import type { DB, ChangeSet } from './types';
 
 const writeSyncMutex = new Mutex();
 
-export async function startDBSync(db: DB, spaceId: string) {
-  await Promise.all(tables.map((table) => syncTable(db, spaceId, table)));
-  startWriteSync(db, spaceId);
-}
+let activeSyncCleanup: undefined | (() => Promise<void>);
 
-export function waitForSync(db: DB, spaceId: string) {
-  return new Promise((resolve, reject) =>
-    db.live
-      .query(
-        'SELECT * FROM sync_status WHERE is_synced = TRUE AND space_id = $1;',
-        [spaceId],
-      )
-      .then((query) =>
-        query.subscribe(
-          (result) =>
-            result.rows.length === tables.length && resolve(undefined),
-        ),
-      )
-      .catch(reject),
-  );
+export async function startDBSync(db: DB, spaceId: string) {
+  await activeSyncCleanup?.();
+
+  const unsubscribers = await Promise.all([
+    ...tables.map((table) => syncTable(db, spaceId, table)),
+    startWriteSync(db, spaceId),
+  ]);
+
+  activeSyncCleanup = async () => {
+    await Promise.all(unsubscribers.map((fn) => fn()));
+    await resetSpaceSyncStatus(db, spaceId);
+  };
 }
 
 async function syncTable(
@@ -35,16 +29,12 @@ async function syncTable(
   spaceId: string,
   { table, primaryKeys, columns, jsonColumns }: TableDefinition,
 ) {
-  const result = await db.query(
-    'INSERT INTO sync_status (table_name, space_id) VALUES ($1, $2) ON CONFLICT DO NOTHING;',
-    [table, spaceId],
-  );
-
-  if (!result.affectedRows) {
-    return;
+  const isSynced = await updateTableSyncStatus(db, spaceId, table);
+  if (!isSynced) {
+    return () => void 0;
   }
 
-  await db.electric.syncShapeToTable({
+  const shape = await db.electric.syncShapeToTable({
     shape: {
       url: `${process.env.PUBLIC_APP_URL}/api/db/sync/${spaceId}/${table}`,
       params: {
@@ -74,12 +64,12 @@ async function syncTable(
       ),
     }),
   });
+
+  return () => shape.unsubscribe();
 }
 
 async function startWriteSync(db: DB, spaceId: string) {
-  await waitForSync(db, spaceId);
-
-  let query = tables
+  let sql = tables
     .map(
       ({ table }) => `(
         SELECT COUNT(*) as ${table}_count
@@ -89,16 +79,13 @@ async function startWriteSync(db: DB, spaceId: string) {
       )`,
     )
     .join(',');
+  sql = `SELECT ${sql}`;
 
-  query = `SELECT ${query}`;
-
-  db.live.query(query, [], async (results) => {
+  const query = await db.live.query(sql, [], async (results) => {
     const counts = results.rows[0];
     const count = Object.values(counts).reduce((acc, curr) => (acc += curr), 0);
-
     if (count > 0) {
       await writeSyncMutex.acquire();
-
       try {
         syncWrites(db, spaceId);
       } finally {
@@ -106,6 +93,8 @@ async function startWriteSync(db: DB, spaceId: string) {
       }
     }
   });
+
+  return () => query.unsubscribe();
 }
 
 async function syncWrites(db: DB, spaceId: string) {
@@ -165,6 +154,42 @@ async function syncWrites(db: DB, spaceId: string) {
       }),
     );
   });
+}
+
+function waitForSyncCount(db: DB, spaceId: string, count: number) {
+  return new Promise((resolve, reject) =>
+    db.live
+      .query(
+        'SELECT * FROM sync_status WHERE is_synced = TRUE AND space_id = $1;',
+        [spaceId],
+      )
+      .then((query) =>
+        query.subscribe(
+          (result) => result.rows.length === count && resolve(undefined),
+        ),
+      )
+      .catch(reject),
+  );
+}
+
+function waitForSyncFinish(db: DB, spaceId: string) {
+  return waitForSyncCount(db, spaceId, tables.length);
+}
+
+function waitForSyncReady(db: DB, spaceId: string) {
+  return waitForSyncCount(db, spaceId, 0);
+}
+
+async function updateTableSyncStatus(db: DB, spaceId: string, table: string) {
+  const result = await db.query(
+    'INSERT INTO sync_status (table_name, space_id) VALUES ($1, $2) ON CONFLICT DO NOTHING;',
+    [table, spaceId],
+  );
+  return !!result.affectedRows;
+}
+
+async function resetSpaceSyncStatus(db: DB, spaceId: string) {
+  await db.query('DELETE FROM sync_status WHERE space_id = $1', [spaceId]);
 }
 
 function mapJSON(value: string) {

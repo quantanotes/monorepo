@@ -8,11 +8,9 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
+import { createServerRootRoute } from '@tanstack/react-start/server'
 
-// Import Routes
-
-import { Route as rootRoute } from './routes/__root'
+import { Route as rootRouteImport } from './routes/__root'
 import { Route as ItemIdRouteImport } from './routes/$itemId'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SSpaceIdRouteImport } from './routes/s.$spaceId'
@@ -20,192 +18,107 @@ import { Route as SSpaceIdIndexRouteImport } from './routes/s.$spaceId.index'
 import { Route as SSpaceIdTagsRouteImport } from './routes/s.$spaceId.tags'
 import { Route as SSpaceIdItemIdRouteImport } from './routes/s.$spaceId.$itemId'
 import { Route as SSpaceIdTTagNameRouteImport } from './routes/s.$spaceId.t.$tagName'
+import { ServerRoute as ApiHealthServerRouteImport } from './routes/api.health'
+import { ServerRoute as ApiDbUsersServerRouteImport } from './routes/api.db.users'
+import { ServerRoute as ApiDbPinnedServerRouteImport } from './routes/api.db.pinned'
+import { ServerRoute as ApiDbItemsServerRouteImport } from './routes/api.db.items'
+import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api.auth.$'
+import { ServerRoute as ApiDbSyncSpaceIdServerRouteImport } from './routes/api.db.sync.$spaceId'
+import { ServerRoute as ApiDbItemIdServerRouteImport } from './routes/api.db.item.$id'
+import { ServerRoute as ApiDbSyncSpaceIdTableServerRouteImport } from './routes/api.db.sync.$spaceId.$table'
+import { ServerRoute as ApiDbCommentsSpaceIdServerRouteImport } from './routes/api.db.comments.space.$id'
+import { ServerRoute as ApiDbCommentsItemIdServerRouteImport } from './routes/api.db.comments.item.$id'
 
-// Create/Update Routes
+const rootServerRouteImport = createServerRootRoute()
 
 const ItemIdRoute = ItemIdRouteImport.update({
   id: '/$itemId',
   path: '/$itemId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
 const SSpaceIdRoute = SSpaceIdRouteImport.update({
   id: '/s/$spaceId',
   path: '/s/$spaceId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
 const SSpaceIdIndexRoute = SSpaceIdIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SSpaceIdRoute,
 } as any)
-
 const SSpaceIdTagsRoute = SSpaceIdTagsRouteImport.update({
   id: '/tags',
   path: '/tags',
   getParentRoute: () => SSpaceIdRoute,
 } as any)
-
 const SSpaceIdItemIdRoute = SSpaceIdItemIdRouteImport.update({
   id: '/$itemId',
   path: '/$itemId',
   getParentRoute: () => SSpaceIdRoute,
 } as any)
-
 const SSpaceIdTTagNameRoute = SSpaceIdTTagNameRouteImport.update({
   id: '/t/$tagName',
   path: '/t/$tagName',
   getParentRoute: () => SSpaceIdRoute,
 } as any)
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/$itemId': {
-      id: '/$itemId'
-      path: '/$itemId'
-      fullPath: '/$itemId'
-      preLoaderRoute: typeof ItemIdRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/s/$spaceId': {
-      id: '/s/$spaceId'
-      path: '/s/$spaceId'
-      fullPath: '/s/$spaceId'
-      preLoaderRoute: typeof SSpaceIdRouteImport
-      parentRoute: typeof rootRoute
-    }
-    '/s/$spaceId/$itemId': {
-      id: '/s/$spaceId/$itemId'
-      path: '/$itemId'
-      fullPath: '/s/$spaceId/$itemId'
-      preLoaderRoute: typeof SSpaceIdItemIdRouteImport
-      parentRoute: typeof SSpaceIdRouteImport
-    }
-    '/s/$spaceId/tags': {
-      id: '/s/$spaceId/tags'
-      path: '/tags'
-      fullPath: '/s/$spaceId/tags'
-      preLoaderRoute: typeof SSpaceIdTagsRouteImport
-      parentRoute: typeof SSpaceIdRouteImport
-    }
-    '/s/$spaceId/': {
-      id: '/s/$spaceId/'
-      path: '/'
-      fullPath: '/s/$spaceId/'
-      preLoaderRoute: typeof SSpaceIdIndexRouteImport
-      parentRoute: typeof SSpaceIdRouteImport
-    }
-    '/s/$spaceId/t/$tagName': {
-      id: '/s/$spaceId/t/$tagName'
-      path: '/t/$tagName'
-      fullPath: '/s/$spaceId/t/$tagName'
-      preLoaderRoute: typeof SSpaceIdTTagNameRouteImport
-      parentRoute: typeof SSpaceIdRouteImport
-    }
-  }
-}
-
-// Add type-safety to the createFileRoute function across the route tree
-
-declare module './routes/index' {
-  const createFileRoute: CreateFileRoute<
-    '/',
-    FileRoutesByPath['/']['parentRoute'],
-    FileRoutesByPath['/']['id'],
-    FileRoutesByPath['/']['path'],
-    FileRoutesByPath['/']['fullPath']
-  >
-}
-declare module './routes/$itemId' {
-  const createFileRoute: CreateFileRoute<
-    '/$itemId',
-    FileRoutesByPath['/$itemId']['parentRoute'],
-    FileRoutesByPath['/$itemId']['id'],
-    FileRoutesByPath['/$itemId']['path'],
-    FileRoutesByPath['/$itemId']['fullPath']
-  >
-}
-declare module './routes/s.$spaceId' {
-  const createFileRoute: CreateFileRoute<
-    '/s/$spaceId',
-    FileRoutesByPath['/s/$spaceId']['parentRoute'],
-    FileRoutesByPath['/s/$spaceId']['id'],
-    FileRoutesByPath['/s/$spaceId']['path'],
-    FileRoutesByPath['/s/$spaceId']['fullPath']
-  >
-}
-declare module './routes/s.$spaceId.$itemId' {
-  const createFileRoute: CreateFileRoute<
-    '/s/$spaceId/$itemId',
-    FileRoutesByPath['/s/$spaceId/$itemId']['parentRoute'],
-    FileRoutesByPath['/s/$spaceId/$itemId']['id'],
-    FileRoutesByPath['/s/$spaceId/$itemId']['path'],
-    FileRoutesByPath['/s/$spaceId/$itemId']['fullPath']
-  >
-}
-declare module './routes/s.$spaceId.tags' {
-  const createFileRoute: CreateFileRoute<
-    '/s/$spaceId/tags',
-    FileRoutesByPath['/s/$spaceId/tags']['parentRoute'],
-    FileRoutesByPath['/s/$spaceId/tags']['id'],
-    FileRoutesByPath['/s/$spaceId/tags']['path'],
-    FileRoutesByPath['/s/$spaceId/tags']['fullPath']
-  >
-}
-declare module './routes/s.$spaceId.index' {
-  const createFileRoute: CreateFileRoute<
-    '/s/$spaceId/',
-    FileRoutesByPath['/s/$spaceId/']['parentRoute'],
-    FileRoutesByPath['/s/$spaceId/']['id'],
-    FileRoutesByPath['/s/$spaceId/']['path'],
-    FileRoutesByPath['/s/$spaceId/']['fullPath']
-  >
-}
-declare module './routes/s.$spaceId.t.$tagName' {
-  const createFileRoute: CreateFileRoute<
-    '/s/$spaceId/t/$tagName',
-    FileRoutesByPath['/s/$spaceId/t/$tagName']['parentRoute'],
-    FileRoutesByPath['/s/$spaceId/t/$tagName']['id'],
-    FileRoutesByPath['/s/$spaceId/t/$tagName']['path'],
-    FileRoutesByPath['/s/$spaceId/t/$tagName']['fullPath']
-  >
-}
-
-// Create and export the route tree
-
-interface SSpaceIdRouteChildren {
-  SSpaceIdItemIdRoute: typeof SSpaceIdItemIdRoute
-  SSpaceIdTagsRoute: typeof SSpaceIdTagsRoute
-  SSpaceIdIndexRoute: typeof SSpaceIdIndexRoute
-  SSpaceIdTTagNameRoute: typeof SSpaceIdTTagNameRoute
-}
-
-const SSpaceIdRouteChildren: SSpaceIdRouteChildren = {
-  SSpaceIdItemIdRoute: SSpaceIdItemIdRoute,
-  SSpaceIdTagsRoute: SSpaceIdTagsRoute,
-  SSpaceIdIndexRoute: SSpaceIdIndexRoute,
-  SSpaceIdTTagNameRoute: SSpaceIdTTagNameRoute,
-}
-
-const SSpaceIdRouteWithChildren = SSpaceIdRoute._addFileChildren(
-  SSpaceIdRouteChildren,
-)
+const ApiHealthServerRoute = ApiHealthServerRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiDbUsersServerRoute = ApiDbUsersServerRouteImport.update({
+  id: '/api/db/users',
+  path: '/api/db/users',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiDbPinnedServerRoute = ApiDbPinnedServerRouteImport.update({
+  id: '/api/db/pinned',
+  path: '/api/db/pinned',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiDbItemsServerRoute = ApiDbItemsServerRouteImport.update({
+  id: '/api/db/items',
+  path: '/api/db/items',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiDbSyncSpaceIdServerRoute = ApiDbSyncSpaceIdServerRouteImport.update({
+  id: '/api/db/sync/$spaceId',
+  path: '/api/db/sync/$spaceId',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiDbItemIdServerRoute = ApiDbItemIdServerRouteImport.update({
+  id: '/api/db/item/$id',
+  path: '/api/db/item/$id',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiDbSyncSpaceIdTableServerRoute =
+  ApiDbSyncSpaceIdTableServerRouteImport.update({
+    id: '/$table',
+    path: '/$table',
+    getParentRoute: () => ApiDbSyncSpaceIdServerRoute,
+  } as any)
+const ApiDbCommentsSpaceIdServerRoute =
+  ApiDbCommentsSpaceIdServerRouteImport.update({
+    id: '/api/db/comments/space/$id',
+    path: '/api/db/comments/space/$id',
+    getParentRoute: () => rootServerRouteImport,
+  } as any)
+const ApiDbCommentsItemIdServerRoute =
+  ApiDbCommentsItemIdServerRouteImport.update({
+    id: '/api/db/comments/item/$id',
+    path: '/api/db/comments/item/$id',
+    getParentRoute: () => rootServerRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -216,7 +129,6 @@ export interface FileRoutesByFullPath {
   '/s/$spaceId/': typeof SSpaceIdIndexRoute
   '/s/$spaceId/t/$tagName': typeof SSpaceIdTTagNameRoute
 }
-
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/$itemId': typeof ItemIdRoute
@@ -225,9 +137,8 @@ export interface FileRoutesByTo {
   '/s/$spaceId': typeof SSpaceIdIndexRoute
   '/s/$spaceId/t/$tagName': typeof SSpaceIdTTagNameRoute
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute
+  __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/$itemId': typeof ItemIdRoute
   '/s/$spaceId': typeof SSpaceIdRouteWithChildren
@@ -236,7 +147,6 @@ export interface FileRoutesById {
   '/s/$spaceId/': typeof SSpaceIdIndexRoute
   '/s/$spaceId/t/$tagName': typeof SSpaceIdTTagNameRoute
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
@@ -266,65 +176,278 @@ export interface FileRouteTypes {
     | '/s/$spaceId/t/$tagName'
   fileRoutesById: FileRoutesById
 }
-
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ItemIdRoute: typeof ItemIdRoute
   SSpaceIdRoute: typeof SSpaceIdRouteWithChildren
 }
+export interface FileServerRoutesByFullPath {
+  '/api/health': typeof ApiHealthServerRoute
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/db/items': typeof ApiDbItemsServerRoute
+  '/api/db/pinned': typeof ApiDbPinnedServerRoute
+  '/api/db/users': typeof ApiDbUsersServerRoute
+  '/api/db/item/$id': typeof ApiDbItemIdServerRoute
+  '/api/db/sync/$spaceId': typeof ApiDbSyncSpaceIdServerRouteWithChildren
+  '/api/db/comments/item/$id': typeof ApiDbCommentsItemIdServerRoute
+  '/api/db/comments/space/$id': typeof ApiDbCommentsSpaceIdServerRoute
+  '/api/db/sync/$spaceId/$table': typeof ApiDbSyncSpaceIdTableServerRoute
+}
+export interface FileServerRoutesByTo {
+  '/api/health': typeof ApiHealthServerRoute
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/db/items': typeof ApiDbItemsServerRoute
+  '/api/db/pinned': typeof ApiDbPinnedServerRoute
+  '/api/db/users': typeof ApiDbUsersServerRoute
+  '/api/db/item/$id': typeof ApiDbItemIdServerRoute
+  '/api/db/sync/$spaceId': typeof ApiDbSyncSpaceIdServerRouteWithChildren
+  '/api/db/comments/item/$id': typeof ApiDbCommentsItemIdServerRoute
+  '/api/db/comments/space/$id': typeof ApiDbCommentsSpaceIdServerRoute
+  '/api/db/sync/$spaceId/$table': typeof ApiDbSyncSpaceIdTableServerRoute
+}
+export interface FileServerRoutesById {
+  __root__: typeof rootServerRouteImport
+  '/api/health': typeof ApiHealthServerRoute
+  '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/db/items': typeof ApiDbItemsServerRoute
+  '/api/db/pinned': typeof ApiDbPinnedServerRoute
+  '/api/db/users': typeof ApiDbUsersServerRoute
+  '/api/db/item/$id': typeof ApiDbItemIdServerRoute
+  '/api/db/sync/$spaceId': typeof ApiDbSyncSpaceIdServerRouteWithChildren
+  '/api/db/comments/item/$id': typeof ApiDbCommentsItemIdServerRoute
+  '/api/db/comments/space/$id': typeof ApiDbCommentsSpaceIdServerRoute
+  '/api/db/sync/$spaceId/$table': typeof ApiDbSyncSpaceIdTableServerRoute
+}
+export interface FileServerRouteTypes {
+  fileServerRoutesByFullPath: FileServerRoutesByFullPath
+  fullPaths:
+    | '/api/health'
+    | '/api/auth/$'
+    | '/api/db/items'
+    | '/api/db/pinned'
+    | '/api/db/users'
+    | '/api/db/item/$id'
+    | '/api/db/sync/$spaceId'
+    | '/api/db/comments/item/$id'
+    | '/api/db/comments/space/$id'
+    | '/api/db/sync/$spaceId/$table'
+  fileServerRoutesByTo: FileServerRoutesByTo
+  to:
+    | '/api/health'
+    | '/api/auth/$'
+    | '/api/db/items'
+    | '/api/db/pinned'
+    | '/api/db/users'
+    | '/api/db/item/$id'
+    | '/api/db/sync/$spaceId'
+    | '/api/db/comments/item/$id'
+    | '/api/db/comments/space/$id'
+    | '/api/db/sync/$spaceId/$table'
+  id:
+    | '__root__'
+    | '/api/health'
+    | '/api/auth/$'
+    | '/api/db/items'
+    | '/api/db/pinned'
+    | '/api/db/users'
+    | '/api/db/item/$id'
+    | '/api/db/sync/$spaceId'
+    | '/api/db/comments/item/$id'
+    | '/api/db/comments/space/$id'
+    | '/api/db/sync/$spaceId/$table'
+  fileServerRoutesById: FileServerRoutesById
+}
+export interface RootServerRouteChildren {
+  ApiHealthServerRoute: typeof ApiHealthServerRoute
+  ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+  ApiDbItemsServerRoute: typeof ApiDbItemsServerRoute
+  ApiDbPinnedServerRoute: typeof ApiDbPinnedServerRoute
+  ApiDbUsersServerRoute: typeof ApiDbUsersServerRoute
+  ApiDbItemIdServerRoute: typeof ApiDbItemIdServerRoute
+  ApiDbSyncSpaceIdServerRoute: typeof ApiDbSyncSpaceIdServerRouteWithChildren
+  ApiDbCommentsItemIdServerRoute: typeof ApiDbCommentsItemIdServerRoute
+  ApiDbCommentsSpaceIdServerRoute: typeof ApiDbCommentsSpaceIdServerRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/$itemId': {
+      id: '/$itemId'
+      path: '/$itemId'
+      fullPath: '/$itemId'
+      preLoaderRoute: typeof ItemIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/s/$spaceId': {
+      id: '/s/$spaceId'
+      path: '/s/$spaceId'
+      fullPath: '/s/$spaceId'
+      preLoaderRoute: typeof SSpaceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/s/$spaceId/': {
+      id: '/s/$spaceId/'
+      path: '/'
+      fullPath: '/s/$spaceId/'
+      preLoaderRoute: typeof SSpaceIdIndexRouteImport
+      parentRoute: typeof SSpaceIdRoute
+    }
+    '/s/$spaceId/tags': {
+      id: '/s/$spaceId/tags'
+      path: '/tags'
+      fullPath: '/s/$spaceId/tags'
+      preLoaderRoute: typeof SSpaceIdTagsRouteImport
+      parentRoute: typeof SSpaceIdRoute
+    }
+    '/s/$spaceId/$itemId': {
+      id: '/s/$spaceId/$itemId'
+      path: '/$itemId'
+      fullPath: '/s/$spaceId/$itemId'
+      preLoaderRoute: typeof SSpaceIdItemIdRouteImport
+      parentRoute: typeof SSpaceIdRoute
+    }
+    '/s/$spaceId/t/$tagName': {
+      id: '/s/$spaceId/t/$tagName'
+      path: '/t/$tagName'
+      fullPath: '/s/$spaceId/t/$tagName'
+      preLoaderRoute: typeof SSpaceIdTTagNameRouteImport
+      parentRoute: typeof SSpaceIdRoute
+    }
+  }
+}
+declare module '@tanstack/react-start/server' {
+  interface ServerFileRoutesByPath {
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/db/users': {
+      id: '/api/db/users'
+      path: '/api/db/users'
+      fullPath: '/api/db/users'
+      preLoaderRoute: typeof ApiDbUsersServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/db/pinned': {
+      id: '/api/db/pinned'
+      path: '/api/db/pinned'
+      fullPath: '/api/db/pinned'
+      preLoaderRoute: typeof ApiDbPinnedServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/db/items': {
+      id: '/api/db/items'
+      path: '/api/db/items'
+      fullPath: '/api/db/items'
+      preLoaderRoute: typeof ApiDbItemsServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/db/sync/$spaceId': {
+      id: '/api/db/sync/$spaceId'
+      path: '/api/db/sync/$spaceId'
+      fullPath: '/api/db/sync/$spaceId'
+      preLoaderRoute: typeof ApiDbSyncSpaceIdServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/db/item/$id': {
+      id: '/api/db/item/$id'
+      path: '/api/db/item/$id'
+      fullPath: '/api/db/item/$id'
+      preLoaderRoute: typeof ApiDbItemIdServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/db/sync/$spaceId/$table': {
+      id: '/api/db/sync/$spaceId/$table'
+      path: '/$table'
+      fullPath: '/api/db/sync/$spaceId/$table'
+      preLoaderRoute: typeof ApiDbSyncSpaceIdTableServerRouteImport
+      parentRoute: typeof ApiDbSyncSpaceIdServerRoute
+    }
+    '/api/db/comments/space/$id': {
+      id: '/api/db/comments/space/$id'
+      path: '/api/db/comments/space/$id'
+      fullPath: '/api/db/comments/space/$id'
+      preLoaderRoute: typeof ApiDbCommentsSpaceIdServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+    '/api/db/comments/item/$id': {
+      id: '/api/db/comments/item/$id'
+      path: '/api/db/comments/item/$id'
+      fullPath: '/api/db/comments/item/$id'
+      preLoaderRoute: typeof ApiDbCommentsItemIdServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
+  }
+}
+
+interface SSpaceIdRouteChildren {
+  SSpaceIdItemIdRoute: typeof SSpaceIdItemIdRoute
+  SSpaceIdTagsRoute: typeof SSpaceIdTagsRoute
+  SSpaceIdIndexRoute: typeof SSpaceIdIndexRoute
+  SSpaceIdTTagNameRoute: typeof SSpaceIdTTagNameRoute
+}
+
+const SSpaceIdRouteChildren: SSpaceIdRouteChildren = {
+  SSpaceIdItemIdRoute: SSpaceIdItemIdRoute,
+  SSpaceIdTagsRoute: SSpaceIdTagsRoute,
+  SSpaceIdIndexRoute: SSpaceIdIndexRoute,
+  SSpaceIdTTagNameRoute: SSpaceIdTTagNameRoute,
+}
+
+const SSpaceIdRouteWithChildren = SSpaceIdRoute._addFileChildren(
+  SSpaceIdRouteChildren,
+)
+
+interface ApiDbSyncSpaceIdServerRouteChildren {
+  ApiDbSyncSpaceIdTableServerRoute: typeof ApiDbSyncSpaceIdTableServerRoute
+}
+
+const ApiDbSyncSpaceIdServerRouteChildren: ApiDbSyncSpaceIdServerRouteChildren =
+  {
+    ApiDbSyncSpaceIdTableServerRoute: ApiDbSyncSpaceIdTableServerRoute,
+  }
+
+const ApiDbSyncSpaceIdServerRouteWithChildren =
+  ApiDbSyncSpaceIdServerRoute._addFileChildren(
+    ApiDbSyncSpaceIdServerRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ItemIdRoute: ItemIdRoute,
   SSpaceIdRoute: SSpaceIdRouteWithChildren,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/",
-        "/$itemId",
-        "/s/$spaceId"
-      ]
-    },
-    "/": {
-      "filePath": "index.tsx"
-    },
-    "/$itemId": {
-      "filePath": "$itemId.tsx"
-    },
-    "/s/$spaceId": {
-      "filePath": "s.$spaceId.tsx",
-      "children": [
-        "/s/$spaceId/$itemId",
-        "/s/$spaceId/tags",
-        "/s/$spaceId/",
-        "/s/$spaceId/t/$tagName"
-      ]
-    },
-    "/s/$spaceId/$itemId": {
-      "filePath": "s.$spaceId.$itemId.tsx",
-      "parent": "/s/$spaceId"
-    },
-    "/s/$spaceId/tags": {
-      "filePath": "s.$spaceId.tags.tsx",
-      "parent": "/s/$spaceId"
-    },
-    "/s/$spaceId/": {
-      "filePath": "s.$spaceId.index.tsx",
-      "parent": "/s/$spaceId"
-    },
-    "/s/$spaceId/t/$tagName": {
-      "filePath": "s.$spaceId.t.$tagName.tsx",
-      "parent": "/s/$spaceId"
-    }
-  }
+const rootServerRouteChildren: RootServerRouteChildren = {
+  ApiHealthServerRoute: ApiHealthServerRoute,
+  ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+  ApiDbItemsServerRoute: ApiDbItemsServerRoute,
+  ApiDbPinnedServerRoute: ApiDbPinnedServerRoute,
+  ApiDbUsersServerRoute: ApiDbUsersServerRoute,
+  ApiDbItemIdServerRoute: ApiDbItemIdServerRoute,
+  ApiDbSyncSpaceIdServerRoute: ApiDbSyncSpaceIdServerRouteWithChildren,
+  ApiDbCommentsItemIdServerRoute: ApiDbCommentsItemIdServerRoute,
+  ApiDbCommentsSpaceIdServerRoute: ApiDbCommentsSpaceIdServerRoute,
 }
-ROUTE_MANIFEST_END */
+export const serverRouteTree = rootServerRouteImport
+  ._addFileChildren(rootServerRouteChildren)
+  ._addFileTypes<FileServerRouteTypes>()
