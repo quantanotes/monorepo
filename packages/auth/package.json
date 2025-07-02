@@ -3,6 +3,8 @@
   "type": "module",
   "version": "0.0.1",
   "dependencies": {
+    "@polar-sh/better-auth": "^1.0.3",
+    "@polar-sh/sdk": "^0.34.2",
     "better-auth": "latest"
   }
 }

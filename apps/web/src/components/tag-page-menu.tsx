@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Ellipsis, Trash, Settings, Pin } from 'lucide-react';
-import { cn } from '@quanta/ui/utils/css';
+import { Ellipsis, Trash, Settings, Pin, Download } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +15,7 @@ interface TagPageMenuProps {
   isPinned: boolean;
   onTogglePin: () => void;
   onDelete: () => void;
+  onExportCsv: () => void;
 }
 
 export function TagPageMenu({
@@ -24,6 +24,7 @@ export function TagPageMenu({
   isPinned,
   onTogglePin,
   onDelete,
+  onExportCsv,
 }: TagPageMenuProps) {
   const [editOpen, setEditOpen] = useState(false);
 
@@ -49,6 +50,11 @@ export function TagPageMenu({
           <DropdownMenuItem onClick={onDelete} variant="destructive">
             <Trash />
             Delete
+          </DropdownMenuItem>
+
+          <DropdownMenuItem onClick={onExportCsv}>
+            <Download />
+            Export
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

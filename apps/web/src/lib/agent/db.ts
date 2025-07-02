@@ -115,20 +115,20 @@ Query must not be empty or it will fail
 db.semantic_search("project docs", 5)`,
     ),
 
-    tagTag: doc(
+    tag_tag: doc(
       `db.tag_tag`,
       (parent: string, child: string) => tagModel.addChild(parent, child),
       `(parent: string, child: string): Promise<void>
 Adds a child tag to a tag.
-db.tag("people", "age");`,
+db.tag_tag("people", "age");`,
     ),
 
-    untagTag: doc(
+    untag_tag: doc(
       `db.untag_tag`,
       (parent: string, child: string) => tagModel.removeChild(parent, child),
       `(parent: string, child: string): Promise<void>
 Adds a child tag to a tag.
-db.tag("people", "age");`,
+db.untag_tag("people", "age");`,
     ),
   };
 };

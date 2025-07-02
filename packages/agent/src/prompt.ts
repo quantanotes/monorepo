@@ -62,6 +62,7 @@ The latest news cycle indicates...
 - Do not title actions that soley affect the UI i.e. adding chat sources
 - Do not terminate your generation after an observe action (like searching the web) without the #[observe] tag
 - Always use chat actions to add sources when doing searches
+- If a task does not require multiple observation steps, complete it in one action
 </guidance>
 
 <environment>

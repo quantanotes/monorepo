@@ -7,15 +7,15 @@
     "local.gen": "drizzle-kit generate --config=drizzle-local.config.ts"
   },
   "devDependencies": {
-    "drizzle-kit": "^0.31.1"
+    "drizzle-kit": "^0.31.4"
   },
   "dependencies": {
-    "@electric-sql/pglite": "^0.3.3",
-    "@electric-sql/pglite-sync": "^0.3.6",
-    "@faker-js/faker": "^9.8.0",
-    "axios": "^1.9.0",
-    "dotenv": "^16.5.0",
-    "drizzle-orm": "^0.43.1",
+    "@electric-sql/pglite": "^0.3.4",
+    "@electric-sql/pglite-sync": "^0.3.7",
+    "@faker-js/faker": "^9.9.0",
+    "axios": "^1.10.0",
+    "dotenv": "^17.0.1",
+    "drizzle-orm": "^0.44.2",
     "nanoid": "^5.1.5",
     "postgres": "^3.4.7"
   }

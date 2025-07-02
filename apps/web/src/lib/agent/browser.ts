@@ -77,8 +77,7 @@ const { interactables } = await browser.get(tab);
 return interactables;
 // Continuing from previous observation
 await browser.type(tab, 4, "Hello World!");
-await browser.click(tab, 1);
-`,
+await browser.click(tab, 1);`,
   begin: doc(
     'browser.begin',
     begin,
@@ -92,8 +91,7 @@ const tab = await browser.begin();`,
     end,
     `(tab: number): Promise<void>
 Ends an active browser tab.
-await browser.end(tab);
-    `,
+await browser.end(tab);`,
   ),
 
   list: doc(
@@ -130,7 +128,7 @@ await browser.goto(tab, "https://example.com");`,
   click: doc(
     'browser.click',
     click,
-    `(tab: number, elementIndex: number): Promise<void>
+    `(tab: number, index: number): Promise<void>
 Clicks an element by its index.
 Make sure you observe the output from get, to ensure you're clicking the right element.
 await browser.click(tab, 1);`,
@@ -139,7 +137,7 @@ await browser.click(tab, 1);`,
   type: doc(
     'browser.type',
     type,
-    `(tab: number, elementIndex: number, text: string): Promise<void>
+    `(tab: number, index: number, text: string): Promise<void>
 Types text into an input field by its index.
 Make sure you observe the output from get, to ensure you're typing into the right element.
 await browser.type(tab, 0, "Hello World!");`,
@@ -174,7 +172,7 @@ const elementFound = await browser.wait_for_selector(tab, "#main-content", 5000)
   wait_for_event: doc(
     'browser.wait_for_event',
     waitForEvent,
-    `(tab: number, eventName: string, timeout?: number): Promise<boolean>
+    `(tab: number, event: string, timeout?: number): Promise<boolean>
 Waits for a specific event to occur on the document.
 Use this to wait for page load events or custom application events.
 const eventFired = await browser.wait_for_event(tab, "load", 5000);`,

@@ -5,9 +5,7 @@ import { assertSessionFn } from '@quanta/web/lib/auth-fns';
 import type { RawMessage } from '@quanta/agent';
 
 // import { createOpenAI } from '@ai-sdk/openai';
-// const model = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })(
-//   'gpt-4.5-preview-2025-02-27',
-// );
+// const model = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })('o4-mini');
 
 import { createOpenAI } from '@ai-sdk/openai';
 const model = createOpenAI({

@@ -23,6 +23,7 @@ worker({
     db.exec('CREATE EXTENSION vector');
 
     const orm = drizzle(db, { schema });
+
     await new PgDialect().migrate(
       migrations,
       orm._.session as unknown as PgSession,

@@ -48,7 +48,7 @@ export function Sidebar({
 
   return (
     <div
-      className="bg-card/50 text-sidebar-foreground flex h-full w-full flex-col p-1"
+      className="bg-card/50 text-sidebar-foreground flex h-full w-full flex-col p-2"
       ref={ref}
     >
       <div
@@ -94,7 +94,7 @@ export function Sidebar({
       <div className="flex flex-col items-center gap-2 py-8">
         <SidebarLink
           href={space ? '/s/$spaceId' : '/'}
-          params={{ spaceId: space?.id }}
+          params={{ spaceId: space?.id! }}
           icon={<Home className="size-6!" />}
           label="Home"
           isCollapsed={isCollapsed}

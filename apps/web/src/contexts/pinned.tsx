@@ -46,8 +46,8 @@ function PinnedLocalProvider({ children }: React.PropsWithChildren) {
 
 export function usePinned() {
   const context = useContext(PinnedContext);
-  if (context === null) {
-    throw new Error('usePinned must be used within a PinnedProvider');
-  }
+  // if (context === null) {
+  //   throw new Error('usePinned must be used within a PinnedProvider');
+  // }
   return context;
 }

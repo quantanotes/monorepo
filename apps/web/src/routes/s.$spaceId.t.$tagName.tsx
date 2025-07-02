@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, createFileRoute } from '@tanstack/react-router';
+import { exportItemsCsv } from '@quanta/web/lib/export-csv';
 import { useTagModelLocal } from '@quanta/web/hooks/use-tag-model-local';
 import { useItemModelLocal } from '@quanta/web/hooks/use-item-model-local';
 import { useSpace } from '@quanta/web/hooks/use-space';
@@ -16,16 +17,16 @@ export const Route = createFileRoute('/s/$spaceId/t/$tagName')({
 
 function RouteComponent() {
   const { tagName } = Route.useParams();
-  const navigate = useNavigate();
-  const space = useSpace()!;
   const { useTagLive, useTagChildrenLive, deleteTag } = useTagModelLocal();
   const { useSearchItemsLive } = useItemModelLocal()!;
   const { isTagPinned, togglePinTag } = usePinnedLocal()!;
-  const [view, setView] = useState('grid');
+  const navigate = useNavigate();
+  const space = useSpace()!;
   const tag = useTagLive(tagName);
   const items = useSearchItemsLive('', [{ tag: tagName }]);
   const tagChildren = useTagChildrenLive(tagName);
-  const isPinned = tag && isTagPinned(tagName);
+  const isPinned = tag ? isTagPinned(tagName) : false;
+  const [view, setView] = useState('grid');
 
   const handleTogglePin = () => {
     if (tag) {
@@ -36,6 +37,10 @@ function RouteComponent() {
   const handleDelete = () => {
     deleteTag(tagName);
     navigate({ to: '/s/$spaceId', params: { spaceId: space.id } });
+  };
+
+  const handleExportCsv = () => {
+    exportItemsCsv(items, tagChildren);
   };
 
   return (
@@ -56,6 +61,7 @@ function RouteComponent() {
             isPinned={isPinned}
             onTogglePin={handleTogglePin}
             onDelete={handleDelete}
+            onExportCsv={handleExportCsv}
           />
         </>
       }

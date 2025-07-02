@@ -1,15 +1,16 @@
 import { useLiveQuery } from '@electric-sql/pglite-react';
-import type { ItemTag, TagQuery, TagType } from '@quanta/types';
 import { snakeToCamelObject } from '@quanta/utils/snake-to-camel';
 import { and, eq, exists, inArray, sql } from '@quanta/db/drizzle';
-import { DB, schema } from '@quanta/db/local';
+import { schema } from '@quanta/db/local';
 import {
   flattenItemTagResult,
   flattenItemTagResults,
   makeTagFilter,
 } from '@quanta/web/lib/items';
-import { TagModel } from '@quanta/web/lib/tag-model';
 import { validateTagValue } from '@quanta/web/lib/tags';
+import { TagModel } from '@quanta/web/lib/tag-model';
+import type { DB } from '@quanta/db/local';
+import type { ItemTag, TagQuery, TagType } from '@quanta/types';
 
 interface ItemWithTags {
   item: typeof schema.items.$inferSelect;

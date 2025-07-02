@@ -1,5 +1,5 @@
-import { search } from './search';
-import { browser } from './browser';
+import { internet } from './internet';
+// import { browser } from './browser';
 import { email } from './email';
 import { csv } from './csv';
 import { db } from './db';
@@ -14,12 +14,11 @@ export function baseAgentEnvironment(
   tagModel?: TagModel,
 ) {
   return {
-    search,
-    email,
     chat,
-    browser,
+    internet,
+    // browser,
+    email,
     csv,
-
     db: itemModel && tagModel ? db(itemModel, tagModel) : undefined,
 
     __doc__files: filesDoc(files),

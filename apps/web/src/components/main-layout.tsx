@@ -32,7 +32,7 @@ export function MainLayout({ children }: React.PropsWithChildren) {
 
   const toggleSidebar = () => {
     if (sidebarRef.current?.isExpanded()) {
-      sidebarRef.current?.resize(getRelativeWidth(40));
+      sidebarRef.current?.resize(getRelativeWidth(48));
     } else {
       sidebarRef.current?.resize(getRelativeWidth(256));
     }
@@ -57,9 +57,9 @@ export function MainLayout({ children }: React.PropsWithChildren) {
           ref={sidebarRef}
           className="h-full transition-transform"
           defaultSize={getRelativeWidth(256)}
-          minSize={getRelativeWidth(40)}
+          minSize={getRelativeWidth(48)}
           maxSize={getRelativeWidth(320)}
-          collapsedSize={getRelativeWidth(40)}
+          collapsedSize={getRelativeWidth(48)}
           collapsible
         >
           <Sidebar

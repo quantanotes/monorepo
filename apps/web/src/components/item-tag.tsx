@@ -26,7 +26,7 @@ export function ItemTag({ itemTag, onDelete }: ItemTagProps) {
           to={space ? '/s/$spaceId/t/$tagName' : '/'}
           params={{ tagName: itemTag.name, spaceId: space?.id }}
         >
-          <span className={onDelete && 'truncate pr-6'}>
+          <span className={onDelete && 'truncate pr-4'}>
             {`#${itemTag.name}${itemTag.value != null || itemTag.value! === undefined ? `:${itemTag.value}` : ''}`}
           </span>
         </Link>

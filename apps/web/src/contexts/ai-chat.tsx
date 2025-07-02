@@ -53,8 +53,8 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
   const [messages, setMessages] = useImmer<Message[]>([]);
   const [running, setRunning] = useState(false);
   const [abortController, setAbortController] = useState<AbortController>();
-  const chatActions = getChatActions(setMessages);
   const _llmTextStreamFn = useServerFn(llmTextStreamFn);
+  const chatActions = getChatActions(setMessages);
 
   const textStreamFn: TextStreamFn = async (messages, signal) => {
     const abortController = new AbortController();
