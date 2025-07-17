@@ -2,8 +2,8 @@ import { createContext, useContext, useMemo, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { useServerFn } from '@tanstack/react-start';
 import { snakeToCamelObject } from '@quanta/utils/snake-to-camel';
-import { addCommentFn, deleteCommentFn } from '@quanta/web/lib/comment-fns';
 import { useShapeWithJoin } from '@quanta/web/hooks/use-shape-with-join';
+import { addCommentFn, deleteCommentFn } from '@quanta/web/lib/comment-fns';
 
 export interface HumanChatComment {
   id: string;
@@ -25,9 +25,7 @@ interface HumanChatContextType {
   deleteComment: (id: string) => void;
 }
 
-const HumanChatContext = createContext<HumanChatContextType | undefined>(
-  undefined,
-);
+const HumanChatContext = createContext<HumanChatContextType>(null!);
 
 export function HumanChatProvider({ children }: React.PropsWithChildren) {
   const [value, setValue] = useState('');
@@ -52,7 +50,7 @@ export function HumanChatProvider({ children }: React.PropsWithChildren) {
     shape2Params: {
       columns: ['id', 'username', 'image'],
     },
-  });
+  }).map(snakeToCamelObject) as HumanChatComment[];
 
   const addComment = async () => {
     await _addComment({
@@ -72,7 +70,7 @@ export function HumanChatProvider({ children }: React.PropsWithChildren) {
   return (
     <HumanChatContext.Provider
       value={{
-        comments: comments.map(snakeToCamelObject) as HumanChatComment[],
+        comments,
         value,
         setValue,
         addComment,
@@ -86,7 +84,7 @@ export function HumanChatProvider({ children }: React.PropsWithChildren) {
 
 export function useHumanChat() {
   const context = useContext(HumanChatContext);
-  if (context === undefined) {
+  if (context === null) {
     throw new Error('useHumanChat must be used within a HumanChatProvider');
   }
   return context;

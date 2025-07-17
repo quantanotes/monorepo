@@ -26,7 +26,7 @@ COPY packages/types ./packages/types
 COPY packages/ui ./packages/ui
 COPY packages/utils ./packages/utils
 
-COPY .env.production ./
+# COPY .env.production ./
 
 WORKDIR /app/apps/web
 RUN bunx vite build
@@ -38,7 +38,7 @@ WORKDIR /app
 COPY --from=builder /app/apps/web/.output ./.output
 COPY --from=builder /app/apps/web/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.env.production ./
+# COPY --from=builder /app/.env.production ./
 
 ENV NODE_ENV=production
 

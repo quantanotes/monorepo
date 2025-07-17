@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { itemsQueryOptions } from '@quanta/web/lib/item-query';
@@ -11,15 +11,15 @@ export const Route = createFileRoute('/')({
   validateSearch: searchQuerySchema,
   loaderDeps: ({ search }) => search,
   loader: async ({ deps, context }) => {
-    await context.queryClient.ensureQueryData(itemsQueryOptions(deps));
+    await context.queryClient.ensureQueryData(itemsQueryOptions(deps as any));
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const search = Route.useSearch();
-  const itemsQuery = useSuspenseQuery(itemsQueryOptions(search));
-  const [view, setView] = useState<'table' | 'grid'>('grid');
+  const itemsQuery = useSuspenseQuery(itemsQueryOptions(search as any));
+  const [view, setView] = useState<string>('grid');
   const tags = search.tags || [];
 
   return (

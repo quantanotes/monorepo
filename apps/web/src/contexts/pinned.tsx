@@ -8,23 +8,19 @@ type PinnedContextType =
   | ReturnType<typeof usePinnedRemote>
   | ReturnType<typeof usePinnedLocal>;
 
-const PinnedContext = createContext<PinnedContextType>(null!);
-
 // TODO: open auth dialog when toggleitemPin
-export const emptyPinnedContextValue = {
+const PinnedContext = createContext<PinnedContextType>({
   pinned: [],
   isItemPinned: (id: string) => false,
   togglePinItem: async (id: string) => void 0,
-};
+});
 
 export function PinnedProvider({ children }: React.PropsWithChildren) {
   const user = useAuthUser();
   const space = useSpace();
 
   if (!user) {
-    return (
-      <PinnedContext value={emptyPinnedContextValue}>{children}</PinnedContext>
-    );
+    return <>{children}</>;
   } else if (space) {
     return <PinnedLocalProvider>{children}</PinnedLocalProvider>;
   } else {
@@ -46,8 +42,8 @@ function PinnedLocalProvider({ children }: React.PropsWithChildren) {
 
 export function usePinned() {
   const context = useContext(PinnedContext);
-  // if (context === null) {
-  //   throw new Error('usePinned must be used within a PinnedProvider');
-  // }
+  if (context === null) {
+    throw new Error('usePinned must be used within a PinnedProvider');
+  }
   return context;
 }

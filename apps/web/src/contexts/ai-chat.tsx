@@ -41,7 +41,7 @@ interface AiChatContextType {
   setInput: (value: string) => void;
 }
 
-const AiChatContext = createContext<AiChatContextType>(undefined!);
+const AiChatContext = createContext<AiChatContextType>(null!);
 
 export function AiChatProvider({ children }: React.PropsWithChildren) {
   const db = useDBLazy();
@@ -212,7 +212,7 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
 
 export function useAiChat() {
   const context = useContext(AiChatContext);
-  if (context === undefined) {
+  if (context === null) {
     throw new Error('useAiChat must be used within a AiChatProvider');
   }
   return context;

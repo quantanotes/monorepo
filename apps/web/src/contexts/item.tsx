@@ -7,7 +7,7 @@ export const ItemProvider = ItemContext;
 
 export function useItem() {
   const context = useContext(ItemContext);
-  if (!context) {
+  if (context === null) {
     throw new Error('useItem must be used within an ItemProvider');
   }
   return context;

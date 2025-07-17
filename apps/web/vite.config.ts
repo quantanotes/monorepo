@@ -1,24 +1,25 @@
 import { IncomingMessage } from 'http';
 import { Readable } from 'stream';
-import { defineConfig, loadEnv, type Plugin } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import mkcert from 'vite-plugin-mkcert';
+import type { Plugin } from 'vite';
 
 export default defineConfig(({ mode }) => ({
   plugins: [
+    env(mode),
+    tailwindcss(),
+    tsconfigPaths({
+      projects: ['../../tsconfig.json'],
+    }),
     tanstackStart({
       tsr: {
         generatedRouteTree: 'src/routes.gen.ts',
       },
       target: 'bun',
     }),
-
-    tsconfigPaths({ projects: ['../../tsconfig.json'] }),
-    tailwindcss(),
-    env(mode),
-
     mode === 'development' && mkcert(),
     mode === 'development' && http2(),
   ],
@@ -80,8 +81,6 @@ function http2(): Plugin {
 
             Object.setPrototypeOf(req, IncomingMessage.prototype);
             Object.assign(req, r);
-
-            res.removeHeader('transfer-encoding');
 
             next();
           });

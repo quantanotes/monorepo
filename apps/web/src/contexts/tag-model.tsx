@@ -14,7 +14,8 @@ export function TagModelProvider({ children }: React.PropsWithChildren) {
   if (space && db) {
     return <TagModelLocalProvider>{children}</TagModelLocalProvider>;
   } else {
-    return <TagModelContext value={undefined}>{children}</TagModelContext>;
+    // TODO: implement remote tag model
+    return <TagModelContext value={undefined!}>{children}</TagModelContext>;
   }
 }
 

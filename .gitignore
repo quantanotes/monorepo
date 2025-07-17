@@ -14,3 +14,6 @@ bun.lock
 dist
 
 fly.toml
+
+# Local Netlify folder
+.netlify
