@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { searchQuerySchema } from '@quanta/web/lib/search';
 import { useItemModelLocal } from '@quanta/web/hooks/use-item-model-local';
@@ -15,8 +15,8 @@ export const Route = createFileRoute('/s/$spaceId/')({
 function RouteComponent() {
   const { limit, tags = [], query = '', offset } = Route.useSearch();
   const { useSearchItemsLive } = useItemModelLocal()!;
-  const [view, setView] = useState('grid');
   const items = useSearchItemsLive(query, tags, limit, offset);
+  const [view, setView] = useState('grid');
 
   return (
     <PageLayout

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Masonry } from 'masonic';
 import { ClientOnly } from '@quanta/web/components/client-only';
 import { GridCard } from '@quanta/web/components/grid-card';
@@ -8,31 +8,41 @@ export const Grid = ({ items }) =>
   ClientOnly({ children: GridInner({ items }) });
 
 function GridInner({ items }) {
+  const minColumnWidth = 320;
+  const maxColumns = 10;
   const [ref, { width }] = useMeasure();
   const [masonryKey, setMasonryKey] = useState(0);
-
-  const getColumnCount = (width: number) => {
-    if (width < 600) return 1;
-    if (width < 900) return 2;
-    return 3;
-  };
-
-  const columnCount = getColumnCount(width);
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeTimeout = useRef<NodeJS.Timeout | null>(null);
+  const columnCount = useMemo(
+    () => Math.max(1, Math.min(Math.floor(width / minColumnWidth), maxColumns)),
+    [width],
+  );
 
   useEffect(() => {
-    setMasonryKey((prevKey) => prevKey + 1);
+    setIsResizing(true);
+    if (resizeTimeout.current) {
+      clearTimeout(resizeTimeout.current);
+    }
+
+    resizeTimeout.current = setTimeout(() => {
+      setMasonryKey((prevKey) => prevKey + 1);
+      setIsResizing(false);
+    }, 50);
   }, [width]);
 
   return (
     <div ref={ref} className="w-full" key={items}>
-      <Masonry
-        key={masonryKey}
-        columnGutter={8}
-        rowGutter={8}
-        items={items}
-        render={GridCard}
-        columnCount={columnCount}
-      />
+      {!isResizing && (
+        <Masonry
+          key={masonryKey}
+          columnGutter={8}
+          rowGutter={8}
+          items={items}
+          render={GridCard}
+          columnCount={columnCount}
+        />
+      )}
     </div>
   );
 }

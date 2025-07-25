@@ -48,13 +48,13 @@ function RouteComponent() {
       title={`#${tagName}`}
       headerMenu={
         <>
-          <PinButton isPinned={isPinned} onTogglePin={handleTogglePin} />
-
           <ViewMenu
             views={['table', 'grid']}
             currentView={view}
             onViewChange={setView}
           />
+
+          <PinButton isPinned={isPinned} onTogglePin={handleTogglePin} />
 
           <TagPageMenu
             tagName={tagName}

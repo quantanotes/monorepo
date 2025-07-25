@@ -37,6 +37,7 @@ export async function agent(
       for await (const { state, text, transition, attributes } of parseStream(
         textStream,
       )) {
+        console.log(state, text, transition, attributes);
         if (transition) {
           const shouldReset = await handleParserStateTransition(
             state,

@@ -60,13 +60,16 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
     const abortController = new AbortController();
     signal.addEventListener('abort', () => abortController.abort());
 
+    console.log('sending text stream');
     const response = await _llmTextStreamFn({ data: { messages }, signal });
+    console.log('text response', response);
     if (!response.ok) {
       throw new Error('Could not connect to AI.');
     }
 
     const rawStream = response.body?.pipeThrough(new TextDecoderStream())!;
     const stream = streamToAsyncIterableStream(rawStream);
+    console.log('text stream', stream);
 
     return { stream, abortController };
   };
@@ -76,10 +79,14 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
       return;
     }
 
+    setRunning(true);
+
     const abortController = new AbortController();
 
     const itemIds = attachments.map((a) => a.itemId).filter((a) => a);
-    const items = await itemModel!.getItems(itemIds as string[]);
+    const items = itemIds.length
+      ? await itemModel!.getItems(itemIds as string[])
+      : [];
     const files = attachments.map((a) => a.file).filter((a) => a) as File[];
     const tools = [];
 
@@ -106,7 +113,6 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
     ] as Message[];
 
     setInput('');
-    setRunning(true);
     setMessages(newMessages);
     setAbortController(abortController);
 

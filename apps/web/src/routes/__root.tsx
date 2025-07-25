@@ -3,8 +3,11 @@ import {
   HeadContent,
   Scripts,
 } from '@tanstack/react-router';
+import { createServerFn } from '@tanstack/react-start';
+import { getCookie, setCookie } from '@tanstack/react-start/server';
 import { z } from 'zod';
 import { Toaster } from '@quanta/ui/sonner';
+import { authUserQueryOptions } from '@quanta/web/lib/user';
 import { ThemeProvider } from '@quanta/web/contexts/theme';
 import { DBProvider } from '@quanta/web/contexts/db';
 import { SyncProvider } from '@quanta/web/contexts/sync';
@@ -14,10 +17,19 @@ import { TagModelProvider } from '@quanta/web/contexts/tag-model';
 import { AiChatProvider } from '@quanta/web/contexts/ai-chat';
 import { AuthDialogProvider } from '@quanta/web/components/auth-dialog';
 import { MainLayout } from '@quanta/web/components/main-layout';
+import { MarketingPage } from '@quanta/web/components/marketing/marketing-page';
 import { AnimatedOutlet } from '@quanta/web/components/animated-outlet';
 import globalCss from '@quanta/ui/styles/globals.css?url';
 import favicon from '@quanta/web/public/favicon.ico?url';
 import type { QueryClient } from '@tanstack/react-query';
+
+const isFirstVisitFn = createServerFn().handler(({}) => {
+  const isFirstVisit = getCookie('is-first-visit') !== undefined;
+  if (!isFirstVisit) {
+    setCookie('is-first-visit', 'yes');
+  }
+  return isFirstVisit;
+});
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -63,10 +75,23 @@ export const Route = createRootRouteWithContext<{
   validateSearch: z.object({ unauthenticated: z.boolean().optional() }),
 
   component: RootComponent,
+
+  loader: async ({ context }) => {
+    const [user, isFirstVisit] = await Promise.all([
+      context.queryClient.ensureQueryData(authUserQueryOptions()),
+      isFirstVisitFn(),
+    ]);
+    return {
+      user,
+      isFirstVisit,
+    };
+  },
 });
 
 function RootComponent() {
   const { unauthenticated } = Route.useSearch();
+  const { user, isFirstVisit } = Route.useLoaderData();
+  const showMarketingPage = !user && isFirstVisit;
 
   return (
     <RootDocument>
@@ -78,9 +103,13 @@ function RootComponent() {
                 <PinnedProvider>
                   <AiChatProvider>
                     <AuthDialogProvider open={!!unauthenticated}>
-                      <MainLayout>
-                        <AnimatedOutlet />
-                      </MainLayout>
+                      {showMarketingPage || true ? (
+                        <MarketingPage />
+                      ) : (
+                        <MainLayout>
+                          <AnimatedOutlet />
+                        </MainLayout>
+                      )}
                     </AuthDialogProvider>
                   </AiChatProvider>
                 </PinnedProvider>

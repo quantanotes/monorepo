@@ -15,7 +15,7 @@ interface TagPageMenuProps {
   isPinned: boolean;
   onTogglePin: () => void;
   onDelete: () => void;
-  onExportCsv: () => void;
+  onExportCsv?: () => void;
 }
 
 export function TagPageMenu({
@@ -52,10 +52,12 @@ export function TagPageMenu({
             Delete
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={onExportCsv}>
-            <Download />
-            Export
-          </DropdownMenuItem>
+          {onExportCsv && (
+            <DropdownMenuItem onClick={onExportCsv}>
+              <Download />
+              Export
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 

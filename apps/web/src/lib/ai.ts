@@ -7,11 +7,17 @@ import type { RawMessage } from '@quanta/agent';
 // import { createOpenAI } from '@ai-sdk/openai';
 // const model = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })('o4-mini');
 
+// import { createOpenAI } from '@ai-sdk/openai';
+// const model = createOpenAI({
+//   apiKey: process.env.GEMINI_API_KEY,
+//   baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+// })('gemini-2.5-flash-preview-04-17');
+
 import { createOpenAI } from '@ai-sdk/openai';
 const model = createOpenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-})('gemini-2.5-flash-preview-04-17');
+  apiKey: process.env.TOGETHER_API_KEY,
+  baseURL: 'https://api.together.xyz/v1',
+})('moonshotai/Kimi-K2-Instruct');
 
 // import { createGoogleGenerativeAI } from '@ai-sdk/google';
 // const model = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY })(
@@ -29,7 +35,7 @@ export const llmTextStreamFn = createServerFn({
 })
   .validator(
     z.object({
-      messages: z.custom<RawMessage[]>(),
+      messages: z.custom<RawMessage[]>().optional(),
     }),
   )
   .handler(async ({ signal, data: { messages } }) => {
@@ -39,9 +45,6 @@ export const llmTextStreamFn = createServerFn({
       model,
       abortSignal: signal,
       messages,
-      onError(error) {
-        console.error(error);
-      },
     });
 
     return new Response(textStream);

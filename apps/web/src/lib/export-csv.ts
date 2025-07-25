@@ -10,7 +10,7 @@ export function exportItemsCsv(items: Item[], tags: Tag[]) {
     return row;
   });
 
-  const csvContent = [header, ...rows]
+  const data = [header, ...rows]
     .map((row) =>
       row
         .map((field) =>
@@ -22,9 +22,10 @@ export function exportItemsCsv(items: Item[], tags: Tag[]) {
     )
     .join('\n');
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob([data], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
+
   link.href = url;
   link.setAttribute('download', `export.csv`);
   document.body.appendChild(link);

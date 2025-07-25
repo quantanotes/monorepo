@@ -19,6 +19,7 @@ export async function* parseStream(
   let transition = false;
 
   for await (const chunk of stream) {
+    console.log('recieving chunk:', chunk);
     buffer += chunk;
 
     while (buffer.length > 0) {

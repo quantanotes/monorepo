@@ -4,7 +4,7 @@ import { Space } from '@quanta/types';
 
 export async function getAllSpaces(userId: string) {
   return (await db
-    .select({ ...schema.spaces, role: schema.members.role })
+    .select({ ...schema.spaces, role: schema.members.role } as any)
     .from(schema.spaces)
     .leftJoin(schema.members, eq(schema.members.spaceId, schema.spaces.id))
     .where(eq(schema.members.userId, userId))) as unknown as Space[];

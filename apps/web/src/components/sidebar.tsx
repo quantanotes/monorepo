@@ -9,6 +9,7 @@ import {
   Search,
   SquarePen,
 } from 'lucide-react';
+import { cn } from '@quanta/ui/utils/css';
 import { useItemModel } from '@quanta/web/contexts/item-model';
 import { useSpace } from '@quanta/web/hooks/use-space';
 import { useMeasure } from '@quanta/web/hooks/use-measure';
@@ -34,7 +35,7 @@ export function Sidebar({
   const [ref, { width }] = useMeasure<HTMLDivElement>();
   const isCollapsed = width <= 56;
 
-  async function handleCreateItem() {
+  const handleCreateItem = async () => {
     const item = await itemModel?.createItem({ name: '', content: '' });
     if (item && space) {
       navigate({
@@ -44,17 +45,21 @@ export function Sidebar({
     } else if (item) {
       navigate({ to: '/$itemId', params: { itemId: item.id } });
     }
-  }
+  };
 
   return (
     <div
-      className="bg-card/50 text-sidebar-foreground flex h-full w-full flex-col p-2"
+      className={cn(
+        'bg-card/50 text-sidebar-foreground flex h-full w-full flex-col p-2',
+        isCollapsed && 'items-center',
+      )}
       ref={ref}
     >
       <div
-        className={`flex items-center gap-2 ${
-          isCollapsed ? 'flex-col' : 'flex-row justify-between'
-        }`}
+        className={cn(
+          'flex items-center gap-2',
+          isCollapsed ? 'flex-col' : 'flex-row justify-between',
+        )}
       >
         <SidebarButton
           icon={<PanelLeft className="size-6!" />}
@@ -64,9 +69,10 @@ export function Sidebar({
         />
 
         <div
-          className={`flex items-center gap-2 ${
-            isCollapsed ? 'flex-reverse flex-col' : 'flex-row'
-          }`}
+          className={cn(
+            'flex items-center gap-2',
+            isCollapsed ? 'flex-reverse flex-col' : 'flex-row',
+          )}
         >
           <SidebarButton
             icon={<MessageCircle className="size-6!" />}

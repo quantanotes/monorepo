@@ -53,42 +53,23 @@ function http2(): Plugin {
   return {
     name: 'http2',
     configureServer(server) {
-      server.middlewares.use((req, res, next) => {
+      server.middlewares.use((req, _, next) => {
         if (req.httpVersionMajor >= 2 && req.headers[':method']) {
-          const chunks: Buffer[] = [];
+          const headers = Object.fromEntries(
+            Object.entries(req.headers).filter(([key]) => !key.startsWith(':')),
+          );
 
-          req.on('data', (chunk) => {
-            chunks.push(chunk);
+          req.method = req.headers[':method'] as any;
+          req.url = req.headers[':path'] as any;
+
+          Object.defineProperty(req, 'headers', {
+            value: headers,
+            writable: true,
+            configurable: true,
           });
-
-          req.on('end', () => {
-            const buffer = Buffer.concat(chunks);
-            const r = new Readable() as any;
-
-            const headers = Object.fromEntries(
-              Object.entries(req.headers).filter(
-                ([key]) => !key.startsWith(':'),
-              ),
-            );
-            headers.host = req.headers[':authority'] as string;
-
-            r.method = req.headers[':method'];
-            r.url = req.headers[':path'];
-            r.headers = headers;
-
-            r.push(buffer);
-            r.push(null);
-
-            Object.setPrototypeOf(req, IncomingMessage.prototype);
-            Object.assign(req, r);
-
-            next();
-          });
-
-          req.on('error', (err) => next(err));
-        } else {
-          next();
         }
+
+        next();
       });
     },
   };

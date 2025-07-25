@@ -10,7 +10,7 @@ import {
 import { validateTagValue } from '@quanta/web/lib/tags';
 import { TagModel } from '@quanta/web/lib/tag-model';
 import type { DB } from '@quanta/db/local';
-import type { ItemTag, TagQuery, TagType } from '@quanta/types';
+import type { Item, ItemTag, TagQuery, TagType } from '@quanta/types';
 
 interface ItemWithTags {
   item: typeof schema.items.$inferSelect;
@@ -34,7 +34,7 @@ export class ItemModelLocal {
     const items = await this.getQuery(id);
     const item = items.at(0);
     if (item) {
-      return flattenItemTagResult(item);
+      return flattenItemTagResult(item) as Item;
     }
   }
 
@@ -126,7 +126,7 @@ export class ItemModelLocal {
     offset: number = 0,
   ) {
     const results = await this.searchQuery(query, tags, limit, offset);
-    return flattenItemTagResults(results);
+    return flattenItemTagResults(results) as Item[];
   }
 
   async tag(id: string, tagName: string, value?: any, type?: TagType) {
@@ -190,7 +190,7 @@ export class ItemModelLocal {
     if (item) {
       //@ts-ignore
       item.item = snakeToCamelObject(item);
-      return flattenItemTagResult(item);
+      return flattenItemTagResult(item) as Item;
     }
   }
 
@@ -213,7 +213,7 @@ export class ItemModelLocal {
         item: snakeToCamelObject(item),
         tags: item.tags,
       })),
-    );
+    ) as unknown as Item[];
   }
 
   getQuery(id: string, filter?: any) {
