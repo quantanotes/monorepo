@@ -25,6 +25,7 @@ export function ItemTag({ itemTag, onDelete }: ItemTagProps) {
           className="not-prose"
           to={space ? '/s/$spaceId/t/$tagName' : '/'}
           params={{ tagName: itemTag.name, spaceId: space?.id }}
+          target=""
         >
           <span className={onDelete && 'truncate pr-4'}>
             {`#${itemTag.name}${itemTag.value != null || itemTag.value! === undefined ? `:${itemTag.value}` : ''}`}

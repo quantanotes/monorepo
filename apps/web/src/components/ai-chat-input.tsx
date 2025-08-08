@@ -66,7 +66,7 @@ export function AiChatInput() {
           />
 
           <Button
-            variant={input.length > 0 ? 'default' : 'ghost'}
+            variant={input.trim().length ? 'default' : 'ghost'}
             size="icon"
             onClick={running ? abort : handleSubmit}
             disabled={!running && !input.trim()}

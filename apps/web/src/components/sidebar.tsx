@@ -33,7 +33,7 @@ export function Sidebar({
   const itemModel = useItemModel();
   const space = useSpace();
   const [ref, { width }] = useMeasure<HTMLDivElement>();
-  const isCollapsed = width <= 56;
+  const isCollapsed = width <= 64;
 
   const handleCreateItem = async () => {
     const item = await itemModel?.createItem({ name: '', content: '' });
@@ -50,7 +50,7 @@ export function Sidebar({
   return (
     <div
       className={cn(
-        'bg-card/50 text-sidebar-foreground flex h-full w-full flex-col p-2',
+        'bg-muted flex h-full w-full flex-col px-2 py-3',
         isCollapsed && 'items-center',
       )}
       ref={ref}
@@ -58,7 +58,7 @@ export function Sidebar({
       <div
         className={cn(
           'flex items-center gap-2',
-          isCollapsed ? 'flex-col' : 'flex-row justify-between',
+          isCollapsed ? 'flex-col' : 'flex-row justify-between px-2',
         )}
       >
         <SidebarButton

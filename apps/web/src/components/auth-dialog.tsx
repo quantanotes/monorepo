@@ -1,5 +1,12 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useTransition,
+} from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { Loader2Icon } from 'lucide-react';
 import { Button } from '@quanta/ui/button';
 import {
   Dialog,
@@ -78,6 +85,38 @@ function AuthDialog() {
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function SignInButton({
+  provider,
+  icon,
+}: {
+  provider: string;
+  icon: React.ReactElement;
+}) {
+  const [isPending, startTransition] = useTransition();
+  const Icon = icon;
+
+  return (
+    <Button
+      className="w-full"
+      variant="outline"
+      onClick={() =>
+        startTransition(
+          async () => void (await auth.signIn.social({ provider })),
+        )
+      }
+    >
+      {isPending ? (
+        <Loader2Icon className="animate-spin" />
+      ) : (
+        <>
+          <Icon className="mr-2 size-5" />
+          Continue with Google
+        </>
+      )}
+    </Button>
   );
 }
 

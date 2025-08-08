@@ -12,7 +12,7 @@ interface TypographyOptions {
 }
 
 export const typography = ({ fontSize, lineHeight }: TypographyOptions) => {
-  const marginY = lineHeight / 3;
+  const marginY = lineHeight / 4;
 
   const base = {
     fontSize: rem(fontSize),
@@ -26,6 +26,7 @@ export const typography = ({ fontSize, lineHeight }: TypographyOptions) => {
     lineHeight: round(lineHeight / (fontSize * scale)),
     marginTop: em(marginY, fontSize),
     marginBottom: em(marginY, fontSize),
+    fontWeight: 600,
   });
 
   return {

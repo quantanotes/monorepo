@@ -8,13 +8,7 @@ import { getCookie, setCookie } from '@tanstack/react-start/server';
 import { z } from 'zod';
 import { Toaster } from '@quanta/ui/sonner';
 import { authUserQueryOptions } from '@quanta/web/lib/user';
-import { ThemeProvider } from '@quanta/web/contexts/theme';
-import { DBProvider } from '@quanta/web/contexts/db';
-import { SyncProvider } from '@quanta/web/contexts/sync';
-import { PinnedProvider } from '@quanta/web/contexts/pinned';
-import { ItemModelProvider } from '@quanta/web/contexts/item-model';
-import { TagModelProvider } from '@quanta/web/contexts/tag-model';
-import { AiChatProvider } from '@quanta/web/contexts/ai-chat';
+import { Providers } from '@quanta/web/components/providers';
 import { AuthDialogProvider } from '@quanta/web/components/auth-dialog';
 import { MainLayout } from '@quanta/web/components/main-layout';
 import { MarketingPage } from '@quanta/web/components/marketing';
@@ -59,7 +53,7 @@ export const Route = createRootRouteWithContext<{
       },
       {
         rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Manrope:wght@200..800&display=swap',
+        href: 'https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Victor+Mono:ital,wght@0,100..700;1,100..700&display=swap',
       },
       {
         rel: 'icon',
@@ -95,29 +89,17 @@ function RootComponent() {
 
   return (
     <RootDocument>
-      <ThemeProvider>
-        <DBProvider>
-          <SyncProvider>
-            <ItemModelProvider>
-              <TagModelProvider>
-                <PinnedProvider>
-                  <AiChatProvider>
-                    <AuthDialogProvider open={!!unauthenticated}>
-                      {showMarketingPage && false ? (
-                        <MarketingPage />
-                      ) : (
-                        <MainLayout>
-                          <AnimatedOutlet />
-                        </MainLayout>
-                      )}
-                    </AuthDialogProvider>
-                  </AiChatProvider>
-                </PinnedProvider>
-              </TagModelProvider>
-            </ItemModelProvider>
-          </SyncProvider>
-        </DBProvider>
-      </ThemeProvider>
+      <Providers>
+        <AuthDialogProvider open={!!unauthenticated}>
+          {showMarketingPage && false ? (
+            <MarketingPage />
+          ) : (
+            <MainLayout>
+              <AnimatedOutlet />
+            </MainLayout>
+          )}
+        </AuthDialogProvider>
+      </Providers>
     </RootDocument>
   );
 }

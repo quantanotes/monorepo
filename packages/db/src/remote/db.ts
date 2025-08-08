@@ -1,8 +1,19 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/postgres-js';
 
-const client = postgres(process.env.DATABASE_URL!);
+export const db =
+  globalThis.globalDB ||
+  drizzle({
+    client: postgres(process.env.DATABASE_URL!),
+    casing: 'snake_case',
+  });
 
-export const db = drizzle({ client, casing: 'snake_case' });
+if (process.env.NODE_ENV !== 'production') {
+  globalThis.globalDB = db;
+}
 
-export type DB = typeof db;
+export type DB = ReturnType<typeof drizzle>;
+
+declare global {
+  var globalDB: DB;
+}
