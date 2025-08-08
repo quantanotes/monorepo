@@ -17,7 +17,7 @@ import { TagModelProvider } from '@quanta/web/contexts/tag-model';
 import { AiChatProvider } from '@quanta/web/contexts/ai-chat';
 import { AuthDialogProvider } from '@quanta/web/components/auth-dialog';
 import { MainLayout } from '@quanta/web/components/main-layout';
-import { MarketingPage } from '@quanta/web/components/marketing/marketing-page';
+import { MarketingPage } from '@quanta/web/components/marketing';
 import { AnimatedOutlet } from '@quanta/web/components/animated-outlet';
 import globalCss from '@quanta/ui/styles/globals.css?url';
 import favicon from '@quanta/web/public/favicon.ico?url';
@@ -103,7 +103,7 @@ function RootComponent() {
                 <PinnedProvider>
                   <AiChatProvider>
                     <AuthDialogProvider open={!!unauthenticated}>
-                      {showMarketingPage || true ? (
+                      {showMarketingPage && false ? (
                         <MarketingPage />
                       ) : (
                         <MainLayout>

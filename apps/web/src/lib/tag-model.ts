@@ -54,6 +54,10 @@ export class TagModel {
     return children.map((child) => child.childTag);
   }
 
+  async getAll() {
+    return await this.getAllQuery();
+  }
+
   async update(name: string, data: { name: string }) {
     await this.#db
       .update(schema.tags)

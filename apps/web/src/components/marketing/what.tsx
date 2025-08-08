@@ -2,17 +2,17 @@ import { RightCurlyArrow } from './right-curly-arrow';
 
 export function What() {
   return (
-    <div className="mx-auto max-w-7xl px-8 py-12">
+    <div className="mx-auto max-w-7xl px-8 py-18">
       <div className="pb-12">
-        <h1 className="pb-4 text-center text-7xl font-bold">Simple as 123</h1>
+        <h1 className="pb-4 text-center text-6xl font-bold">Simple as 123</h1>
 
-        <h3 className="text-muted-foreground text-center text-4xl font-semibold">
+        <h3 className="text-muted-foreground text-center text-2xl font-semibold">
           Instead of hours wasted on development, just ask AI to get the job
           done
         </h3>
       </div>
 
-      <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
+      <div className="flex flex-col items-center justify-center gap-4 lg:flex-row">
         <div className="flex flex-col gap-4">
           <div className="text-center text-lg font-bold">
             1. Import data from CSV/CRM
@@ -42,7 +42,7 @@ export function What() {
             2. Tell AI what to do
           </div>
 
-          <RightCurlyArrow className="fill-foreground size-24 rotate-90 md:rotate-0" />
+          <RightCurlyArrow className="fill-foreground size-24 rotate-90 lg:rotate-0" />
         </div>
 
         <div className="flex flex-col gap-4">

@@ -3,7 +3,7 @@ import stripeMrrUrl from '@quanta/web/public/stripe-mrr.jpg?url';
 
 export function Testimonial() {
   return (
-    <div className="mx-auto flex max-w-4xl flex-col items-center justify-center gap-8 px-8 py-12 md:flex-row">
+    <div className="mx-auto flex max-w-4xl flex-col items-center justify-center gap-8 px-8 py-18 md:flex-row">
       <div className="text-muted-foreground flex shrink flex-col gap-4">
         <Quote className="fill-muted-foreground size-8" />
 

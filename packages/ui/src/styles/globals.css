@@ -97,20 +97,20 @@
   body {
     @apply bg-background text-foreground;
   }
-}
 
-.collaboration-cursor__caret {
-  @apply pointer-events-none relative break-normal;
-}
+  .collaboration-cursor__caret {
+    @apply pointer-events-none relative break-normal;
+  }
 
-.collaboration-cursor__label {
-  @apply absolute -top-[1.4em] -left-[1px] px-[0.1rem] py-[0.3rem] text-sm font-normal whitespace-nowrap select-none;
-}
+  .collaboration-cursor__label {
+    @apply absolute -top-[1.4em] -left-[1px] px-[0.1rem] py-[0.3rem] text-sm font-normal whitespace-nowrap select-none;
+  }
 
-.tiptap-placeholder::before {
-  @apply text-muted-foreground pointer-events-none float-left h-0 cursor-text content-[attr(data-placeholder)];
-}
+  .tiptap-placeholder::before {
+    @apply text-muted-foreground pointer-events-none float-left h-0 cursor-text content-[attr(data-placeholder)];
+  }
 
-.tiptap-placeholder[data-placeholder='Title...'] {
-  @apply text-7xl font-bold;
+  .tiptap-placeholder[data-placeholder='Title...'] {
+    @apply text-7xl font-bold;
+  }
 }

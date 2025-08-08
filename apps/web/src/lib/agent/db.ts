@@ -84,6 +84,14 @@ Delete item and its tags
 db.delete("doc_123")`,
     ),
 
+    tags: doc(
+      'db.tag',
+      async () => tagModel.getAllQuery(),
+      `(): Promise<Tag[]>
+Fetch all tags in the database
+db.tags()`,
+    ),
+
     tag: doc(
       'db.tag',
       async (id: string, name: string, value?: any, type?: TagType) =>

@@ -1,12 +1,12 @@
 import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { debounce } from '@quanta/utils/debounce';
-import { Item } from '@quanta/types';
 import { usePinned } from '@quanta/web/contexts/pinned';
 import { useItemModel } from '@quanta/web/contexts/item-model';
 import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
 import { useLike } from '@quanta/web/hooks/use-like';
 import { itemQueryOptions } from '@quanta/web/lib/item-query';
 import { ItemPage } from '@quanta/web/components/item-page';
+import type { Item } from '@quanta/types';
 
 export const Route = createFileRoute('/$itemId')({
   component: RouteComponent,

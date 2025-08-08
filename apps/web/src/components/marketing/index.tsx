@@ -4,15 +4,21 @@ import { Testimonial } from './testimonial';
 import { What } from './what';
 import { Story } from './story';
 import { Pricing } from './pricing';
+import { Faq } from './faq';
+import { Cta } from './cta';
 
 export function MarketingPage() {
   return (
-    <ScrollArea className="h-screen max-w-screen shrink-0">
-      <Hero />
-      <Testimonial />
-      <What />
-      <Story />
-      <Pricing />
+    <ScrollArea className="h-screen">
+      <div className="max-w-screen">
+        <Hero />
+        <Testimonial />
+        <What />
+        <Story />
+        <Pricing />
+        <Faq />
+        <Cta />
+      </div>
     </ScrollArea>
   );
 }

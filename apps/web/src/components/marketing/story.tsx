@@ -2,10 +2,11 @@ import moeedImg from '@quanta/web/public/moeed.jpg?url';
 
 export function Story() {
   return (
-    <div className="mx-auto max-w-4xl px-8 py-12">
+    <div className="mx-auto max-w-4xl px-8 py-18">
       <div className="mb-6 text-xl font-bold">
         👋 Hey, I'm Moeed — Founder of Quanta.
       </div>
+
       <div className="flex flex-col items-center gap-6 md:flex-row">
         <img
           src={moeedImg}

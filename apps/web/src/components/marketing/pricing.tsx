@@ -3,15 +3,15 @@ import { Button } from '@quanta/ui/button';
 
 export function Pricing() {
   return (
-    <div className="mx-auto max-w-7xl px-8 py-12">
+    <div className="mx-auto max-w-7xl px-8 py-18">
       <div className="pb-12">
-        <h1 className="text-center text-7xl font-bold">
+        <h1 className="text-center text-6xl font-bold">
           96% the price of a dev, with instant delivery
         </h1>
       </div>
 
       <div className="mx-auto flex max-w-3xl flex-col items-center justify-center gap-8 md:flex-row">
-        <div className="bg-card flex flex-1/2 flex-col gap-4 rounded-md p-6">
+        <div className="bg-card flex w-96 flex-1/2 flex-col gap-4 rounded-md p-6">
           <div className="text-xl font-bold">Standard</div>
 
           <div className="flex gap-1 text-xl font-bold">
@@ -22,10 +22,9 @@ export function Pricing() {
 
           <ul className="h-96 py-8 text-xl font-semibold">
             {[
-              'Unlimited AI agent usage',
-              'Workflow scheduling',
-              'Email, browser, calendar and API integrations',
-              '1 on 1 consultation to tailor around your needs',
+              'Unlimited workflow generation',
+              'All integrations (email, CRM, calendar)',
+              '1 on 1 setup consulation',
             ].map((content) => (
               <li className="my-4">
                 <span className="pr-2">🔥</span>
@@ -35,11 +34,11 @@ export function Pricing() {
           </ul>
 
           <Button className="font-semibold" size="lg">
-            <SparklesIcon /> Get Quanta
+            <SparklesIcon /> Start Free Trial
           </Button>
         </div>
 
-        <div className="bg-card flex flex-1/2 flex-col gap-4 rounded-md p-6 shadow-[0_0_64px_4px_hsla(44,30%,28%,0.5)]">
+        <div className="bg-card flex w-96 flex-1/2 flex-col gap-4 rounded-md p-6 shadow-[0_0_64px_4px_hsla(44,30%,28%,0.5)]">
           <div className="text-xl font-bold">Lifetime</div>
 
           <div className="flex gap-1 text-xl font-bold">
@@ -50,9 +49,10 @@ export function Pricing() {
 
           <ul className="h-96 py-8 text-xl font-semibold">
             {[
-              'Everything in standard plus',
-              'Custom integrations for your personal workflow',
-              'Priority support and consultation',
+              'Everything in standard',
+              'Custom feature requests',
+              'Direct founder access',
+              'All future features included',
             ].map((content) => (
               <li className="my-4">
                 <span className="pr-2">🔥</span>
@@ -66,11 +66,15 @@ export function Pricing() {
               Only 27 slots available. Selling out fast!
             </p>
             <Button className="font-semibold" size="lg">
-              <SparklesIcon /> Get Quanta
+              <SparklesIcon /> Claim Lifetime Deal
             </Button>
           </div>
         </div>
       </div>
+
+      <p className="py-6 text-center text-lg">
+        No setup fees • Cancel anytime • 30-day money-back guarantee
+      </p>
     </div>
   );
 }
