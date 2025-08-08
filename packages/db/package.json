@@ -10,12 +10,12 @@
     "drizzle-kit": "^0.31.4"
   },
   "dependencies": {
-    "@electric-sql/pglite": "^0.3.4",
-    "@electric-sql/pglite-sync": "^0.3.7",
+    "@electric-sql/pglite": "^0.3.7",
+    "@electric-sql/pglite-sync": "^0.3.10",
     "@faker-js/faker": "^9.9.0",
-    "axios": "^1.10.0",
-    "dotenv": "^17.0.1",
-    "drizzle-orm": "^0.44.2",
+    "axios": "^1.11.0",
+    "dotenv": "^17.2.1",
+    "drizzle-orm": "^0.44.4",
     "nanoid": "^5.1.5",
     "postgres": "^3.4.7"
   }
