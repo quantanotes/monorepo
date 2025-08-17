@@ -36,7 +36,7 @@ export function HumanChatInput() {
           onClick={addComment}
           disabled={!value.trim()}
         >
-          <Send className="size-5" />
+          <Send className="size-4" />
         </Button>
       </div>
     </div>

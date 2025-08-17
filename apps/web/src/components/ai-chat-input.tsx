@@ -51,7 +51,7 @@ export function AiChatInput() {
             onClick={() => fileInputRef.current?.click()}
             disabled={running}
           >
-            <Plus className="size-5" />
+            <Plus className="size-4" />
           </Button>
 
           <AutosizeTextarea
@@ -72,9 +72,9 @@ export function AiChatInput() {
             disabled={!running && !input.trim()}
           >
             {running ? (
-              <Loader2 className="size-5 animate-spin" />
+              <Loader2 className="size-4 animate-spin" />
             ) : (
-              <ArrowUp className="size-5" />
+              <ArrowUp className="size-4" />
             )}
           </Button>
         </div>

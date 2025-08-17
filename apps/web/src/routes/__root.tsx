@@ -2,6 +2,7 @@ import {
   createRootRouteWithContext,
   HeadContent,
   Scripts,
+  Outlet,
 } from '@tanstack/react-router';
 import { createServerFn } from '@tanstack/react-start';
 import { getCookie, setCookie } from '@tanstack/react-start/server';
@@ -12,7 +13,6 @@ import { Providers } from '@quanta/web/components/providers';
 import { AuthDialogProvider } from '@quanta/web/components/auth-dialog';
 import { MainLayout } from '@quanta/web/components/main-layout';
 import { MarketingPage } from '@quanta/web/components/marketing';
-import { AnimatedOutlet } from '@quanta/web/components/animated-outlet';
 import globalCss from '@quanta/ui/styles/globals.css?url';
 import favicon from '@quanta/web/public/favicon.ico?url';
 import type { QueryClient } from '@tanstack/react-query';
@@ -95,7 +95,7 @@ function RootComponent() {
             <MarketingPage />
           ) : (
             <MainLayout>
-              <AnimatedOutlet />
+              <Outlet />
             </MainLayout>
           )}
         </AuthDialogProvider>

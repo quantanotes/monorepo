@@ -1,7 +1,6 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { AnimatedOutlet } from '@quanta/web/components/animated-outlet';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/s/$spaceId')({
-  component: AnimatedOutlet,
+  component: Outlet,
   ssr: false,
 });
