@@ -81,14 +81,14 @@ export function SidebarMainNavigation({
           {
             title: 'Tools',
             icon: PlugIcon,
-            type: 'link' as const,
-            to: '/tools',
+            type: 'action' as const,
+            // to: '/tools',
           },
           {
             title: 'Tasks',
             icon: BrainIcon,
-            type: 'link' as const,
-            to: '/tasks',
+            type: 'action' as const,
+            // to: '/tasks',
           },
         ]
       : []),
