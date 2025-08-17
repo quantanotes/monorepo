@@ -16,7 +16,7 @@ interface ViewMenuProps {
 export function ViewMenu({ views, currentView, onViewChange }: ViewMenuProps) {
   return (
     <Select onValueChange={onViewChange} value={currentView}>
-      <SelectTrigger className="hover:bg-accent! border-0 bg-transparent! shadow-none!">
+      <SelectTrigger className="hover:bg-accent! border-0 bg-transparent! text-sm! shadow-none!">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

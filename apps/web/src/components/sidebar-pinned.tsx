@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { Link } from '@tanstack/react-router';
 import { StickyNote, Sparkles, Hash } from 'lucide-react';
-import { Pinned } from '@quanta/types';
-import { Button } from '@quanta/ui/button';
+import { SidebarMenuItem, SidebarMenuButton } from '@quanta/ui/sidebar';
 import { SidebarPinnedItemMenu } from '@quanta/web/components/sidebar-pinned-item-menu';
 import { SidebarPinnedTagMenu } from '@quanta/web/components/sidebar-pinned-tag-menu';
+import type { Pinned } from '@quanta/types';
 
 interface SidebarPinnedProps {
   pinned: Pinned;
@@ -24,16 +24,16 @@ export function SidebarPinned({ pinned, spaceId }: SidebarPinnedProps) {
       result += `/t/${pinned.name}`;
     }
     return result;
-  }, [pinned.type, pinned.itemId, spaceId]);
+  }, [pinned.type, pinned.itemId, pinned.name, spaceId]);
 
   const Icon = () => {
     switch (pinned.type) {
       case 'item':
-        return <StickyNote className="size-5!" />;
+        return <StickyNote className="size-4" />;
       case 'tag':
-        return <Hash className="size-5!" />;
+        return <Hash className="size-4" />;
       default:
-        return <Sparkles className="size-5!" />;
+        return <Sparkles className="size-4" />;
     }
   };
 
@@ -44,26 +44,19 @@ export function SidebarPinned({ pinned, spaceId }: SidebarPinnedProps) {
       case 'tag':
         return <SidebarPinnedTagMenu pinned={pinned} />;
       default:
-        return <div></div>;
+        return null;
     }
   };
 
   return (
-    <div className="group/menu-item relative">
-      <Button
-        className="text-muted-foreground peer/menu-button h-8 w-full justify-start truncate text-base"
-        variant="ghost"
-        asChild
-      >
+    <SidebarMenuItem className="group/pinned relative">
+      <SidebarMenuButton asChild>
         <Link to={href}>
           <Icon />
-          <span className="truncate group-hover/menu-item:mr-8">
-            {pinned.name || 'Untitled'}
-          </span>
+          <span className="truncate">{pinned.name || 'Untitled'}</span>
         </Link>
-      </Button>
-
+      </SidebarMenuButton>
       <Menu />
-    </div>
+    </SidebarMenuItem>
   );
 }

@@ -15,8 +15,8 @@ export function GridCard({ data }: GridCardProps) {
       to={data.spaceId ? `/s/$spaceId/$itemId` : `/$itemId`}
       params={{ itemId: data.id, spaceId: data.spaceId }}
     >
-      <div className="bg-card/70 hover:bg-card/40 h-full overflow-hidden rounded-md p-4 transition-colors">
-        <h3 className="text-card-foreground mb-6 truncate text-xl font-semibold">
+      <div className="bg-card/70 hover:bg-card/40 h-full overflow-hidden rounded-lg p-4 transition-colors">
+        <h3 className="mb-6 truncate text-2xl font-semibold">
           {data.name || 'Untitled'}
         </h3>
 
@@ -35,10 +35,14 @@ export function GridCard({ data }: GridCardProps) {
           </div>
         )}
 
-        <div className="text-muted-foreground flex items-center justify-between pt-3">
-          {data.username && <span className="font-bold">@{data.username}</span>}
+        <div className="text-muted-foreground flex w-full items-center justify-between text-sm">
+          {data.username && (
+            <div className="text-muted-foreground w-full truncate text-sm">
+              @{data.username}
+            </div>
+          )}
 
-          <div className="flex items-center">
+          <div className="flex items-center justify-end">
             {Object(data).hasOwnProperty('likeCount') && (
               <LikeButton
                 likeCount={data.likeCount}
@@ -56,9 +60,9 @@ export function GridCard({ data }: GridCardProps) {
             )}
 
             {Object(data).hasOwnProperty('commentCount') && (
-              <Button variant="ghost" className="p-2!">
-                <MessageCircle className="size-5!" />
-                <span className="text-xs">{data.commentCount}</span>
+              <Button variant="ghost" className="p-1">
+                <MessageCircle className="size-4!" />
+                <span className="w-3 text-xs">{data.commentCount}</span>
               </Button>
             )}
           </div>

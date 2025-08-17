@@ -106,7 +106,7 @@ function RootComponent() {
 
 function RootDocument({ children }: React.PropsWithChildren) {
   return (
-    <html>
+    <html className="dark">
       <head>
         <HeadContent />
       </head>

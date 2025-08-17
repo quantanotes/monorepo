@@ -1,5 +1,4 @@
 import { Ellipsis, Trash, Pin, MessageCircle } from 'lucide-react';
-import { cn } from '@quanta/ui/utils/css';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +14,7 @@ interface ItemPageMenuProps {
   isPinned: boolean;
   onTogglePin: () => void;
   onDelete?: () => void;
+  trigger?: React.ReactNode;
 }
 
 export function ItemPageMenu({
@@ -23,30 +23,34 @@ export function ItemPageMenu({
   isPinned,
   onTogglePin,
   onDelete,
+  trigger,
 }: ItemPageMenuProps) {
   const { addAttachment } = useAiChat();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className={className} variant="ghost" size="icon">
-          <Ellipsis className="text-muted-foreground size-5" />
-        </Button>
+        {trigger ?? (
+          <Button className={className} variant="ghost" size="icon">
+            <Ellipsis className="size-4" />
+          </Button>
+        )}
       </DropdownMenuTrigger>
+
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={onTogglePin}>
-          <Pin className={`${isPinned && 'fill-foreground'}`} />
+          <Pin className={`${isPinned ? 'fill-foreground' : ''} mr-2 size-4`} />
           {isPinned ? 'Unpin' : 'Pin'}
         </DropdownMenuItem>
 
         <DropdownMenuItem onClick={() => addAttachment('item', itemId)}>
-          <MessageCircle />
+          <MessageCircle className="mr-2 size-4" />
           Add to chat
         </DropdownMenuItem>
 
         {onDelete && (
           <DropdownMenuItem onClick={onDelete} variant="destructive">
-            <Trash />
+            <Trash className="mr-2 size-4" />
             Delete
           </DropdownMenuItem>
         )}

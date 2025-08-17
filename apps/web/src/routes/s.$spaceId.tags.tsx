@@ -50,7 +50,6 @@ function RouteComponent() {
               isPinned={isTagPinned(tag.name)}
               onDelete={handleDelete(tag.name)}
               onTogglePin={handleTogglePin(tag.id)}
-              // onExportCsv={handleExportCsv(tag.id)}
             />
           </div>
         ))}

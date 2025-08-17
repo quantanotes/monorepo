@@ -16,6 +16,7 @@ interface TagPageMenuProps {
   onTogglePin: () => void;
   onDelete: () => void;
   onExportCsv?: () => void;
+  trigger?: React.ReactNode;
 }
 
 export function TagPageMenu({
@@ -25,6 +26,7 @@ export function TagPageMenu({
   onTogglePin,
   onDelete,
   onExportCsv,
+  trigger,
 }: TagPageMenuProps) {
   const [editOpen, setEditOpen] = useState(false);
 
@@ -32,29 +34,34 @@ export function TagPageMenu({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className={className} variant="ghost" size="icon">
-            <Ellipsis className="text-muted-foreground size-5" />
-          </Button>
+          {trigger ?? (
+            <Button className={className} variant="ghost" size="icon">
+              <Ellipsis className="size-4" />
+            </Button>
+          )}
         </DropdownMenuTrigger>
+
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={onTogglePin}>
-            <Pin className={`${isPinned && 'fill-foreground'}`} />
+            <Pin
+              className={`${isPinned ? 'fill-foreground' : ''} mr-2 size-4`}
+            />
             {isPinned ? 'Unpin' : 'Pin'}
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setEditOpen(true)}>
-            <Settings />
+            <Settings className="mr-2 size-4" />
             Edit
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={onDelete} variant="destructive">
-            <Trash />
+            <Trash className="mr-2 size-4" />
             Delete
           </DropdownMenuItem>
 
           {onExportCsv && (
             <DropdownMenuItem onClick={onExportCsv}>
-              <Download />
+              <Download className="mr-2 size-4" />
               Export
             </DropdownMenuItem>
           )}

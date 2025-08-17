@@ -8,7 +8,7 @@ export function AiChatHeader() {
   return (
     <>
       <Button size="icon" variant="ghost" onClick={resetChat}>
-        <RefreshCw className="size-5" />
+        <RefreshCw className="size-4" />
       </Button>
     </>
   );

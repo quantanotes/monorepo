@@ -13,7 +13,7 @@ export function AiChatAIMessage({
   messageIndex,
 }: AiChatAIMessageProps) {
   return (
-    <div className="px-3">
+    <div className="">
       {message.sources.length > 0 && (
         <AiChatSources sources={message.sources} />
       )}

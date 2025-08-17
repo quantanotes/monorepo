@@ -1,15 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from '@tanstack/react-router';
-import type { ImperativePanelHandle } from 'react-resizable-panels';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from '@quanta/ui/resizable';
-import { useMeasure } from '@quanta/web/hooks/use-measure';
+import { SidebarInset, SidebarProvider } from '@quanta/ui/sidebar';
 import { Sidebar } from '@quanta/web/components/sidebar';
 import { RightPanel } from '@quanta/web/components/right-panel';
 import { Search } from '@quanta/web/components/search';
+import { useMeasure } from '@quanta/web/hooks/use-measure';
+import type { ImperativePanelHandle } from 'react-resizable-panels';
 
 export function MainLayout({ children }: React.PropsWithChildren) {
   const location = useLocation();
@@ -30,14 +31,6 @@ export function MainLayout({ children }: React.PropsWithChildren) {
     return (widthPx / availableWidth) * 100;
   };
 
-  const toggleSidebar = () => {
-    if (sidebarRef.current?.isExpanded()) {
-      sidebarRef.current?.resize(getRelativeWidth(48));
-    } else {
-      sidebarRef.current?.resize(getRelativeWidth(256));
-    }
-  };
-
   const toggleRightPanel = () => {
     if (rightPanelRef.current?.isExpanded()) {
       rightPanelRef.current?.resize(0);
@@ -51,45 +44,33 @@ export function MainLayout({ children }: React.PropsWithChildren) {
   };
 
   return (
-    <div ref={measureRef} className="h-screen">
-      <ResizablePanelGroup className="h-screen" direction="horizontal">
-        <ResizablePanel
-          ref={sidebarRef}
-          className="h-full transition-transform"
-          defaultSize={getRelativeWidth(256)}
-          minSize={getRelativeWidth(48)}
-          maxSize={getRelativeWidth(320)}
-          collapsedSize={getRelativeWidth(48)}
-          collapsible
-        >
-          <Sidebar
-            toggleSidebar={toggleSidebar}
-            toggleRightPanel={toggleRightPanel}
-            toggleSearch={toggleSearch}
-          />
-        </ResizablePanel>
+    <SidebarProvider>
+      <Sidebar
+        toggleRightPanel={toggleRightPanel}
+        toggleSearch={toggleSearch}
+      />
+      <SidebarInset ref={measureRef} className="h-screen">
+        <ResizablePanelGroup className="h-screen" direction="horizontal">
+          <ResizablePanel className="relative flex h-full flex-col">
+            {children}
+          </ResizablePanel>
 
-        <ResizableHandle className="z-50 bg-transparent" />
+          <ResizableHandle className="z-50" />
 
-        <ResizablePanel className="relative flex h-full flex-col">
-          {children}
-        </ResizablePanel>
+          <ResizablePanel
+            ref={rightPanelRef}
+            className="relativeh z-50 flex h-full flex-col"
+            minSize={getRelativeWidth(336)}
+            maxSize={getRelativeWidth(768)}
+            collapsedSize={0}
+            collapsible
+          >
+            <RightPanel />
+          </ResizablePanel>
+        </ResizablePanelGroup>
 
-        <ResizableHandle />
-
-        <ResizablePanel
-          ref={rightPanelRef}
-          className="relative z-50 flex h-full flex-col"
-          minSize={getRelativeWidth(336)}
-          maxSize={getRelativeWidth(768)}
-          collapsedSize={0}
-          collapsible
-        >
-          <RightPanel />
-        </ResizablePanel>
-      </ResizablePanelGroup>
-
-      <Search show={showSearch} setShow={setShowSearch} />
-    </div>
+        <Search show={showSearch} setShow={setShowSearch} />
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

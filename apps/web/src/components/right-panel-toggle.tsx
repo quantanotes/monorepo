@@ -11,11 +11,12 @@ export function RightPanelToggle({
   onChange,
 }: RightPanelToggleProps) {
   return (
-    <div className="flex items-center justify-center gap-1">
+    <div className="bg-muted flex items-center justify-center gap-1 rounded-full p-1">
       <Button
         variant="ghost"
+        size="sm"
         className={cn(
-          'flex items-center gap-1',
+          'flex items-center gap-1 text-sm',
           activeTab === 'ai' && 'bg-accent text-foreground',
         )}
         onClick={() => onChange('ai')}
@@ -26,8 +27,9 @@ export function RightPanelToggle({
 
       <Button
         variant="ghost"
+        size="sm"
         className={cn(
-          'flex items-center gap-1',
+          'flex items-center gap-1 text-sm',
           activeTab === 'human' && 'bg-accent text-foreground',
         )}
         onClick={() => onChange('human')}

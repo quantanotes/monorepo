@@ -48,12 +48,6 @@ function RouteComponent() {
       title={`#${tagName}`}
       headerMenu={
         <>
-          <ViewMenu
-            views={['table', 'grid']}
-            currentView={view}
-            onViewChange={setView}
-          />
-
           <PinButton isPinned={isPinned} onTogglePin={handleTogglePin} />
 
           <TagPageMenu
@@ -62,6 +56,12 @@ function RouteComponent() {
             onTogglePin={handleTogglePin}
             onDelete={handleDelete}
             onExportCsv={handleExportCsv}
+          />
+
+          <ViewMenu
+            views={['table', 'grid']}
+            currentView={view}
+            onViewChange={setView}
           />
         </>
       }

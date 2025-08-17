@@ -18,7 +18,7 @@ export function LikeButton({
       variant="ghost"
       onClick={onToggleLike}
     >
-      <Heart className={`size-5 ${isLiked && 'fill-foreground'}`} />
+      <Heart className={`size-4 ${isLiked && 'fill-foreground'}`} />
       {typeof likeCount === 'number' && (
         <span className="w-3 text-xs">{likeCount}</span>
       )}

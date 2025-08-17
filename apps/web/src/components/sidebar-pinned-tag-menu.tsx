@@ -1,8 +1,10 @@
 import { useParams, useNavigate } from '@tanstack/react-router';
-import { Pinned } from '@quanta/types';
+import { MoreHorizontal } from 'lucide-react';
+import { SidebarMenuAction } from '@quanta/ui/sidebar';
+import { TagPageMenu } from '@quanta/web/components/tag-page-menu';
 import { usePinned } from '@quanta/web/contexts/pinned';
 import { useTagModelLocal } from '@quanta/web/hooks/use-tag-model-local';
-import { TagPageMenu } from '@quanta/web/components/tag-page-menu';
+import type { Pinned } from '@quanta/types';
 
 interface SidebarPinnedTagMenuProps {
   pinned: Pinned;
@@ -28,10 +30,14 @@ export function SidebarPinnedTagMenu({ pinned }: SidebarPinnedTagMenuProps) {
   return (
     <TagPageMenu
       tagName={pinned.name}
-      className="peer-hover/menu-button:text-accent-foreground absolute right-1 h-8 w-8 opacity-0 transition-opacity group-hover/menu-item:opacity-100"
       isPinned={true}
       onTogglePin={() => togglePinTag(pinned.tagId)}
       onDelete={onDeleteTag}
+      trigger={
+        <SidebarMenuAction>
+          <MoreHorizontal className="size-4" />
+        </SidebarMenuAction>
+      }
     />
   );
 }

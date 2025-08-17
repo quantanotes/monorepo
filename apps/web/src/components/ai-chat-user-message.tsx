@@ -8,8 +8,8 @@ interface AiChatUserMessageProps {
 export function AiChatUserMessage({ message }: AiChatUserMessageProps) {
   return (
     <div className="flex justify-end">
-      <div className="bg-card rounded-2xl px-4">
-        <div className="prose">
+      <div className="bg-primary rounded-2xl px-4">
+        <div className="prose prose-p:text-primary-foreground prose-headings:text-primary-foreground">
           {message.parts.map(
             (part, index) =>
               part.type === 'text' && (
@@ -17,6 +17,11 @@ export function AiChatUserMessage({ message }: AiChatUserMessageProps) {
                   animationDuration="0.3"
                   key={index}
                   content={part.content}
+                  customComponents={{
+                    code: ({ node, ...props }: any) => (
+                      <code {...props}>{props.children}</code>
+                    ),
+                  }}
                 />
               ),
           )}

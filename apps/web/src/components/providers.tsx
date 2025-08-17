@@ -8,18 +8,18 @@ import { AiChatProvider } from '@quanta/web/contexts/ai-chat';
 
 export function Providers({ children }: React.PropsWithChildren) {
   return (
-    <ThemeProvider>
-      <DBProvider>
-        <SyncProvider>
-          <ItemModelProvider>
-            <TagModelProvider>
-              <PinnedProvider>
-                <AiChatProvider>{children}</AiChatProvider>
-              </PinnedProvider>
-            </TagModelProvider>
-          </ItemModelProvider>
-        </SyncProvider>
-      </DBProvider>
-    </ThemeProvider>
+    // <ThemeProvider>
+    <DBProvider>
+      <SyncProvider>
+        <ItemModelProvider>
+          <TagModelProvider>
+            <PinnedProvider>
+              <AiChatProvider>{children}</AiChatProvider>
+            </PinnedProvider>
+          </TagModelProvider>
+        </ItemModelProvider>
+      </SyncProvider>
+    </DBProvider>
+    // </ThemeProvider>
   );
 }

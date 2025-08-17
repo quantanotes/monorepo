@@ -1,42 +1,43 @@
+import { MoreHorizontal } from 'lucide-react';
 import { useParams, useNavigate } from '@tanstack/react-router';
+import { SidebarMenuAction } from '@quanta/ui/sidebar';
 import { useItemModel } from '@quanta/web/contexts/item-model';
 import { usePinned } from '@quanta/web/contexts/pinned';
 import { ItemPageMenu } from '@quanta/web/components/item-page-menu';
 import type { Pinned } from '@quanta/types';
 
-interface SidebarPinnedProps {
+interface SidebarPinnedItemMenuProps {
   pinned: Pinned;
 }
 
-export function SidebarPinnedItemMenu({ pinned }: SidebarPinnedProps) {
+export function SidebarPinnedItemMenu({ pinned }: SidebarPinnedItemMenuProps) {
   const navigate = useNavigate();
-  const { itemId: pageItemId, spaceId: pageSpaceId } = useParams({
-    strict: false,
-  });
-  const { togglePinItem } = usePinned()!;
-  const { deleteItem } = useItemModel()!;
-  const itemId = pinned?.itemId!;
+  const { togglePinItem } = usePinned();
+  const { deleteItem } = useItemModel();
+  const { itemId, spaceId } = useParams({ strict: false });
 
   const onDeleteItem = () => {
-    if (pageItemId === itemId && pageSpaceId) {
-      navigate({ to: '/s/$spaceId', params: { spaceId: pageSpaceId } });
-    } else if (pageItemId === itemId) {
-      navigate({ to: '/' });
+    if (itemId === pinned.itemId) {
+      if (spaceId) {
+        navigate({ to: '/s/$spaceId', params: { spaceId } });
+      } else {
+        navigate({ to: '/' });
+      }
     }
-    deleteItem(itemId);
-  };
-
-  const onTogglePinItem = () => {
-    togglePinItem(itemId);
+    deleteItem(pinned.itemId!);
   };
 
   return (
     <ItemPageMenu
-      className="peer-hover/menu-button:text-accent-foreground absolute right-1 size-8 opacity-0 transition-opacity group-hover/menu-item:opacity-100"
-      itemId={itemId}
-      onTogglePin={onTogglePinItem}
-      onDelete={onDeleteItem}
+      itemId={pinned.itemId!}
       isPinned={true}
+      onTogglePin={() => togglePinItem(pinned.itemId!)}
+      onDelete={onDeleteItem}
+      trigger={
+        <SidebarMenuAction>
+          <MoreHorizontal className="size-4" />
+        </SidebarMenuAction>
+      }
     />
   );
 }

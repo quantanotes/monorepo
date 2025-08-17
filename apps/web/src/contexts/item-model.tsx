@@ -36,7 +36,8 @@ function ItemModelLocalProvider({ children }: React.PropsWithChildren) {
 export function useItemModel() {
   const context = useContext(ItemModelContext);
   if (context === null) {
-    throw new Error('useItemModel must be used within an ItemModelProvider');
+    return {} as ItemModelContextType;
+    // throw new Error('useItemModel must be used within an ItemModelProvider');
   }
   return context;
 }

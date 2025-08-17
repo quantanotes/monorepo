@@ -10,11 +10,11 @@ export function AiChatAction({ title, status }: AiChatActionProps) {
   const ActionStatusIndicator = () => {
     switch (status) {
       case 'completed':
-        return <Check className="size-5" />;
+        return <Check className="size-4" />;
       case 'pending':
-        return <LoaderCircle className="size-5 animate-spin" />;
+        return <LoaderCircle className="size-4 animate-spin" />;
       case 'failed':
-        return <X className="size-5" />;
+        return <X className="size-4" />;
     }
   };
 

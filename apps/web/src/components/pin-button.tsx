@@ -18,7 +18,7 @@ export function PinButton({
       variant="ghost"
       onClick={onTogglePin}
     >
-      <Pin className={`size-5 ${isPinned && 'fill-foreground'}`} />
+      <Pin className={`size-4 ${isPinned && 'fill-foreground'}`} />
       {typeof pinCount === 'number' && (
         <span className="w-3 text-xs">{pinCount}</span>
       )}

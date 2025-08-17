@@ -1,7 +1,6 @@
-import { IncomingMessage } from 'http';
-import { Readable } from 'stream';
 import { defineConfig, loadEnv } from 'vite';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
+import viteReact from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import mkcert from 'vite-plugin-mkcert';
@@ -18,8 +17,10 @@ export default defineConfig(({ mode }) => ({
       tsr: {
         generatedRouteTree: 'src/routes.gen.ts',
       },
-      target: 'bun',
+      customViteReactPlugin: true,
+      target: 'netlify',
     }),
+    viteReact(),
     mode === 'development' && mkcert(),
     mode === 'development' && http2(),
   ],
