@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { useSpace } from '@quanta/web/hooks/use-space';
 import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
 import { usePinnedRemote } from '@quanta/web/hooks/use-pinned-remote';
@@ -18,9 +19,23 @@ const PinnedContext = createContext<PinnedContextType>({
 export function PinnedProvider({ children }: React.PropsWithChildren) {
   const user = useAuthUser();
   const space = useSpace();
+  const navigate = useNavigate();
 
   if (!user) {
-    return <>{children}</>;
+    return (
+      <PinnedContext
+        value={{
+          pinned: [],
+          isItemPinned: (id: string) => false,
+          togglePinItem: async (id: string) =>
+            navigate({
+              search: { unauthenticated: true },
+            }),
+        }}
+      >
+        {children}
+      </PinnedContext>
+    );
   } else if (space) {
     return <PinnedLocalProvider>{children}</PinnedLocalProvider>;
   } else {

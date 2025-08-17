@@ -3,7 +3,10 @@ import { redirect } from '@tanstack/react-router';
 import { auth } from '@quanta/auth/server';
 
 export function throwUnauthenticatedRedirect() {
+  const { headers } = getWebRequest();
+  const url = new URL(headers.get('referer')).pathname || '/';
   throw redirect({
+    to: url,
     search: { unauthenticated: true },
   });
 }

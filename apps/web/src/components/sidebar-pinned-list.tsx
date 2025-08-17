@@ -41,7 +41,7 @@ export function SidebarPinnedList() {
             <SidebarMenu>
               {pinned.length === 0 ? (
                 <SidebarMenuItem>
-                  <div className="text-muted-foreground px-2 py-1.5 text-xs">
+                  <div className="text-muted-foreground p-4 text-center text-xs">
                     Nothing pinned yet
                   </div>
                 </SidebarMenuItem>

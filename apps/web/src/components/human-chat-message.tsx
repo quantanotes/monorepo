@@ -19,9 +19,10 @@ export function HumanChatMessage({ comment, onDelete }: HumanChatMessageProps) {
   const user = useAuthUser();
   const isCurrentUser = comment.userId === user?.id;
   const date = new Date(comment.createdAt);
+
   return (
     <div className="group hover:bg-muted/50 flex gap-4 px-4 py-4 transition-colors">
-      <Avatar className="h-8 w-8 shrink-0">
+      <Avatar className="mt-2 size-6 shrink-0">
         <AvatarImage src={comment.image} />
         <AvatarFallback>
           {comment.username ? comment.username.charAt(0).toUpperCase() : ''}
@@ -33,16 +34,18 @@ export function HumanChatMessage({ comment, onDelete }: HumanChatMessageProps) {
           <span className="text-foreground text-sm font-medium">
             {comment.username}
           </span>
+
           <span className="text-muted-foreground text-xs">
             {formatTime(date)}
           </span>
+
           {isCurrentUser && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="size-6 opacity-0 group-hover:opacity-100"
+                  className="size-4 opacity-0 group-hover:opacity-100"
                 >
                   <MoreHorizontal />
                 </Button>
@@ -52,7 +55,7 @@ export function HumanChatMessage({ comment, onDelete }: HumanChatMessageProps) {
                   onClick={() => onDelete(comment.id)}
                   variant="destructive"
                 >
-                  <Trash2 />
+                  <Trash2 className="mr-2 size-4" />
                   Delete
                 </DropdownMenuItem>
               </DropdownMenuContent>

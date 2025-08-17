@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link, useParams } from '@tanstack/react-router';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ChevronDownIcon, PlusIcon, EclipseIcon } from 'lucide-react';
 import {
   SidebarMenu,
@@ -16,11 +16,13 @@ import {
 } from '@quanta/ui/dropdown-menu';
 import { SpaceCreateDialog } from '@quanta/web/components/space-create-dialog';
 import { spaceQueryOptions } from '@quanta/web/lib/space-query';
+import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
 
 export function SidebarSpaceMenu() {
   const navigate = useNavigate();
+  const user = useAuthUser();
+  const { data: spaces } = useQuery(spaceQueryOptions());
   const { spaceId } = useParams({ strict: false });
-  const { data: spaces } = useSuspenseQuery(spaceQueryOptions());
   const [isSpaceCreateOpen, setIsSpaceCreateOpen] = useState(false);
 
   const currentSpaceName =
@@ -69,7 +71,13 @@ export function SidebarSpaceMenu() {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={() => setIsSpaceCreateOpen(true)}>
+            <DropdownMenuItem
+              onClick={() => {
+                user
+                  ? setIsSpaceCreateOpen(true)
+                  : navigate({ search: { unauthenticated: true } });
+              }}
+            >
               <PlusIcon className="mr-2 size-4" />
               Create Space
             </DropdownMenuItem>

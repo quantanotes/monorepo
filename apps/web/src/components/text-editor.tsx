@@ -6,12 +6,6 @@ import StarterKit from '@tiptap/starter-kit';
 import { Settings } from '@quanta/web/lib/text/extensions/settings';
 import { Tags } from '@quanta/web/lib/text/extensions/tags';
 
-// const PLACEHOLDER_CLASS = `\
-//    cursor-text before:absolute before:content-[attr(data-placeholder)]\
-//    data-[placeholder=Title...]:text-7xl data-[placeholder=Title...]:p-3\
-//    data-[placeholder=Title...]:font-bold before:text-muted-foreground\
-//    before-pointer-events-none`;
-
 const PLACEHOLDER_CLASS = `tiptap-placeholder`;
 
 const placeholder = ({ node }) =>
@@ -65,7 +59,7 @@ export const TextEditor = memo(function ({
 
   return (
     <EditorContent
-      className="prose mx-auto w-full max-w-prose pb-32"
+      className="prose mx-auto w-full max-w-prose px-4 pb-32"
       editor={editor}
     />
   );
