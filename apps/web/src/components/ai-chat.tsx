@@ -4,12 +4,12 @@ import { ScrollArea } from '@quanta/ui/scroll-area';
 
 export function AiChat() {
   return (
-    <div className="relative z-50 h-full">
+    <div className="relative h-full">
       <ScrollArea className="h-full">
         <AiChatMessages />
       </ScrollArea>
 
-      <div className="sticky right-0 bottom-4 left-0 z-50 px-4">
+      <div className="sticky right-0 bottom-4 left-0 z-10 px-4">
         <AiChatInput />
       </div>
     </div>

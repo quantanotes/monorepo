@@ -42,7 +42,7 @@ export function GridCard({ data }: GridCardProps) {
             </div>
           )}
 
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-end gap-1">
             {Object(data).hasOwnProperty('likeCount') && (
               <LikeButton
                 likeCount={data.likeCount}
@@ -60,7 +60,7 @@ export function GridCard({ data }: GridCardProps) {
             )}
 
             {Object(data).hasOwnProperty('commentCount') && (
-              <Button variant="ghost" className="p-1">
+              <Button variant="ghost" className="h-7 p-1.5!">
                 <MessageCircle className="size-4!" />
                 <span className="w-3 text-xs">{data.commentCount}</span>
               </Button>

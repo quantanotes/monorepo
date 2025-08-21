@@ -7,10 +7,14 @@ import { useTagModelLocal } from '@quanta/web/hooks/use-tag-model-local';
 import type { Pinned } from '@quanta/types';
 
 interface SidebarPinnedTagMenuProps {
+  className?: string;
   pinned: Pinned;
 }
 
-export function SidebarPinnedTagMenu({ pinned }: SidebarPinnedTagMenuProps) {
+export function SidebarPinnedTagMenu({
+  className,
+  pinned,
+}: SidebarPinnedTagMenuProps) {
   const navigate = useNavigate();
   const { togglePinTag } = usePinned();
   const { deleteTag } = useTagModelLocal();
@@ -34,7 +38,7 @@ export function SidebarPinnedTagMenu({ pinned }: SidebarPinnedTagMenuProps) {
       onTogglePin={() => togglePinTag(pinned.tagId)}
       onDelete={onDeleteTag}
       trigger={
-        <SidebarMenuAction>
+        <SidebarMenuAction className={className}>
           <MoreHorizontal className="size-4" />
         </SidebarMenuAction>
       }

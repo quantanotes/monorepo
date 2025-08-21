@@ -40,16 +40,26 @@ export function SidebarPinned({ pinned, spaceId }: SidebarPinnedProps) {
   const Menu = () => {
     switch (pinned.type) {
       case 'item':
-        return <SidebarPinnedItemMenu pinned={pinned} />;
+        return (
+          <SidebarPinnedItemMenu
+            // className="opacity-0 transition-opacity group-hover/item:opacity-100"
+            pinned={pinned}
+          />
+        );
       case 'tag':
-        return <SidebarPinnedTagMenu pinned={pinned} />;
+        return (
+          <SidebarPinnedTagMenu
+            // className="opacity-0 transition-opacity group-hover/item:opacity-100"
+            pinned={pinned}
+          />
+        );
       default:
         return null;
     }
   };
 
   return (
-    <SidebarMenuItem className="group/pinned relative">
+    <SidebarMenuItem className="group/item relative">
       <SidebarMenuButton asChild>
         <Link to={href}>
           <Icon />

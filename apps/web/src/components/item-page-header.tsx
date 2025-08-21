@@ -45,6 +45,7 @@ export function ItemPageHeader({
       )}
 
       <ItemPageMenu
+        className="size-7"
         itemId={itemId}
         isPinned={isPinned}
         onTogglePin={onTogglePin}

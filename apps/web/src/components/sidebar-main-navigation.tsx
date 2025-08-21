@@ -1,13 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import {
-  SearchIcon,
-  HashIcon,
-  SquarePenIcon,
-  PlugIcon,
-  BrainIcon,
-  HomeIcon,
-  MessageCircleIcon,
-} from 'lucide-react';
+import { HashIcon, PlugIcon, BrainIcon, HomeIcon } from 'lucide-react';
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -18,15 +10,7 @@ import {
 import { useSpace } from '@quanta/web/hooks/use-space';
 import { useItemModel } from '@quanta/web/contexts/item-model';
 
-interface SidebarMainNavigationProps {
-  toggleSearch: () => void;
-  toggleRightPanel: () => void;
-}
-
-export function SidebarMainNavigation({
-  toggleSearch,
-  toggleRightPanel,
-}: SidebarMainNavigationProps) {
+export function SidebarMainNavigation() {
   const space = useSpace();
   const itemModel = useItemModel();
   const navigate = useNavigate();
@@ -51,24 +35,6 @@ export function SidebarMainNavigation({
       to: space ? '/s/$spaceId' : '/',
       params: space ? { spaceId: space.id } : undefined,
     },
-    {
-      title: 'Search',
-      icon: SearchIcon,
-      type: 'action' as const,
-      onClick: toggleSearch,
-    },
-    {
-      title: 'Chat',
-      icon: MessageCircleIcon,
-      type: 'action' as const,
-      onClick: toggleRightPanel,
-    },
-    {
-      title: 'Create',
-      icon: SquarePenIcon,
-      type: 'action' as const,
-      onClick: handleCreateItem,
-    },
     ...(space
       ? [
           {
@@ -82,13 +48,13 @@ export function SidebarMainNavigation({
             title: 'Tools',
             icon: PlugIcon,
             type: 'action' as const,
-            // to: '/tools',
+            onClick: () => void 0,
           },
           {
             title: 'Tasks',
             icon: BrainIcon,
             type: 'action' as const,
-            // to: '/tasks',
+            onClick: () => void 0,
           },
         ]
       : []),

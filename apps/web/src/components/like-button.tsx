@@ -14,7 +14,7 @@ export function LikeButton({
 }: LikeButtonProps) {
   return (
     <Button
-      className={`p-2 ${isLiked && 'text-foreground'}`}
+      className={`h-7 p-1.5! ${isLiked && 'text-foreground'}`}
       variant="ghost"
       onClick={onToggleLike}
     >

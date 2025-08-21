@@ -14,7 +14,7 @@ export function PinButton({
 }: PinButtonProps) {
   return (
     <Button
-      className={`p-2 ${isPinned && 'text-foreground'}`}
+      className={`h-7 p-1.5! ${isPinned && 'text-foreground'}`}
       variant="ghost"
       onClick={onTogglePin}
     >

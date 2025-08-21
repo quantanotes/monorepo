@@ -53,9 +53,9 @@ export function SidebarProfileMenu() {
                 size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
-                <Avatar className="h-8 w-8 rounded-lg">
+                <Avatar className="size-8">
                   <AvatarImage src={user.image ?? ''} alt={user.username} />
-                  <AvatarFallback className="rounded-lg">
+                  <AvatarFallback>
                     {user.username?.[0]?.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -95,11 +95,6 @@ export function SidebarProfileMenu() {
               <DropdownMenuItem onClick={() => setIsProfileSettingsOpen(true)}>
                 <UserIcon className="mr-2 size-4" />
                 Profile
-              </DropdownMenuItem>
-
-              <DropdownMenuItem onClick={() => setIsProfileSettingsOpen(true)}>
-                <SettingsIcon className="mr-2 size-4" />
-                Settings
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />

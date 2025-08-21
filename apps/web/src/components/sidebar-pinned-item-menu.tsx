@@ -7,10 +7,14 @@ import { ItemPageMenu } from '@quanta/web/components/item-page-menu';
 import type { Pinned } from '@quanta/types';
 
 interface SidebarPinnedItemMenuProps {
+  className?: string;
   pinned: Pinned;
 }
 
-export function SidebarPinnedItemMenu({ pinned }: SidebarPinnedItemMenuProps) {
+export function SidebarPinnedItemMenu({
+  className,
+  pinned,
+}: SidebarPinnedItemMenuProps) {
   const navigate = useNavigate();
   const { togglePinItem } = usePinned();
   const { deleteItem } = useItemModel();
@@ -34,7 +38,7 @@ export function SidebarPinnedItemMenu({ pinned }: SidebarPinnedItemMenuProps) {
       onTogglePin={() => togglePinItem(pinned.itemId!)}
       onDelete={onDeleteItem}
       trigger={
-        <SidebarMenuAction>
+        <SidebarMenuAction className={className}>
           <MoreHorizontal className="size-4" />
         </SidebarMenuAction>
       }

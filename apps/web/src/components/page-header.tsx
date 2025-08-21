@@ -1,4 +1,5 @@
-import { SidebarTrigger } from '@quanta/ui/sidebar';
+import { useSidebar } from '@quanta/ui/sidebar';
+import { QuickMenu } from '@quanta/web/components/quick-menu';
 
 export interface PageHeaderProps {
   title: string;
@@ -6,13 +7,15 @@ export interface PageHeaderProps {
 }
 
 export function PageHeader({ title, children }: PageHeaderProps) {
+  const { state } = useSidebar();
+
   return (
-    <header className="text-muted-foreground flex h-12 items-center justify-between px-4 py-2">
-      <div className="flex grow items-center gap-4 truncate">
-        <SidebarTrigger />
-        <h1 className="text-sm">{title}</h1>
-      </div>
-      <div className="items-left flex flex-1 justify-end gap-1">{children}</div>
+    <header className="text-muted-foreground relative flex h-12 items-center px-4 py-2">
+      {state === 'expanded' ? <div /> : <QuickMenu />}
+
+      <h1 className="absolute left-1/2 -translate-x-1/2 text-sm">{title}</h1>
+
+      <div className="ml-auto flex items-center gap-1">{children}</div>
     </header>
   );
 }
