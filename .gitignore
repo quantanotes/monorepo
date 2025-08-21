@@ -1,19 +1,16 @@
 node_modules
 bun.lock
-.npmrc
-
-.env*
-
-.app.config.timestamp_*
 
 .tanstack-start
 .tanstack
 .nitro
+.netlify
 .output
-.git
+
 dist
 
-fly.toml
+.env*
 
-# Local Netlify folder
-.netlify
+.npmrc
+
+.app.config.timestamp_*
