@@ -25,7 +25,7 @@ export function ItemPage({
   onToggleLike,
 }: ItemPageProps) {
   if (item === undefined) {
-    return <PageLayout />;
+    return <></>;
   }
 
   return (

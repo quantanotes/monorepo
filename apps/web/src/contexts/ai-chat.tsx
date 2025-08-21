@@ -219,7 +219,7 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
 export function useAiChat() {
   const context = useContext(AiChatContext);
   if (context === null) {
-    throw new Error('useAiChat must be used within a AiChatProvider');
+    // throw new Error('useAiChat must be used within a AiChatProvider');
   }
   return context;
 }

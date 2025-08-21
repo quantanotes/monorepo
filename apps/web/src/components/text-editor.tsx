@@ -59,7 +59,7 @@ export const TextEditor = memo(function ({
 
   return (
     <EditorContent
-      className="prose mx-auto w-full max-w-prose px-4 pb-32"
+      className="prose mx-auto w-full max-w-3xl px-8 pb-32"
       editor={editor}
     />
   );

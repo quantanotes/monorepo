@@ -1,24 +1,26 @@
 import { useNavigate, createFileRoute } from '@tanstack/react-router';
 import { debounce } from '@quanta/utils/debounce';
+import { preloadShapeFn } from '@quanta/web/lib/preload-shape-fn';
 import { usePinned } from '@quanta/web/contexts/pinned';
-import { useItemModel } from '@quanta/web/contexts/item-model';
+import { useItemModelRemote } from '@quanta/web/hooks/use-item-model-remote';
 import { useAuthUser } from '@quanta/web/hooks/use-auth-user';
 import { useLike } from '@quanta/web/hooks/use-like';
-import { itemQueryOptions } from '@quanta/web/lib/item-query';
 import { ItemPage } from '@quanta/web/components/item-page';
 import type { Item } from '@quanta/types';
 
 export const Route = createFileRoute('/$itemId')({
   component: RouteComponent,
   loader: async ({ params, context }) => {
-    await context.queryClient.ensureQueryData(itemQueryOptions(params.itemId));
+    await preloadShapeFn({
+      url: `${process.env.PUBLIC_APP_URL}/api/db/item/${params.itemId}`,
+    });
   },
 });
 
 function RouteComponent() {
   const navigate = useNavigate();
   const { itemId } = Route.useParams();
-  const { useItemLive, updateItem, deleteItem } = useItemModel()!;
+  const { useItemLive, updateItem, deleteItem } = useItemModelRemote()!;
   const { isItemPinned, togglePinItem } = usePinned()!;
   const { isLiked, toggleLike } = useLike(itemId);
   const user = useAuthUser();

@@ -1,7 +1,6 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useServerFn } from '@tanstack/react-start';
 import { useShape } from '@electric-sql/react';
-import { TagQuery } from '@quanta/types';
 import { snakeToCamelObject } from '@quanta/utils/snake-to-camel';
 import {
   getItemsFn,
@@ -10,6 +9,7 @@ import {
   deleteItemFn,
   searchItemFn,
 } from '@quanta/web/lib/item-fns';
+import type { TagQuery } from '@quanta/types';
 
 export function useItemModelRemote() {
   const _getItemsFn = useServerFn(getItemsFn);
@@ -29,13 +29,13 @@ export function useItemModelRemote() {
   };
 
   const useItemsLive = (ids: string[]) => {
-    const itemShape = useShape({
+    const itemsShape = useShape({
       url: `${process.env.PUBLIC_APP_URL}/api/db/items`,
       params: {
         where: ids.map((id) => `id = ${id}`).join(' OR '),
       },
     });
-    return useMemo(() => snakeToCamelObject(itemShape.data), [itemShape]);
+    return useMemo(() => snakeToCamelObject(itemsShape.data), [itemsShape]);
   };
 
   const getItems = (ids: string[]) => _getItemsFn({ data: { ids } });
