@@ -1,9 +1,9 @@
 import { forwardRef, useState, useImperativeHandle, useRef } from 'react';
-import { SuggestionProps } from '@tiptap/suggestion';
 import { Popover, PopoverAnchor, PopoverContent } from '@quanta/ui/popover';
 import { Command, CommandItem, CommandList } from '@quanta/ui/command';
 import { useItemModel } from '@quanta/web/contexts/item-model';
 import { useItem } from '@quanta/web/contexts/item';
+import type { SuggestionProps } from '@tiptap/suggestion';
 
 export interface TagsViewRef {
   onKeyDown: (event: KeyboardEvent) => boolean;
@@ -12,14 +12,35 @@ export interface TagsViewRef {
 
 export const TagsView = forwardRef<TagsViewRef, SuggestionProps>(
   ({ query, clientRect, command }, ref) => {
-    const [open, setOpen] = useState(true);
     const anchorRef = useRef({ getBoundingClientRect: () => clientRect!()! });
     const commandListRef = useRef<HTMLDivElement>(null);
+    const [open, setOpen] = useState(true);
     const { tagItem } = useItemModel();
     const item = useItem();
+
     const tag = query.replace(/:.*/, '');
     const value =
       query.indexOf(':') > 0 ? query.slice(query.indexOf(':') + 1) : null;
+
+    const options = !value
+      ? [{ type: undefined, value: 'default', label: `Add tag #${tag}` }]
+      : [
+          {
+            type: 'text',
+            value: 'text',
+            label: `Add tag #${tag} with text ${value}`,
+          },
+          {
+            type: 'number',
+            value: 'number',
+            label: `Add tag #${tag} with number ${value}`,
+          },
+          {
+            type: 'boolean',
+            value: 'boolean',
+            label: `Add tag #${tag} with boolean ${value === 'true' ? 'true' : 'false'}`,
+          },
+        ];
 
     useImperativeHandle(ref, () => ({
       onKeyDown(event) {
@@ -42,7 +63,6 @@ export const TagsView = forwardRef<TagsViewRef, SuggestionProps>(
             return false;
         }
       },
-
       hide() {
         setOpen(false);
       },
@@ -77,26 +97,21 @@ export const TagsView = forwardRef<TagsViewRef, SuggestionProps>(
           sideOffset={5}
           onOpenAutoFocus={(event) => event.preventDefault()}
         >
-          <Command onKeyDown={(event) => event.stopPropagation()}>
+          <Command
+            key={options[0].value}
+            defaultValue={options[0].value}
+            onKeyDown={(event) => event.stopPropagation()}
+          >
             <CommandList ref={commandListRef}>
-              {!value ? (
-                <CommandItem onSelect={() => handleSelect()}>
-                  Add tag #{tag}
+              {options.map((option, index) => (
+                <CommandItem
+                  key={option.value}
+                  value={option.value}
+                  onSelect={() => handleSelect(option.type)}
+                >
+                  {option.label}
                 </CommandItem>
-              ) : (
-                <>
-                  <CommandItem onSelect={() => handleSelect('text')}>
-                    Add tag #{tag} with text {value}
-                  </CommandItem>
-                  <CommandItem onSelect={() => handleSelect('number')}>
-                    Add tag #{tag} with number {value}
-                  </CommandItem>
-                  <CommandItem onSelect={() => handleSelect('boolean')}>
-                    Add tag #{tag} with boolean{' '}
-                    {value === 'true' ? 'true' : 'false'}
-                  </CommandItem>
-                </>
-              )}
+              ))}
             </CommandList>
           </Command>
         </PopoverContent>

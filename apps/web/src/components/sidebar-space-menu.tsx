@@ -33,24 +33,14 @@ export function SidebarSpaceMenu() {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton
-              // size="sm"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground w-full"
-            >
-              {/*<div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <EclipseIcon className="size-4" />
-              </div>*/}
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{currentSpaceName}</span>
-              </div>
-              <div className="relative w-3">
-                <ChevronDownIcon className="ml-auto size-4" />
-              </div>
+            <SidebarMenuButton>
+              <span className="truncate font-medium">{currentSpaceName}</span>
+              <ChevronDownIcon className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent
-            className="border-border bg-background w-(--radix-dropdown-menu-trigger-width) min-w-60 rounded-lg border p-1 shadow-md"
+            className="min-w-[17rem]"
             side="bottom"
             align="start"
             sideOffset={4}

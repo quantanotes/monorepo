@@ -1,7 +1,8 @@
 import { Extension } from '@tiptap/core';
 import { ReactRenderer } from '@tiptap/react';
-import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
+import Suggestion from '@tiptap/suggestion';
 import { TagsView } from './view';
+import type { SuggestionOptions } from '@tiptap/suggestion';
 
 export const Tags = Extension.create({
   name: 'tags',
@@ -42,8 +43,9 @@ const suggestion: Partial<SuggestionOptions> = {
         if (props.event.key === 'Escape') {
           component.ref?.hide();
           return true;
+        } else {
+          return component.ref?.onKeyDown(props.event);
         }
-        return component.ref?.onKeyDown(props.event);
       },
 
       onExit() {

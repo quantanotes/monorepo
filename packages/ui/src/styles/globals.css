@@ -1,9 +1,10 @@
 @import 'tailwindcss';
 
+@config '../../tailwind.config.ts';
+
+
 @plugin '@tailwindcss/typography';
 @plugin 'tailwindcss-animate';
-
-@config '../../tailwind.config.ts';
 
 @source '../**/*.{tsx,ts}';
 @source '@radix-ui/**/*.{tsx,ts}';
@@ -27,14 +28,18 @@
   --accent-foreground: oklch(0.3525 0.0053 271.2636);
   --destructive: oklch(0.6121 0.034 35.5116);
   --destructive-foreground: oklch(1 0 0);
+
   --border: oklch(0.7866 0.0011 17.1833);
+
   --input: oklch(0.7866 0.0011 17.1833);
   --ring: oklch(0.6353 0.0435 294.6159);
+
   --chart-1: oklch(0.6353 0.0435 294.6159);
   --chart-2: oklch(0.5761 0.0462 295.6106);
   --chart-3: oklch(0.5237 0.0349 297.6685);
   --chart-4: oklch(0.4569 0.028 298.7356);
   --chart-5: oklch(0.404 0.0184 293.9002);
+
   --sidebar: oklch(0.7866 0.0011 17.1833);
   --sidebar-foreground: oklch(0.2688 0.0057 271.2004);
   --sidebar-primary: oklch(0.6353 0.0435 294.6159);
@@ -43,10 +48,16 @@
   --sidebar-accent-foreground: oklch(0.3525 0.0053 271.2636);
   --sidebar-border: oklch(0.7866 0.0011 17.1833);
   --sidebar-ring: oklch(0.6353 0.0435 294.6159);
+
   --font-sans: IBM Plex Sans, sans-serif;
   --font-serif: Victor Mono, serif;
   --font-mono: Victor Mono, monospace;
+
   --radius: 1.25rem;
+
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
   --shadow-2xs: 2px 2px 10px 4px hsl(240 0.8264% 52.549% / 0.09);
   --shadow-xs: 2px 2px 10px 4px hsl(240 0.8264% 52.549% / 0.09);
   --shadow-sm:
@@ -65,8 +76,6 @@
     2px 2px 10px 4px hsl(240 0.8264% 52.549% / 0.18),
     2px 8px 10px 3px hsl(240 0.8264% 52.549% / 0.18);
   --shadow-2xl: 2px 2px 10px 4px hsl(240 0.8264% 52.549% / 0.45);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
 }
 
 .dark {
@@ -86,14 +95,18 @@
   --accent-foreground: oklch(0.7898 0.0042 286.3034);
   --destructive: oklch(0.6121 0.034 35.5116);
   --destructive-foreground: oklch(0.2178 0 0);
+
   --border: oklch(0.3062 0.0014 17.2356);
+
   --input: oklch(0.3062 0.0014 17.2356);
   --ring: oklch(0.6904 0.0393 288.7203);
+
   --chart-1: oklch(0.6904 0.0393 288.7203);
   --chart-2: oklch(0.6353 0.0435 294.6159);
   --chart-3: oklch(0.5761 0.0462 295.6106);
   --chart-4: oklch(0.5237 0.0349 297.6685);
   --chart-5: oklch(0.4569 0.028 298.7356);
+
   --sidebar: oklch(0.2002 0 0);
   --sidebar-foreground: oklch(0.8425 0.0056 274.9526);
   --sidebar-primary: oklch(0.6904 0.0393 288.7203);
@@ -102,10 +115,13 @@
   --sidebar-accent-foreground: oklch(0.7898 0.0042 286.3034);
   --sidebar-border: oklch(0.3062 0.0014 17.2356);
   --sidebar-ring: oklch(0.6904 0.0393 288.7203);
+
   --font-sans: IBM Plex Sans, sans-serif;
   --font-serif: Victor Mono, serif;
   --font-mono: Victor Mono, monospace;
+
   --radius: 1.25rem;
+
   --shadow-2xs: 2px 2px 10px 4px hsl(0 0% 10.1961% / 0.09);
   --shadow-xs: 2px 2px 10px 4px hsl(0 0% 10.1961% / 0.09);
   --shadow-sm:
@@ -125,6 +141,7 @@
     2px 8px 10px 3px hsl(0 0% 10.1961% / 0.18);
   --shadow-2xl: 2px 2px 10px 4px hsl(0 0% 10.1961% / 0.45);
 }
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -142,14 +159,18 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+
   --color-border: var(--border);
+
   --color-input: var(--input);
   --color-ring: var(--ring);
+
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);

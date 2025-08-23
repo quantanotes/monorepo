@@ -1,4 +1,4 @@
-import { Check, LoaderCircle, X } from 'lucide-react';
+import { CheckIcon, LoaderCircleIcon, XIcon } from 'lucide-react';
 import { useAiChat } from '@quanta/web/contexts/ai-chat';
 
 interface AiChatActionProps {
@@ -10,11 +10,11 @@ export function AiChatAction({ title, status }: AiChatActionProps) {
   const ActionStatusIndicator = () => {
     switch (status) {
       case 'completed':
-        return <Check className="size-4" />;
+        return <CheckIcon className="size-4" />;
       case 'pending':
-        return <LoaderCircle className="size-4 animate-spin" />;
+        return <LoaderCircleIcon className="size-4 animate-spin" />;
       case 'failed':
-        return <X className="size-4" />;
+        return <XIcon className="size-4" />;
     }
   };
 
