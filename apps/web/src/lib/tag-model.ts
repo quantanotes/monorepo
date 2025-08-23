@@ -1,7 +1,7 @@
 import { aliasedTable, and, eq } from '@quanta/db/drizzle';
 import { type DB as DBLocal, schema } from '@quanta/db/local';
 import type { DB as DBRemote } from '@quanta/db/remote';
-import { TagType } from '@quanta/types';
+import type { TagType } from '@quanta/types';
 
 export class TagModel {
   readonly #db: DBLocal['orm'] | DBRemote;
@@ -37,15 +37,7 @@ export class TagModel {
     if (tag) {
       return tag;
     } else {
-      return await this.#db
-        .insert(schema.tags)
-        .values({
-          name,
-          type,
-          spaceId: this.#spaceId,
-        })
-        .returning()
-        .then((tags) => tags.at(0)!);
+      return await this.create(name, type);
     }
   }
 
@@ -56,6 +48,18 @@ export class TagModel {
 
   async getAll() {
     return await this.getAllQuery();
+  }
+
+  async create(name: string, type?: TagType) {
+    return await this.#db
+      .insert(schema.tags)
+      .values({
+        name,
+        type,
+        spaceId: this.#spaceId,
+      })
+      .returning()
+      .then((tags) => tags.at(0)!);
   }
 
   async update(name: string, data: { name: string }) {

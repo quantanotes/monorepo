@@ -33,7 +33,7 @@ function filesDoc(files: File[]) {
   return `File[]
 Provides you access to the user's attached files.
 Here is the file array you can acesss from:
-${files.map((file, i) => `${i}: Name: ${file.name}`).join('\n')}
+${files.map((file, i) => `${i}: Name: ${file.name}`).join('\n') || 'There are no files in this chat.'}
 Example:
 files[1]`;
 }
@@ -42,7 +42,7 @@ function toolsDoc(tools: any[]) {
   return `Tool[]
 Provides you access to the user's integrated tools.
 Here is the tool array you can acesss from:
-${tools.map((tool, i) => `${i}: Name: ${tool.name} Type: ${tool.type}`).join('\n')}
+${tools.map((tool, i) => `${i}: Name: ${tool.name} Type: ${tool.type}`).join('\n') || 'There are no tools in this chat.'}
 Example:
 tools[3]`;
 }

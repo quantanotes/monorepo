@@ -1,6 +1,10 @@
-import { buildAgentSteps, buildSystemPrompt } from './prompt';
-import { parseStream } from './parser';
-import type { AgentServerCallbacks, RawMessage, TextStreamFn } from './types';
+import { buildAgentSteps, buildSystemPrompt } from '@quanta/agent/prompt';
+import { parseStream } from '@quanta/agent/parser';
+import type {
+  AgentServerCallbacks,
+  RawMessage,
+  TextStreamFn,
+} from '@quanta/agent/types';
 import type { Item } from '@quanta/types';
 
 export async function agent(
@@ -11,51 +15,65 @@ export async function agent(
   textStreamFn: TextStreamFn,
   abortSignal: AbortSignal,
 ) {
+  if (abortSignal.aborted) {
+    callbacks.onFinish?.();
+    return;
+  }
+
+  const steps: any[] = [];
+  const currentStep = () => steps[steps.length - 1];
+
+  messages.unshift({
+    role: 'system',
+    content: buildSystemPrompt(environment, items),
+  });
+
+  messages.push({
+    role: 'assistant',
+    content: '',
+  });
+
   try {
-    const steps: any[] = [{ type: 'text', content: '' }];
-
-    messages.unshift({
-      role: 'system',
-      content: buildSystemPrompt(environment, items),
-    });
-
-    messages.push({
-      role: 'assistant',
-      content: '',
-    });
-
-    function currentStep() {
-      return steps[steps.length - 1];
-    }
-
     outer: while (!abortSignal.aborted) {
+      steps.push({ type: 'text', content: '' });
       messages[messages.length - 1] = buildAgentSteps(steps);
 
       const { stream: textStream, abortController: textStreamAbortController } =
-        await textStreamFn(messages, abortSignal);
+        await textStreamFn(messages);
 
-      for await (const { state, text, transition, attributes } of parseStream(
-        textStream,
-      )) {
-        console.log(state, text, transition, attributes);
-        if (transition) {
-          const shouldReset = await handleParserStateTransition(
-            state,
-            attributes,
-            currentStep,
-            steps,
-            callbacks,
-            textStreamAbortController,
-          );
-          if (shouldReset) {
-            continue outer;
-          }
-        }
+      abortSignal.addEventListener('abort', () =>
+        textStreamAbortController.abort(),
+      );
 
-        currentStep().content += text;
+      for await (const chunk of parseStream(textStream)) {
+        switch (chunk.type) {
+          case 'text':
+            const { text } = chunk;
 
-        if (currentStep().type === 'text') {
-          callbacks.onText?.(text);
+            currentStep().content += text;
+
+            if (currentStep().type === 'text') {
+              callbacks.onText?.(text);
+            }
+
+            break;
+          case 'transition':
+            const { state, attributes } = chunk;
+
+            const shouldReset = await handleTransition(
+              state,
+              attributes,
+              currentStep,
+              steps,
+              callbacks,
+              textStreamAbortController,
+            );
+
+            if (shouldReset) {
+              continue outer;
+            }
+
+            break;
         }
       }
 
@@ -65,25 +83,23 @@ export async function agent(
 
       break;
     }
-  } catch (error) {
-    throw error;
   } finally {
     callbacks.onFinish?.();
   }
 }
 
-async function handleParserStateTransition(
+async function handleTransition(
   state: string,
   attributes: Record<string, string | number | boolean>,
   currentStep: () => any,
   steps: any[],
   callbacks: AgentServerCallbacks,
-  abortController: AbortController,
-): Promise<boolean> {
+  textStreamAbortController: AbortController,
+) {
   const { type, content, title } = currentStep();
 
   if (type === 'action' && state === 'observe') {
-    abortController.abort();
+    textStreamAbortController.abort();
     const observation = await callbacks.onActObserve(content, title);
     steps.push({ type: 'observe', content: observation });
     return true;
@@ -92,5 +108,6 @@ async function handleParserStateTransition(
   }
 
   steps.push({ type: state, content: '', title: attributes.title });
+
   return false;
 }

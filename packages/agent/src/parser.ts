@@ -1,186 +1,131 @@
-interface AgentParserState {
+enum ParseState {
+  TEXT = 'TEXT',
+  HASH = 'HASH',
+  MARKER = 'MARKER',
+}
+
+interface Transition {
   state: string;
-  attributes: Record<string, string | number | boolean>;
+  attributes: Record<string, any>;
 }
 
-interface AgentParserResult extends AgentParserState {
+interface AgentParserTextResult {
+  type: 'text';
   text: string;
-  transition: boolean;
 }
 
-export async function* parseStream(
-  stream: AsyncIterable<string>,
-): AsyncGenerator<AgentParserResult> {
-  let buffer = '';
-  let currentState: AgentParserState = { state: 'default', attributes: {} };
-  let markerBuffer = '';
-  let inMarker = false;
-  let partialMarkerStart = false;
-  let transition = false;
+interface AgentParserTransitionResult extends Transition {
+  type: 'transition';
+}
 
-  for await (const chunk of stream) {
-    console.log('recieving chunk:', chunk);
-    buffer += chunk;
+type AgentParserResult = AgentParserTextResult | AgentParserTransitionResult;
 
-    while (buffer.length > 0) {
-      if (inMarker) {
-        const endIndex = findMarkerEnd(buffer);
+class AgentParser {
+  #state = ParseState.TEXT;
+  #buffer = '';
 
-        if (endIndex === -1) {
-          markerBuffer += buffer;
-          buffer = '';
-          break;
-        }
-
-        markerBuffer += buffer.substring(0, endIndex);
-        const newState = parseStateMarker(markerBuffer);
-
-        // Set transition flag if state has changed
-        transition = newState.state !== currentState.state;
-        currentState = newState;
-
-        inMarker = false;
-        markerBuffer = '';
-        buffer = buffer.substring(endIndex + 1);
-        continue;
+  async *parse(
+    stream: AsyncIterable<string>,
+  ): AsyncGenerator<AgentParserResult> {
+    for await (const chunk of stream) {
+      for (const char of chunk) {
+        yield* this.#step(char);
       }
+    }
 
-      if (partialMarkerStart) {
-        partialMarkerStart = false;
+    if (this.#state === ParseState.HASH) {
+      yield this.#yieldText('#');
+    }
 
-        if (buffer.startsWith('[')) {
-          inMarker = true;
-          buffer = buffer.substring(1);
-          continue;
+    if (this.#state === ParseState.MARKER) {
+      yield this.#yieldText('#[' + this.#buffer);
+    }
+  }
+
+  *#step(char: string): Generator<AgentParserResult> {
+    switch (this.#state) {
+      case ParseState.TEXT: {
+        if (char === '#') {
+          this.#state = ParseState.HASH;
         } else {
-          yield* yieldText('#', currentState, transition);
-          // Reset transition flag after yielding
-          transition = false;
+          yield this.#yieldText(char);
         }
-      }
-
-      const hashIndex = findMarkerStart(buffer);
-
-      if (hashIndex === -1) {
-        yield* yieldText(buffer, currentState, transition);
-        // Reset transition flag after yielding
-        transition = false;
-        buffer = '';
         break;
       }
-
-      if (hashIndex > 0) {
-        const textBeforeMarker = extractTextBeforeMarker(buffer, hashIndex);
-        yield* yieldText(textBeforeMarker, currentState, transition);
-        // Reset transition flag after yielding
-        transition = false;
-        buffer = buffer.substring(hashIndex);
-      }
-
-      if (buffer.length === 1) {
-        partialMarkerStart = true;
-        buffer = '';
+      case ParseState.HASH: {
+        if (char === '[') {
+          this.#state = ParseState.MARKER;
+          this.#buffer = '';
+        } else {
+          yield this.#yieldText('#' + char);
+          this.#state = ParseState.TEXT;
+        }
         break;
       }
-
-      if (isCompleteMarkerStart(buffer)) {
-        inMarker = true;
-        buffer = buffer.substring(2);
-        continue;
-      } else {
-        yield* yieldText('#', currentState, transition);
-        // Reset transition flag after yielding
-        transition = false;
-        buffer = buffer.substring(1);
+      case ParseState.MARKER: {
+        if (char === ']') {
+          const transition = this.#parseTransition(this.#buffer);
+          yield this.#yieldTransition(transition);
+          this.#state = ParseState.TEXT;
+        } else {
+          this.#buffer += char;
+        }
+        break;
       }
     }
   }
 
-  if (buffer) {
-    yield* yieldText(buffer, currentState, transition);
-    // Reset transition flag after yielding
-    transition = false;
+  #yieldText(text: string): AgentParserResult {
+    return {
+      type: 'text',
+      text,
+    };
   }
 
-  if (partialMarkerStart) {
-    yield* yieldText('#', currentState, transition);
-    // Reset transition flag after yielding
-    transition = false;
+  #yieldTransition(transition: Transition): AgentParserResult {
+    return {
+      type: 'transition',
+      ...transition,
+    };
   }
-}
 
-function parseAttributeValue(valueRaw: string): string | number | boolean {
-  const value = valueRaw.trim();
+  #parseTransition(input: string) {
+    const [state, ...attrs] = input.split('|');
+    const attributes: Record<string, any> = {};
 
-  if (value.startsWith('"') && value.endsWith('"')) {
-    try {
-      return JSON.parse(value);
-    } catch {
-      return value.substring(1, value.length - 1);
+    for (const pair of attrs) {
+      const [key, raw] = pair.split('=');
+      if (key && raw) {
+        attributes[key.trim()] = this.#parseAttrValue(raw.trim());
+      } else if (key) {
+        attributes[key] = true;
+      }
     }
+
+    return { state, attributes };
   }
 
-  if (!isNaN(Number(value))) {
-    return Number(value);
-  }
+  #parseAttrValue(input: string): any {
+    if (/^".*"$/.test(input)) {
+      try {
+        return JSON.parse(input);
+      } catch {
+        return input.slice(1, -1);
+      }
+    }
 
-  if (value === 'true' || value === 'false') {
-    return value === 'true';
-  }
+    if (!isNaN(Number(input))) {
+      return Number(input);
+    }
 
-  return value;
-}
+    if (input === 'true' || input === 'false') {
+      return input === 'true';
+    }
 
-function parseStateMarker(markerContent: string): AgentParserState {
-  const parts = markerContent.split('|');
-  const type = parts[0];
-  const attributes = parts
-    .slice(1)
-    .map((pair) => {
-      const separatorIndex = pair.indexOf('=');
-      if (separatorIndex === -1) return null;
-
-      const key = pair.substring(0, separatorIndex).trim();
-      const valueRaw = pair.substring(separatorIndex + 1);
-      return { key, value: parseAttributeValue(valueRaw) };
-    })
-    .filter(
-      (item): item is { key: string; value: string | number | boolean } =>
-        item !== null,
-    )
-    .reduce(
-      (acc, { key, value }) => {
-        acc[key] = value;
-        return acc;
-      },
-      {} as Record<string, string | number | boolean>,
-    );
-
-  return { state: type, attributes };
-}
-
-async function* yieldText(
-  text: string,
-  state: AgentParserState,
-  stateTransition: boolean,
-): AsyncGenerator<AgentParserResult> {
-  if (text) {
-    yield { ...state, text, transition: stateTransition };
+    return input;
   }
 }
 
-function isCompleteMarkerStart(buffer: string): boolean {
-  return buffer.startsWith('#[');
-}
-
-function extractTextBeforeMarker(buffer: string, markerIndex: number): string {
-  return buffer.substring(0, markerIndex);
-}
-
-function findMarkerEnd(buffer: string): number {
-  return buffer.indexOf(']');
-}
-
-function findMarkerStart(buffer: string): number {
-  return buffer.indexOf('#');
+export async function* parseStream(stream: AsyncIterable<string>) {
+  yield* new AgentParser().parse(stream);
 }

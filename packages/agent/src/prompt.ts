@@ -1,5 +1,5 @@
 import type { Item } from '@quanta/types';
-import type { AgentInputStep, RawMessage } from './types';
+import type { AgentInputStep, RawMessage } from '@quanta/agent/types';
 
 export const buildSystemPrompt = (
   environment: string,
@@ -44,7 +44,6 @@ result.forEach((source) => chat.add_web_source(source))
 The latest news cycle indicates...
 </example>
 
-
 <code_style>
 - Wrap all statements in function body
 - Return final result explicitly
@@ -60,9 +59,9 @@ The latest news cycle indicates...
 - Avoid repetition
 - Do not mention JavaScript as a means to do actions - this is simply an implementation detail
 - Do not title actions that soley affect the UI i.e. adding chat sources
-- Do not terminate your generation after an observe action (like searching the web) without the #[observe] tag
 - Always use chat actions to add sources when doing searches
-- If a task does not require multiple observation steps, complete it in one action
+- If a task does not require multiple observation steps, try and complete it in one action
+- Terminate your response after "#[observe]\\n"to recieve the observation
 </guidance>
 
 <environment>

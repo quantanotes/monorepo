@@ -1,4 +1,4 @@
-import { Message, RawMessage } from './types';
+import { Message, RawMessage } from '@quanta/types';
 
 export function messageToRawMessage(message: Message): RawMessage {
   return {

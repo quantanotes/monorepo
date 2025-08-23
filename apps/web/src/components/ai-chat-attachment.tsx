@@ -16,7 +16,7 @@ export function AiChatAttachment({ index }: AiChatAttachmentProps) {
   };
 
   return (
-    <div className="flex items-center gap-1 rounded-full border px-2 py-1 text-sm">
+    <div className="flex items-center gap-1 rounded-full border px-2 py-1 text-sm shadow-md">
       {name}
       <Button
         variant="ghost"

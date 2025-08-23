@@ -9,7 +9,7 @@ export function AiChatAttachments() {
   }
 
   return (
-    <div className="flex flex-wrap gap-2 px-3 pb-3">
+    <div className="flex flex-wrap gap-2">
       {attachments.map((a, i) => (
         <AiChatAttachment key={i} index={i} />
       ))}

@@ -54,17 +54,17 @@ export function TagPageMenu({
             Edit
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={onDelete} variant="destructive">
-            <Trash className="mr-2 size-4" />
-            Delete
-          </DropdownMenuItem>
-
           {onExportCsv && (
             <DropdownMenuItem onClick={onExportCsv}>
               <Download className="mr-2 size-4" />
               Export
             </DropdownMenuItem>
           )}
+
+          <DropdownMenuItem onClick={onDelete} variant="destructive">
+            <Trash className="mr-2 size-4" />
+            Delete
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
 

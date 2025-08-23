@@ -13,39 +13,20 @@ export function doc(name: string, fn: any, doc: string) {
 
 export function docs(env: any, path: string = '') {
   let result = '';
+
   for (const key in env) {
     if (key.startsWith('__doc__')) {
       continue;
     }
+
     const value = env[key];
     const currentPath = path ? `${path}.${key}` : key;
 
     if (value && typeof value === 'object' && value.__doc__) {
-      if (path !== '') {
-        result += `<module name="${currentPath}">\n`;
-        result += `  ${fmt(value.__doc__ || '')}\n`;
-      } else {
-        if (value.__doc__) {
-          result += `${fmt(value.__doc__ || '')}\n\n`;
-        }
-      }
-
-      const nestedDocs = docs(value, currentPath);
-      if (nestedDocs.trim() !== '') {
-        if (path !== '') {
-          const nestedContent = nestedDocs
-            .split('\n')
-            .map((line) => (line ? `  ${line}` : line))
-            .join('\n');
-          result += nestedContent;
-        } else {
-          result += nestedDocs;
-        }
-      }
-
-      if (path !== '') {
-        result += `</module>\n`;
-      }
+      result += `<module name="${currentPath}">\n`;
+      result += ` ${fmt(value.__doc__ || '')}\n`;
+      result += docs(value, currentPath);
+      result += `</module>\n`;
     } else if (value && typeof value === 'function') {
       result += `<function name="${currentPath}">\n`;
       result += `  ${fmt(value.__doc__ || '')}\n`;
@@ -56,5 +37,6 @@ export function docs(env: any, path: string = '') {
       result += `</variable>\n`;
     }
   }
+
   return result;
 }

@@ -17,11 +17,11 @@ export const Route = createFileRoute('/s/$spaceId/t/$tagName')({
 
 function RouteComponent() {
   const { tagName } = Route.useParams();
+  const navigate = useNavigate();
+  const space = useSpace()!;
   const { useTagLive, useTagChildrenLive, deleteTag } = useTagModelLocal();
   const { useSearchItemsLive } = useItemModelLocal()!;
   const { isTagPinned, togglePinTag } = usePinnedLocal()!;
-  const navigate = useNavigate();
-  const space = useSpace()!;
   const tag = useTagLive(tagName);
   const items = useSearchItemsLive('', [{ tag: tagName }]);
   const tagChildren = useTagChildrenLive(tagName);
@@ -48,20 +48,21 @@ function RouteComponent() {
       title={`#${tagName}`}
       headerMenu={
         <>
+          <ViewMenu
+            views={['table', 'grid']}
+            currentView={view}
+            onViewChange={setView}
+          />
+
           <PinButton isPinned={isPinned} onTogglePin={handleTogglePin} />
 
           <TagPageMenu
+            className="size-7"
             tagName={tagName}
             isPinned={isPinned}
             onTogglePin={handleTogglePin}
             onDelete={handleDelete}
             onExportCsv={handleExportCsv}
-          />
-
-          <ViewMenu
-            views={['table', 'grid']}
-            currentView={view}
-            onViewChange={setView}
           />
         </>
       }

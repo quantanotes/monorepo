@@ -29,16 +29,23 @@ interface AiChatContextType {
   input: string;
   messages: Message[];
   attachments: Attachment[];
+  isAgentEnabled: boolean;
+  isSpaceSearchEnabled: boolean;
+  isWebSearchEnabled: boolean;
   running: boolean;
 
   send: () => void;
   abort?: () => void;
   resetChat: () => void;
 
+  setInput: (value: string) => void;
+
+  toggleAgent: () => void;
+  toggleSpaceSearch: () => void;
+  toggleWebSearch: () => void;
+
   addAttachment: (type: 'file' | 'item', data: File | string) => void;
   removeAttachment: (index: number) => void;
-
-  setInput: (value: string) => void;
 }
 
 const AiChatContext = createContext<AiChatContextType>(null!);
@@ -49,28 +56,27 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
   const user = useAuthUser();
   const itemModel = useItemModel();
   const [input, setInput] = useState('');
-  const [attachments, setAttachments] = useImmer<Attachment[]>([]);
   const [messages, setMessages] = useImmer<Message[]>([]);
+  const [attachments, setAttachments] = useImmer<Attachment[]>([]);
+  const [isAgentEnabled, setIsAgentEnabled] = useState(false);
+  const [isSpaceSearchEnabled, setIsSpaceSearchEnabled] = useState(false);
+  const [isWebSearchEnabled, setIsWebSearchEnabled] = useState(false);
   const [running, setRunning] = useState(false);
   const [abortController, setAbortController] = useState<AbortController>();
-  const _llmTextStreamFn = useServerFn(llmTextStreamFn);
   const chatActions = getChatActions(setMessages);
+  const _llmTextStreamFn = useServerFn(llmTextStreamFn);
 
-  const textStreamFn: TextStreamFn = async (messages, signal) => {
+  const textStreamFn: TextStreamFn = async (messages) => {
     const abortController = new AbortController();
-    signal.addEventListener('abort', () => abortController.abort());
+    const signal = abortController.signal;
 
-    console.log('sending text stream');
     const response = await _llmTextStreamFn({ data: { messages }, signal });
-    console.log('text response', response);
     if (!response.ok) {
       throw new Error('Could not connect to AI.');
     }
 
     const rawStream = response.body?.pipeThrough(new TextDecoderStream())!;
     const stream = streamToAsyncIterableStream(rawStream);
-    console.log('text stream', stream);
-
     return { stream, abortController };
   };
 
@@ -84,7 +90,7 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
     const abortController = new AbortController();
 
     const itemIds = attachments.map((a) => a.itemId).filter((a) => a);
-    const items = itemIds.length
+    let items = itemIds.length
       ? await itemModel!.getItems(itemIds as string[])
       : [];
     const files = attachments.map((a) => a.file).filter((a) => a) as File[];
@@ -196,19 +202,29 @@ export function AiChatProvider({ children }: React.PropsWithChildren) {
       }
     });
 
+  const toggleAgent = () => setIsAgentEnabled((prev) => !prev);
+  const toggleSpaceSearch = () => setIsSpaceSearchEnabled((prev) => !prev);
+  const toggleWebSearch = () => setIsWebSearchEnabled((prev) => !prev);
+
   return (
     <AiChatContext
       value={{
         input,
         messages,
         attachments,
+        isAgentEnabled,
+        isSpaceSearchEnabled,
+        isWebSearchEnabled,
         running,
         send,
         abort,
         resetChat,
+        setInput,
         addAttachment,
         removeAttachment,
-        setInput,
+        toggleAgent,
+        toggleSpaceSearch,
+        toggleWebSearch,
       }}
     >
       {children}
@@ -225,16 +241,16 @@ export function useAiChat() {
 }
 
 function getChatActions(setMessages: Updater<Message[]>) {
-  function addObjectSource(object: any) {
+  const addItemSource = (object: any) => {
     setMessages((messages) => {
       messages[messages.length - 1].sources.push({
-        type: 'object',
+        type: 'item',
         id: typeof object === 'string' ? object : (object.id as string),
       });
     });
-  }
+  };
 
-  function addWebSource(source: any) {
+  const addWebSource = (source: any) => {
     setMessages((messages) => {
       messages[messages.length - 1].sources.push({
         type: 'web',
@@ -243,7 +259,7 @@ function getChatActions(setMessages: Updater<Message[]>) {
         image: source.image,
       });
     });
-  }
+  };
 
   return {
     __doc__: `Chat UI actions for source management. Sources are visual indicators showing information origin.
@@ -252,12 +268,12 @@ Do not tell the user "I am going to add sources" because they will already see i
 Add sources as soon as as you see them and recognise their relevancy to the chat, do not add them at the end, for maximum responsiveness.
 Always use the add_web_source function to add web sources after a search query.`,
 
-    add_object_source: doc(
-      'chat.add_object_source',
-      addObjectSource,
-      `(object:string|{id:string}): void
-Add object reference to chat
-add_object_source("obj_123")`,
+    add_item_source: doc(
+      'chat.add_item_source',
+      addItemSource,
+      `(item:string|{id:string}): void
+Add item reference to chat
+add_item_source("obj_123")`,
     ),
 
     add_web_source: doc(

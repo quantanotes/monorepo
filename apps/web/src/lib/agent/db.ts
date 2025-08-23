@@ -16,13 +16,20 @@ export const db = (itemModel: ItemModelLocal, tagModel: TagModel) => {
   };
 
   return {
-    __doc__: `Knowledge base operations for managing items and their relationships through tags.
-Items are the fundamental datum of knowledge. They can represent anything - documents, contacts etc.
-User may refer to items as pages, objects, rows etc.
-Tags are like fields/types on each knowledge item. A tag can have a child tag which serves like a fields on that tag i.e.
-#person will have the child tags #age #job #gender e.t.c.
-Child tags are useful for constructing higher order models.
-Prefer lower kebab case for all tag names.`,
+    __doc__: `Knowledge Base API for managing items and their associated tags.
+
+Items are the fundamental units of knowledge and can represent documents, contacts, projects, or any object.
+Tags are metadata fields attached to items. Tags can have values (e.g., #priority: high, #due: 2024-03-20).
+
+**Child-tags**: Tags can have child-tags to define structured information.
+For example, a #contact tag can have child-tags #email, #phone, #address.
+Use child-tags to create higher-order structured data on your items.
+Prefer lower kebab-case for all tag names.
+
+The user may refer to this API as their database, their notes, their documents etc.
+Essentially this is the user's general knowledge/data store.
+You are operating within a Notion/Anytype/Airtable style app.
+`,
 
     get: doc(
       'db.get',
@@ -90,6 +97,30 @@ db.delete("doc_123")`,
       `(): Promise<Tag[]>
 Fetch all tags in the database
 db.tags()`,
+    ),
+
+    create_tag: doc(
+      'db.create_tag',
+      (name: string, type?: TagType) => tagModel.create(name, type),
+      `(name:string, type?:TagType): Promise<Tag>
+Create a new tag
+db.create_tag("priority")`,
+    ),
+
+    update_tag: doc(
+      'db.update_tag',
+      (name: string, data: { name: string }) => tagModel.update(name, data),
+      `(name:string, data:{name:string}): Promise<void>
+Rename a tag
+db.update_tag("old-priority", { name: "new-priority" })`,
+    ),
+
+    delete_tag: doc(
+      'db.delete_tag',
+      (name: string) => tagModel.delete(name),
+      `(name:string): Promise<void>
+Delete a tag
+db.delete_tag("priority")`,
     ),
 
     tag: doc(

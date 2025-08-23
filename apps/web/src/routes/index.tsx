@@ -25,13 +25,11 @@ function RouteComponent() {
   return (
     <PageLayout
       headerMenu={
-        <>
-          <ViewMenu
-            views={['table', 'grid']}
-            currentView={view}
-            onViewChange={setView}
-          />
-        </>
+        <ViewMenu
+          views={['table', 'grid']}
+          currentView={view}
+          onViewChange={setView}
+        />
       }
     >
       <Query

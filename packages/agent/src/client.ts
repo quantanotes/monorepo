@@ -1,14 +1,14 @@
 import { nanoid } from 'nanoid';
 import { callbacksToAsyncIterator } from '@quanta/utils/callbacks-to-async-iterator';
-import { messagesToRawMessages } from './utils';
-import { docs } from './doc';
-import { agent } from './agent';
+import { messagesToRawMessages } from '@quanta/agent/utils';
+import { docs } from '@quanta/agent/doc';
+import { agent } from '@quanta/agent/agent';
 import type {
   AgentActionStep,
   AgentStep,
   Message,
   TextStreamFn,
-} from './types';
+} from '@quanta/agent/types';
 import type { Item } from '@quanta/types';
 
 type AgentYielder = (step: AgentStep) => void;

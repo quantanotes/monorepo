@@ -47,10 +47,7 @@ export interface TextStream {
   abortController: AbortController;
 }
 
-export type TextStreamFn = (
-  messages: RawMessage[],
-  signal: AbortSignal,
-) => Promise<TextStream>;
+export type TextStreamFn = (messages: RawMessage[]) => Promise<TextStream>;
 
 export type MessageRole = 'user' | 'assistant' | 'system';
 
@@ -69,7 +66,7 @@ export interface MessagePart {
 }
 
 export interface Source {
-  type: 'web' | 'object' | 'file';
+  type: 'web' | 'item' | 'file';
   id?: string;
   url?: string;
   name?: string;
