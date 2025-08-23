@@ -25,16 +25,38 @@ export function Search({ show, setShow }: SearchProps) {
   const searchItems = itemModel?.searchItems;
 
   const search = debounce(async () => {
-    const results = await searchItems?.(input);
-    setResults(results || []);
-  }, 400);
+    if (!input.trim()) {
+      setResults([]);
+    } else {
+      const results = await searchItems?.(input);
+      setResults(results || []);
+    }
+  }, 100);
 
   useEffect(() => {
     search();
   }, [input]);
 
+  useEffect(() => {
+    if (!show) {
+      setInput('');
+      setResults([]);
+    }
+  }, [show]);
+
+  useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setShow(!show);
+      }
+    };
+    document.addEventListener('keydown', handleKeydown);
+    return () => document.removeEventListener('keydown', handleKeydown);
+  }, []);
+
   return (
-    <CommandDialog open={show} onOpenChange={setShow}>
+    <CommandDialog open={show} onOpenChange={setShow} shouldFilter={false}>
       <CommandInput value={input} onValueChange={setInput} />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
