@@ -3,20 +3,46 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import Placeholder from '@tiptap/extension-placeholder';
 import Document from '@tiptap/extension-document';
 import StarterKit from '@tiptap/starter-kit';
+import { TaskList } from '@tiptap/extension-list';
+import { Dropcursor } from '@tiptap/extensions';
 import { Settings } from '@quanta/web/lib/text/extensions/settings';
 import { Tags } from '@quanta/web/lib/text/extensions/tags';
+import { TaskItem } from '@quanta/web/lib/text/extensions/task-item';
+import { SlashCommands } from '@quanta/web/lib/text/extensions/slash-commands';
+import { DragHandle } from '@quanta/web/lib/text/extensions/drag-handle';
+import { BubbleMenu } from '@quanta/web/lib/text/extensions/bubble-menu';
 
 const PLACEHOLDER_CLASS = `tiptap-placeholder`;
 
 const placeholder = ({ node }) =>
-  node.type?.name === 'settings' ? 'Title...' : 'Create anything...';
+  node.type?.name === 'settings'
+    ? 'Title...'
+    : node.type?.name === 'paragraph'
+      ? 'Type / for commands or # for tags...'
+      : '';
 
 const extensions = () => [
   Document.extend({ content: 'settings block*' }),
-  Placeholder.configure({ placeholder, emptyNodeClass: 'tiptap-placeholder' }),
+  Dropcursor.configure({
+    width: 6,
+    color: 'var(--ring)',
+  }),
+  Placeholder.configure({
+    placeholder,
+    emptyNodeClass: 'tiptap-placeholder',
+  }),
   Settings,
+  SlashCommands,
   StarterKit.configure({ document: false }),
   Tags,
+  TaskList.configure({
+    HTMLAttributes: {
+      class: 'pl-2!',
+    },
+  }),
+  TaskItem.configure({
+    nested: true,
+  }),
 ];
 
 interface TextEditorProps {
@@ -58,9 +84,15 @@ export const TextEditor = memo(function ({
   }
 
   return (
-    <EditorContent
-      className="prose mx-auto w-full max-w-3xl px-8 pb-32"
-      editor={editor}
-    />
+    <>
+      <EditorContent
+        className="prose relative mx-auto w-full max-w-3xl pb-32"
+        editor={editor}
+      />
+
+      <BubbleMenu editor={editor} />
+
+      <DragHandle editor={editor} />
+    </>
   );
 });

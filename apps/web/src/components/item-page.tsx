@@ -36,8 +36,8 @@ export function ItemPage({
           itemId={item.id}
           isPinned={isPinned}
           isLiked={isLiked}
-          // likeCount={item.likeCount}
-          // pinCount={item.pinCount}
+          likeCount={item.likeCount}
+          pinCount={item.pinCount}
           onDelete={onDelete}
           onTogglePin={onTogglePin}
           onToggleLike={onToggleLike}
